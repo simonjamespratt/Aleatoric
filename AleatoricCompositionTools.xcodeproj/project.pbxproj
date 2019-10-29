@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF18091C2368F40E009A122D /* TestACTLib.m in Sources */ = {isa = PBXBuildFile; fileRef = DF18091B2368F40E009A122D /* TestACTLib.m */; };
+		DF18091C2368F40E009A122D /* helloWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF18091B2368F40E009A122D /* helloWorld.mm */; };
 		DF18091E2368F40E009A122D /* libAleatoricCompositionTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */; };
 		DF61CFF22368D5B400B8268F /* helloWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61CFF02368D5B400B8268F /* helloWorld.cpp */; };
 		DF61CFF32368D5B400B8268F /* helloWorld.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* helloWorld.hpp */; };
@@ -25,7 +25,7 @@
 
 /* Begin PBXFileReference section */
 		DF1809192368F40E009A122D /* TestACTLib.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestACTLib.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF18091B2368F40E009A122D /* TestACTLib.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestACTLib.m; sourceTree = "<group>"; };
+		DF18091B2368F40E009A122D /* helloWorld.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = helloWorld.mm; sourceTree = "<group>"; };
 		DF18091D2368F40E009A122D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF61CFEA2368D09300B8268F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DF61CFF02368D5B400B8268F /* helloWorld.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helloWorld.cpp; sourceTree = "<group>"; };
@@ -63,7 +63,7 @@
 		DF61CFEC2368D09300B8268F /* test */ = {
 			isa = PBXGroup;
 			children = (
-				DF18091B2368F40E009A122D /* TestACTLib.m */,
+				DF18091B2368F40E009A122D /* helloWorld.mm */,
 				DF18091D2368F40E009A122D /* Info.plist */,
 			);
 			path = test;
@@ -214,7 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF18091C2368F40E009A122D /* TestACTLib.m in Sources */,
+				DF18091C2368F40E009A122D /* helloWorld.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

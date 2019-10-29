@@ -14,6 +14,7 @@
 
 namespace actlib::utilities {
     std::string getHelloWorld();
+    int addStuff(int a, int b);
 }
 
 #endif /* helloWorld_hpp */

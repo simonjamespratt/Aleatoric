@@ -13,4 +13,9 @@ namespace actlib::utilities {
     {
         return "Hello world!";
     }
+    
+    int addStuff(int a, int b)
+    {
+        return a + b;
+    }
 }
