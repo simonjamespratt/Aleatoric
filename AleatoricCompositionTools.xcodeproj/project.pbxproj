@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF18091C2368F40E009A122D /* helloWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF18091B2368F40E009A122D /* helloWorld.mm */; };
+		DF18091C2368F40E009A122D /* NumberGenerators.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF18091B2368F40E009A122D /* NumberGenerators.mm */; };
 		DF18091E2368F40E009A122D /* libAleatoricCompositionTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */; };
-		DF61CFF22368D5B400B8268F /* helloWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61CFF02368D5B400B8268F /* helloWorld.cpp */; };
-		DF61CFF32368D5B400B8268F /* helloWorld.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* helloWorld.hpp */; };
+		DF61CFF22368D5B400B8268F /* NumberGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */; };
+		DF61CFF32368D5B400B8268F /* NumberGenerators.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,11 +25,11 @@
 
 /* Begin PBXFileReference section */
 		DF1809192368F40E009A122D /* TestACTLib.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestACTLib.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF18091B2368F40E009A122D /* helloWorld.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = helloWorld.mm; sourceTree = "<group>"; };
+		DF18091B2368F40E009A122D /* NumberGenerators.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NumberGenerators.mm; sourceTree = "<group>"; };
 		DF18091D2368F40E009A122D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF61CFEA2368D09300B8268F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		DF61CFF02368D5B400B8268F /* helloWorld.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helloWorld.cpp; sourceTree = "<group>"; };
-		DF61CFF12368D5B400B8268F /* helloWorld.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helloWorld.hpp; sourceTree = "<group>"; };
+		DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NumberGenerators.cpp; sourceTree = "<group>"; };
+		DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NumberGenerators.hpp; sourceTree = "<group>"; };
 		DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAleatoricCompositionTools.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -55,7 +55,7 @@
 		DF61CFEB2368D09300B8268F /* src */ = {
 			isa = PBXGroup;
 			children = (
-				DF61CFF02368D5B400B8268F /* helloWorld.cpp */,
+				DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -63,7 +63,7 @@
 		DF61CFEC2368D09300B8268F /* test */ = {
 			isa = PBXGroup;
 			children = (
-				DF18091B2368F40E009A122D /* helloWorld.mm */,
+				DF18091B2368F40E009A122D /* NumberGenerators.mm */,
 				DF18091D2368F40E009A122D /* Info.plist */,
 			);
 			path = test;
@@ -87,7 +87,7 @@
 		DF61CFEF2368D09300B8268F /* actlib */ = {
 			isa = PBXGroup;
 			children = (
-				DF61CFF12368D5B400B8268F /* helloWorld.hpp */,
+				DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */,
 			);
 			path = actlib;
 			sourceTree = "<group>";
@@ -120,7 +120,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF61CFF32368D5B400B8268F /* helloWorld.hpp in Headers */,
+				DF61CFF32368D5B400B8268F /* NumberGenerators.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,7 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF18091C2368F40E009A122D /* helloWorld.mm in Sources */,
+				DF18091C2368F40E009A122D /* NumberGenerators.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,7 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF61CFF22368D5B400B8268F /* helloWorld.cpp in Sources */,
+				DF61CFF22368D5B400B8268F /* NumberGenerators.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
