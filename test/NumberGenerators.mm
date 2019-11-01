@@ -16,9 +16,15 @@
 
 @implementation NumberGenerators
 
-- (void)testAddTwoNumbers
+- (void)testRandomNumberWithinRange
 {
-    XCTAssert(actlib::NumberGenerators::addTwoNumbers(1, 1) == 2);
+    // It should produce random numbers within provided the range
+    actlib::NumberGenerators::RandomNumberWithinRange rnwr(1, 3);
+    for (int i = 0; i < 10; i++) {
+        auto number = rnwr.getNumber();
+        XCTAssert(number > 0);
+        XCTAssert(number < 4);
+    }
 }
 
 @end

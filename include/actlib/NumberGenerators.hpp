@@ -9,13 +9,11 @@
 #ifndef NumberGenerators_hpp
 #define NumberGenerators_hpp
 
-#include <string>
 #include <random>
 
 
 
 namespace actlib::NumberGenerators {
-    int addTwoNumbers(int a, int b);
     
     struct RandomSelectionRange
     {

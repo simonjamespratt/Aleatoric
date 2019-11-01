@@ -9,10 +9,6 @@
 #include "NumberGenerators.hpp"
 
 namespace actlib::NumberGenerators {
-    int addTwoNumbers(int a, int b)
-    {
-        return a + b;
-    }
     
     namespace random_number
     {
@@ -61,9 +57,7 @@ namespace actlib::NumberGenerators {
     
     // RANDOM WITHIN RANGE =====================================================
     // range is inclusive, so range is: end - start + 1
-    RandomNumberWithinRange::RandomNumberWithinRange(int rangeStart, int rangeEnd) : RandomNumberSelector(rangeStart, rangeEnd)
-    {
-    }
+    RandomNumberWithinRange::RandomNumberWithinRange(int rangeStart, int rangeEnd) : RandomNumberSelector(rangeStart, rangeEnd) {}
     
     RandomNumberWithinRange::~RandomNumberWithinRange() {}
     
