@@ -11,6 +11,7 @@
 		DF18091E2368F40E009A122D /* libAleatoricCompositionTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */; };
 		DF61CFF22368D5B400B8268F /* NumberGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */; };
 		DF61CFF32368D5B400B8268F /* NumberGenerators.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */; };
+		DFE91F59236C9E7F008DAF76 /* NumberGenerators.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,6 +23,19 @@
 			remoteInfo = AleatoricCompositionTools;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DFE91F57236C9C30008DAF76 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = include/actlib;
+			dstSubfolderSpec = 16;
+			files = (
+				DFE91F59236C9E7F008DAF76 /* NumberGenerators.hpp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DF1809192368F40E009A122D /* TestACTLib.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestACTLib.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,6 +166,7 @@
 				DF71916B2368CDF600803C13 /* Sources */,
 				DF71916C2368CDF600803C13 /* Frameworks */,
 				DF71916D2368CDF600803C13 /* Headers */,
+				DFE91F57236C9C30008DAF76 /* CopyFiles */,
 			);
 			buildRules = (
 			);
