@@ -11,6 +11,8 @@
 		DF18091E2368F40E009A122D /* libAleatoricCompositionTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */; };
 		DF61CFF22368D5B400B8268F /* NumberGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */; };
 		DF61CFF32368D5B400B8268F /* NumberGenerators.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */; };
+		DF887508236EF1FE00068F9F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF887507236EF1FE00068F9F /* main.cpp */; };
+		DF887511236F085300068F9F /* libAleatoricCompositionTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */; };
 		DFE91F59236C9E7F008DAF76 /* NumberGenerators.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */; };
 /* End PBXBuildFile section */
 
@@ -22,9 +24,25 @@
 			remoteGlobalIDString = DF71916E2368CDF600803C13;
 			remoteInfo = AleatoricCompositionTools;
 		};
+		DF88750E236F084600068F9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF7191672368CDF600803C13 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF71916E2368CDF600803C13;
+			remoteInfo = AleatoricCompositionTools;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		DF887503236EF1FE00068F9F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		DFE91F57236C9C30008DAF76 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -45,6 +63,9 @@
 		DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NumberGenerators.cpp; sourceTree = "<group>"; };
 		DF61CFF12368D5B400B8268F /* NumberGenerators.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NumberGenerators.hpp; sourceTree = "<group>"; };
 		DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAleatoricCompositionTools.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF887505236EF1FE00068F9F /* TestACT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestACT; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF887507236EF1FE00068F9F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		DF88750D236EF2C500068F9F /* catch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = catch.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +81,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF887502236EF1FE00068F9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF887511236F085300068F9F /* libAleatoricCompositionTools.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,7 +143,9 @@
 				DF61CFEA2368D09300B8268F /* README.md */,
 				DF61CFEB2368D09300B8268F /* src */,
 				DF61CFEC2368D09300B8268F /* test */,
+				DF887506236EF1FE00068F9F /* TestACT */,
 				DF7191702368CDF600803C13 /* Products */,
+				DF887510236F085300068F9F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -123,8 +154,25 @@
 			children = (
 				DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */,
 				DF1809192368F40E009A122D /* TestACTLib.xctest */,
+				DF887505236EF1FE00068F9F /* TestACT */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DF887506236EF1FE00068F9F /* TestACT */ = {
+			isa = PBXGroup;
+			children = (
+				DF88750D236EF2C500068F9F /* catch.hpp */,
+				DF887507236EF1FE00068F9F /* main.cpp */,
+			);
+			path = TestACT;
+			sourceTree = "<group>";
+		};
+		DF887510236F085300068F9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +225,24 @@
 			productReference = DF71916F2368CDF600803C13 /* libAleatoricCompositionTools.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		DF887504236EF1FE00068F9F /* TestACT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF88750B236EF1FE00068F9F /* Build configuration list for PBXNativeTarget "TestACT" */;
+			buildPhases = (
+				DF887501236EF1FE00068F9F /* Sources */,
+				DF887502236EF1FE00068F9F /* Frameworks */,
+				DF887503236EF1FE00068F9F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF88750F236F084600068F9F /* PBXTargetDependency */,
+			);
+			name = TestACT;
+			productName = TestACT;
+			productReference = DF887505236EF1FE00068F9F /* TestACT */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -191,6 +257,10 @@
 						ProvisioningStyle = Automatic;
 					};
 					DF71916E2368CDF600803C13 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					DF887504236EF1FE00068F9F = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -210,6 +280,7 @@
 			targets = (
 				DF71916E2368CDF600803C13 /* AleatoricCompositionTools */,
 				DF1809182368F40E009A122D /* TestACTLib */,
+				DF887504236EF1FE00068F9F /* TestACT */,
 			);
 		};
 /* End PBXProject section */
@@ -241,6 +312,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DF887501236EF1FE00068F9F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF887508236EF1FE00068F9F /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -248,6 +327,11 @@
 			isa = PBXTargetDependency;
 			target = DF71916E2368CDF600803C13 /* AleatoricCompositionTools */;
 			targetProxy = DF18091F2368F40E009A122D /* PBXContainerItemProxy */;
+		};
+		DF88750F236F084600068F9F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF71916E2368CDF600803C13 /* AleatoricCompositionTools */;
+			targetProxy = DF88750E236F084600068F9F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -445,6 +529,22 @@
 			};
 			name = Release;
 		};
+		DF887509236EF1FE00068F9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DF88750A236EF1FE00068F9F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -471,6 +571,15 @@
 			buildConfigurations = (
 				DF71917B2368CDF600803C13 /* Debug */,
 				DF71917C2368CDF600803C13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF88750B236EF1FE00068F9F /* Build configuration list for PBXNativeTarget "TestACT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF887509236EF1FE00068F9F /* Debug */,
+				DF88750A236EF1FE00068F9F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
