@@ -66,6 +66,7 @@
 		DF887505236EF1FE00068F9F /* TestACT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestACT; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF887507236EF1FE00068F9F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DF88750D236EF2C500068F9F /* catch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = catch.hpp; sourceTree = "<group>"; };
+		DF887516236F25D300068F9F /* fakeit.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fakeit.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +163,7 @@
 		DF887506236EF1FE00068F9F /* TestACT */ = {
 			isa = PBXGroup;
 			children = (
+				DF887513236F258300068F9F /* FakeIt */,
 				DF88750D236EF2C500068F9F /* catch.hpp */,
 				DF887507236EF1FE00068F9F /* main.cpp */,
 			);
@@ -173,6 +175,30 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF887513236F258300068F9F /* FakeIt */ = {
+			isa = PBXGroup;
+			children = (
+				DF887514236F258300068F9F /* single_header */,
+			);
+			path = FakeIt;
+			sourceTree = "<group>";
+		};
+		DF887514236F258300068F9F /* single_header */ = {
+			isa = PBXGroup;
+			children = (
+				DF887515236F25AF00068F9F /* catch */,
+			);
+			path = single_header;
+			sourceTree = "<group>";
+		};
+		DF887515236F25AF00068F9F /* catch */ = {
+			isa = PBXGroup;
+			children = (
+				DF887516236F25D300068F9F /* fakeit.hpp */,
+			);
+			path = catch;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -533,6 +559,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -541,6 +568,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

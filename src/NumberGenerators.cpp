@@ -8,7 +8,7 @@
 
 #include "NumberGenerators.hpp"
 
-namespace actlib::NumberGenerators {
+namespace actlib {
     
     namespace random_number
     {
@@ -57,14 +57,15 @@ namespace actlib::NumberGenerators {
     
     // RANDOM WITHIN RANGE =====================================================
     // range is inclusive, so range is: end - start + 1
-    RandomNumberWithinRange::RandomNumberWithinRange(int rangeStart, int rangeEnd) : RandomNumberSelector(rangeStart, rangeEnd) {}
+    RandomNumberWithinRange::RandomNumberWithinRange(int rangeStart, int rangeEnd) :
+        RandomNumberSelector(rangeStart, rangeEnd),
+        randomNumber(rangeStart, rangeEnd) {}
     
     RandomNumberWithinRange::~RandomNumberWithinRange() {}
     
     int RandomNumberWithinRange::getNumber()
     {
         // select a number in range - uniform dist
-        RandomNumber randomNumber(range.start, range.end);
         return randomNumber.getNumber();
     }
     

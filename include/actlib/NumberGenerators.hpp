@@ -13,13 +13,46 @@
 
 
 
-namespace actlib::NumberGenerators {
+namespace actlib { namespace NumberGenerators
     
-    struct RandomSelectionRange
+    struct SelectionRange
     {
         int start;
         int end;
+        int offset;
+        int size;
     };
+    
+    // Base class from which all other classes inherit
+    class NumberGenerator
+    {
+    public:
+        NumberGenerator(int rangeStart, int rangeEnd);
+        virtual ~NumberGenerator();
+        
+        virtual int getNumber();
+        virtual int getUniformNumber();
+        virtual int getDiscreteNumber();
+        
+        virtual void reset();
+        
+    protected:
+        virtual void initialise();
+        SelectionRange range;
+        
+    private:
+        //uniform
+        std::uniform_int_distribution<int> uniformDistribution;
+        
+        // discrete
+        std::discrete_distribution<int> discreteDistribution;
+        std::vector<double> distributionArray; // rename this
+        void setUniformDistribution(double value);
+        void setEqualProbability();
+    }
+}
+    
+
     
     class RandomNumber
     {
@@ -79,9 +112,10 @@ namespace actlib::NumberGenerators {
         
     protected:
         void initialize() override;
+        RandomNumber randomNumber;
         
     private:
     };
-}
+
 
 #endif /* NumberGenerators_hpp */
