@@ -9,7 +9,7 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 #include "fakeit.hpp"
-//#include "NumberGenerators.hpp"
+#include "NumberGenerators.hpp"
 
 using namespace fakeit;
 
@@ -26,7 +26,7 @@ public:
 };
 
 
-TEST_CASE("RandomNumberWithinRange") {
+TEST_CASE("SomeInterface testing") {
     Mock<MyClass> mock;
     When(Method(mock, doSomething)).AlwaysReturn(1);
     
@@ -36,14 +36,21 @@ TEST_CASE("RandomNumberWithinRange") {
         Verify(Method(mock, doSomething));
         REQUIRE(instance.doSomething() == 1);
     }
+}
+
+TEST_CASE("UniformNumberGenerator")
+{
+    actlib::NumberGenerators::UniformNumberGenerator instance(1, 2);
     
-//    Mock<actlib::RandomNumber> mockRandomNumber;
-//    When(Method(mockRandomNumber,getNumber)).Return(1);
-//    actlib::RandomNumberWithinRange rnwr(1, 3);
-//
-//    SECTION("It should produce random numbers within provided the range") {
-//        int number = rnwr.getNumber();
-//        REQUIRE(number > 0);
-//        REQUIRE(number < 4);
-//    }
+    SECTION("It should produce random numbers within provided the range")
+    {
+        // NB: This is a pseudo test, in that it is unlikely to be wrong, but is not guaranteed to be right!
+        // In order to test this properly it would require understanding how to deterministically seed the RNG
+        // or Mock things (which I don't think is possible)
+        for (int i = 0; i < 100; i++) {
+            int number = instance.getNumber();
+            REQUIRE(number >= 1);
+            REQUIRE(number <= 2);
+        }
+    }    
 }

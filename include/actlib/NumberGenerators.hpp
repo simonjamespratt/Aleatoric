@@ -11,9 +11,7 @@
 
 #include <random>
 
-
-
-namespace actlib { namespace NumberGenerators
+namespace actlib { namespace NumberGenerators {
     
     struct SelectionRange
     {
@@ -29,93 +27,39 @@ namespace actlib { namespace NumberGenerators
     public:
         NumberGenerator(int rangeStart, int rangeEnd);
         virtual ~NumberGenerator();
-        
-        virtual int getNumber();
-        virtual int getUniformNumber();
-        virtual int getDiscreteNumber();
-        
-        virtual void reset();
+        // virtual void reset();
         
     protected:
-        virtual void initialise();
+        // virtual void initialise();
         SelectionRange range;
         
     private:
-        //uniform
+    };
+    
+    // Class for getting random numbers according to a uniform distribution
+    class UniformNumberGenerator: public NumberGenerator
+    {
+    public:
+        UniformNumberGenerator(int rangeStart, int rangeEnd);
+        ~UniformNumberGenerator();
+        virtual int getNumber();
+    private:
         std::uniform_int_distribution<int> uniformDistribution;
-        
-        // discrete
-        std::discrete_distribution<int> discreteDistribution;
+    };
+    
+    // Class for getting random numbers according to a discrete distribution
+    class DiscreteNumberGenerator
+    {
+    public:
+        DiscreteNumberGenerator(int rangeStart, int rangeEnd);
+        ~DiscreteNumberGenerator();
+        virtual int getNumber();
+    private:
         std::vector<double> distributionArray; // rename this
-        void setUniformDistribution(double value);
-        void setEqualProbability();
-    }
-}
-    
-
-    
-    class RandomNumber
-    {
-    public:
-        RandomNumber(int rangeStart, int rangeEnd);
-        ~RandomNumber();
-        
-        int getNumber();
-        
-    private:
-        std::uniform_int_distribution<int> dist;
+        std::discrete_distribution<int> discreteDistribution;
+        // void setUniformDistribution(double value);
+        // void setEqualProbability();
     };
-    
-    // Abstract class for derived classes working with ranges, offsets and offering the ability to get a random number
-    class RandomNumberSelector
-    {
-    public:
-        RandomNumberSelector(int rangeStart, int rangeEnd);
-        virtual ~RandomNumberSelector();
-        
-        // NB: removed as pure virtual method because cannot return different types when method has no params
-        // virtual int getNumber() = 0;
-        virtual void reset() = 0;
-        
-    protected:
-        RandomSelectionRange range;
-        int offset;
-        int rangeSize;
-        virtual void initialize() = 0;
-        
-    private:
-    };
-    
-    // Abstract Base class for derived classes using a discrete distribution
-    class DiscreteDistributionRandomNumber : public RandomNumberSelector
-    {
-    public:
-        DiscreteDistributionRandomNumber(int rangeStart, int rangeEnd);
-        virtual ~DiscreteDistributionRandomNumber();
-        
-    protected:
-        std::vector<double> discreteDist;
-        void setUniformDistribution(double value);
-        void setEqualProbability();
-        
-    private:
-    };
-    
-    // Between from RTC
-    class RandomNumberWithinRange : RandomNumberSelector
-    {
-    public:
-        RandomNumberWithinRange(int rangeStart, int rangeEnd);
-        ~RandomNumberWithinRange();
-        int getNumber();
-        void reset() override;
-        
-    protected:
-        void initialize() override;
-        RandomNumber randomNumber;
-        
-    private:
-    };
-
-
+} // namespace NumberGenerators
+} // namespace actlib
 #endif /* NumberGenerators_hpp */
