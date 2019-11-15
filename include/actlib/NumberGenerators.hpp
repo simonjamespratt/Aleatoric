@@ -21,7 +21,8 @@ namespace actlib { namespace NumberGenerators {
         int size;
     };
     
-    // Base class from which all other classes inherit
+    // Number Generator ===========================================
+    // Base class from which all interface classes inherit
     class NumberGenerator
     {
     public:
@@ -36,26 +37,29 @@ namespace actlib { namespace NumberGenerators {
     private:
     };
     
+    // UniformNumberGenerator ====================================
     // Class for getting random numbers according to a uniform distribution
-    class UniformNumberGenerator: public NumberGenerator
+    class UniformNumberGenerator
     {
     public:
         UniformNumberGenerator(int rangeStart, int rangeEnd);
         ~UniformNumberGenerator();
-        virtual int getNumber();
+        virtual int getNumber(); // virtual for mocking in tests
     private:
         std::uniform_int_distribution<int> uniformDistribution;
     };
     
+    // DiscreteNumberGenerator ===================================
     // Class for getting random numbers according to a discrete distribution
     class DiscreteNumberGenerator
     {
     public:
-        DiscreteNumberGenerator(int rangeStart, int rangeEnd);
+        DiscreteNumberGenerator();
+        DiscreteNumberGenerator(std::vector<double> distribution);
         ~DiscreteNumberGenerator();
-        virtual int getNumber();
+        virtual int getNumber(); // virtual for mocking in tests
+        void updateDistribution(std::vector<double> distribution);
     private:
-        std::vector<double> distributionArray; // rename this
         std::discrete_distribution<int> discreteDistribution;
         // void setUniformDistribution(double value);
         // void setEqualProbability();

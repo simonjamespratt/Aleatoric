@@ -28,9 +28,7 @@ NumberGenerator::NumberGenerator(int rangeStart, int rangeEnd)
 NumberGenerator::~NumberGenerator() {}
 
 // UniformNumberGenerator ====================================
-UniformNumberGenerator::UniformNumberGenerator(int rangeStart, int rangeEnd) :
-NumberGenerator(rangeStart, rangeEnd),
-uniformDistribution(rangeStart, rangeEnd)
+UniformNumberGenerator::UniformNumberGenerator(int rangeStart, int rangeEnd) : uniformDistribution(rangeStart, rangeEnd)
 {}
 
 UniformNumberGenerator::~UniformNumberGenerator() {}
@@ -38,4 +36,21 @@ UniformNumberGenerator::~UniformNumberGenerator() {}
 int UniformNumberGenerator::getNumber()
 {
     return uniformDistribution(random_number::engine);
+}
+
+// DiscreteNumberGenerator ===================================
+DiscreteNumberGenerator::DiscreteNumberGenerator() {}
+DiscreteNumberGenerator::DiscreteNumberGenerator(std::vector<double> distribution) : discreteDistribution(distribution.begin(), distribution.end())
+{}
+
+DiscreteNumberGenerator::~DiscreteNumberGenerator() {}
+
+int DiscreteNumberGenerator::getNumber()
+{
+    discreteDistribution(random_number::engine);
+}
+
+void DiscreteNumberGenerator::updateDistribution(std::vector<double> distribution)
+{
+    discreteDistribution = std::discrete_distribution<int>(distribution.begin(), distribution.end());
 }
