@@ -26,7 +26,7 @@ clang++ \
     -std=c++14 \
     -stdlib=libc++ \
     -Wall \
-    -o main \
+    -o test \
     -I ../../include/actlib \
     -I ../../tests/FakeIt/single_header/catch \
     -I ../../tests \

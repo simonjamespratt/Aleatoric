@@ -18,7 +18,7 @@
         {
             "label": "Run in debug",
             "type": "shell",
-            "command": "${workspaceFolder}/build/debug/main",
+            "command": "${workspaceFolder}/build/debug/test",
             "args": [
                 "-r console",
                 "-d yes",
