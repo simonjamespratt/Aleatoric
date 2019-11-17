@@ -76,19 +76,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		DF61CFEB2368D09300B8268F /* src */ = {
+		DF61CFEB2368D09300B8268F /* source */ = {
 			isa = PBXGroup;
 			children = (
 				DF61CFF02368D5B400B8268F /* NumberGenerators.cpp */,
 			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		DF61CFED2368D09300B8268F /* doc */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = doc;
+			path = source;
 			sourceTree = "<group>";
 		};
 		DF61CFEE2368D09300B8268F /* include */ = {
@@ -110,11 +103,10 @@
 		DF7191662368CDF600803C13 = {
 			isa = PBXGroup;
 			children = (
-				DF61CFED2368D09300B8268F /* doc */,
 				DF61CFEE2368D09300B8268F /* include */,
 				DF61CFEA2368D09300B8268F /* README.md */,
-				DF61CFEB2368D09300B8268F /* src */,
-				DF887506236EF1FE00068F9F /* TestACT */,
+				DF61CFEB2368D09300B8268F /* source */,
+				DF887506236EF1FE00068F9F /* tests */,
 				DF7191702368CDF600803C13 /* Products */,
 				DF887510236F085300068F9F /* Frameworks */,
 			);
@@ -129,14 +121,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DF887506236EF1FE00068F9F /* TestACT */ = {
+		DF887506236EF1FE00068F9F /* tests */ = {
 			isa = PBXGroup;
 			children = (
 				DF887513236F258300068F9F /* FakeIt */,
 				DF88750D236EF2C500068F9F /* catch.hpp */,
 				DF887507236EF1FE00068F9F /* main.cpp */,
 			);
-			path = TestACT;
+			path = tests;
 			sourceTree = "<group>";
 		};
 		DF887510236F085300068F9F /* Frameworks */ = {

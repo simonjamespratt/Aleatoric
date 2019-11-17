@@ -29,7 +29,7 @@ clang++ \
     -Wall \
     -o NumberGenerators.o \
     -I ../../include/actlib \
-    ../../src/NumberGenerators.cpp \
+    ../../source/NumberGenerators.cpp \
     --debug && \
 
 ar \

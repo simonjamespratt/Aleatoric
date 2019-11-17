@@ -28,9 +28,9 @@ clang++ \
     -Wall \
     -o main \
     -I ../../include/actlib \
-    -I ../../TestACT/FakeIt/single_header/catch \
-    -I ../../TestACT \
-    ../../TestACT/main.cpp \
+    -I ../../tests/FakeIt/single_header/catch \
+    -I ../../tests \
+    ../../tests/main.cpp \
     libAleatoricCompositionTools.a \
     --debug
 
