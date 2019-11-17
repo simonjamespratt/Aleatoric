@@ -29,16 +29,6 @@
       language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DF1809182368F40E009A122D"
-               BuildableName = "TestACTLib.xctest"
-               BlueprintName = "TestACTLib"
-               ReferencedContainer = "container:AleatoricCompositionTools.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

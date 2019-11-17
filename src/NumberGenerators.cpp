@@ -47,7 +47,7 @@ DiscreteNumberGenerator::~DiscreteNumberGenerator() {}
 
 int DiscreteNumberGenerator::getNumber()
 {
-    discreteDistribution(random_number::engine);
+    return discreteDistribution(random_number::engine);
 }
 
 void DiscreteNumberGenerator::updateDistribution(std::vector<double> distribution)
