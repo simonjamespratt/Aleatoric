@@ -12,7 +12,7 @@
 #include <random>
 
 namespace actlib { namespace NumberGenerators {
-    
+
     struct SelectionRange
     {
         int start;
@@ -20,23 +20,23 @@ namespace actlib { namespace NumberGenerators {
         int offset;
         int size;
     };
-    
+
     // Number Generator ===========================================
-    // Base class from which all interface classes inherit
+    // Base class from which interface classes can inherit
     class NumberGenerator
     {
     public:
         NumberGenerator(int rangeStart, int rangeEnd);
         virtual ~NumberGenerator();
         // virtual void reset();
-        
+
     protected:
         // virtual void initialise();
         SelectionRange range;
-        
+
     private:
     };
-    
+
     // UniformNumberGenerator ====================================
     // Class for getting random numbers according to a uniform distribution
     class UniformNumberGenerator
@@ -48,7 +48,7 @@ namespace actlib { namespace NumberGenerators {
     private:
         std::uniform_int_distribution<int> uniformDistribution;
     };
-    
+
     // DiscreteNumberGenerator ===================================
     // Class for getting random numbers according to a discrete distribution
     class DiscreteNumberGenerator
