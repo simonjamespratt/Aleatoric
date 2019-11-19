@@ -17,7 +17,8 @@ namespace random_number
 } // namespace random_number
 
 // Number Generator ===========================================
-NumberGenerator::NumberGenerator(int rangeStart, int rangeEnd)
+// range is inclusive, so range is: end - start + 1
+NumberGeneratorInterface::NumberGeneratorInterface(int rangeStart, int rangeEnd)
 {
     range.start = rangeStart;
     range.end = rangeEnd;
@@ -25,7 +26,7 @@ NumberGenerator::NumberGenerator(int rangeStart, int rangeEnd)
     range.size = rangeEnd - rangeStart + 1;
 }
 
-NumberGenerator::~NumberGenerator() {}
+NumberGeneratorInterface::~NumberGeneratorInterface() {}
 
 // UniformNumberGenerator ====================================
 UniformNumberGenerator::UniformNumberGenerator(int rangeStart, int rangeEnd) : uniformDistribution(rangeStart, rangeEnd)
@@ -53,4 +54,50 @@ int DiscreteNumberGenerator::getNumber()
 void DiscreteNumberGenerator::updateDistribution(std::vector<double> distribution)
 {
     discreteDistribution = std::discrete_distribution<int>(distribution.begin(), distribution.end());
+}
+
+// SERIES RANDOM =====================================================
+// range is inclusive, so range is: end - start + 1
+Serial::Serial(int rangeStart, int rangeEnd) : NumberGeneratorInterface(rangeStart, rangeEnd)
+{
+    setEqualProbability();
+}
+
+Serial::~Serial()
+{
+}
+
+int Serial::getNumber()
+{
+    if (seriesIsComplete())
+    {
+        setEqualProbability();
+    }
+
+    int selectedNumber = generator.getNumber();
+    distributionArray[selectedNumber] = 0.0;
+    generator.updateDistribution(distributionArray);
+    return selectedNumber + range.offset;
+}
+
+void Serial::setEqualProbability()
+{
+    distributionArray.clear();
+    for (int i = 0; i < range.size; i++)
+    {
+        distributionArray.push_back(1.0);
+    }
+    generator.updateDistribution(distributionArray);
+}
+
+bool Serial::seriesIsComplete()
+{
+    for (auto &&item : distributionArray)
+    {
+        if (item > 0.0)
+        {
+            return false;
+        }
+    }
+    return true;
 }

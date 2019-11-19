@@ -23,11 +23,11 @@ namespace actlib { namespace NumberGenerators {
 
     // Number Generator ===========================================
     // Base class from which interface classes can inherit
-    class NumberGenerator
+    class NumberGeneratorInterface
     {
     public:
-        NumberGenerator(int rangeStart, int rangeEnd);
-        virtual ~NumberGenerator();
+        NumberGeneratorInterface(int rangeStart, int rangeEnd);
+        virtual ~NumberGeneratorInterface();
         // virtual void reset();
 
     protected:
@@ -63,6 +63,21 @@ namespace actlib { namespace NumberGenerators {
         std::discrete_distribution<int> discreteDistribution;
         // void setUniformDistribution(double value);
         // void setEqualProbability();
+    };
+
+    // Series ===================================================
+    // xRandom from RTC
+    class Serial : public NumberGeneratorInterface
+    {
+    public:
+        Serial(int rangeStart, int rangeEnd);
+        ~Serial();
+        int getNumber();
+    private:
+        std::vector<double> distributionArray;
+        DiscreteNumberGenerator generator;
+        void setEqualProbability();
+        bool seriesIsComplete();
     };
 } // namespace NumberGenerators
 } // namespace actlib
