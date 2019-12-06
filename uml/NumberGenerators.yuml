@@ -2,8 +2,6 @@
 // {direction:topDown}
 [Client]-[(Context);Producer]
 [(Context);Producer]+->[<<StrategyInterface>>;Protocol|getNumber();reset()]
-[<<StrategyInterface>>;Protocol|getNumber();reset()]^-.-[Series]
-[<<StrategyInterface>>;Protocol|getNumber();reset()]^-.-[Random]
-[<<StrategyInterface>>;Protocol|getNumber();reset()]++->[<<RandomInterface>>;Generator|getNumber();setDistribution()]
-[<<RandomInterface>>;Generator|getNumber();setDistribution()]^-.-[UniformGenerator]
-[<<RandomInterface>>;Generator]^-.-[DiscreteGenerator]
+[<<StrategyInterface>>;Protocol|getNumber();reset()]^-.-[Protocol_Implementation]
+[Protocol_Implementation]++->[UniformGenerator|getNumber();setDistribution()]
+[Protocol_Implementation]++->[DiscreteGenerator|getNumber();setDistribution()]
