@@ -9,6 +9,7 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 #include "fakeit.hpp"
+#include "Engine.hpp"
 #include "NumberGenerators.hpp"
 
 using namespace fakeit;
@@ -38,82 +39,15 @@ TEST_CASE("SomeInterface testing") {
     }
 }
 
-TEST_CASE("UniformNumberGenerator")
-{
-    actlib::NumberGenerators::UniformNumberGenerator instance(1, 2);
-
-    SECTION("It should produce random numbers within provided the range")
-    {
-        // NB: This is a pseudo test, in that it is unlikely to be wrong, but is not guaranteed to be right!
-        // In order to test this properly it would require understanding how to deterministically seed the RNG
-        // or Mock things (which I don't think is possible)
-        for (int i = 0; i < 100; i++) {
-            int number = instance.getNumber();
-            REQUIRE(number >= 1);
-            REQUIRE(number <= 2);
-        }
-    }
-}
-
-SCENARIO("DiscreteNumberGenerator")
-{
-
-    GIVEN("The class is invoked with the default constructor")
-    {
-        actlib::NumberGenerators::DiscreteNumberGenerator instance;
-
-        WHEN("A number is requested")
-        {
-            THEN("It should return 0")
-            {
-                // NB: This is a pseudo test, in that it is unlikely to be wrong, but is not guaranteed to be right!
-                // In order to test this properly it would require understanding how to deterministically seed the RNG
-                // or Mock things (which I don't think is possible)
-                for (int i = 0; i < 100; i++) {
-                    REQUIRE(instance.getNumber() == 0);
-                }
-            }
-        }
-    }
-
-    GIVEN("The class is invoked with a weighted discrete distribution")
-    {
-        actlib::NumberGenerators::DiscreteNumberGenerator instance(std::vector<double> {0.0, 1.0});
-
-        WHEN("A number is requested")
-        {
-            THEN("It should return the expected number")
-            {
-                // NB: This is a pseudo test, in that it is unlikely to be wrong, but is not guaranteed to be right!
-                // In order to test this properly it would require understanding how to deterministically seed the RNG
-                // or Mock things (which I don't think is possible)
-                for (int i = 0; i < 100; i++) {
-                    REQUIRE(instance.getNumber() == 1);
-                }
-            }
-        }
-
-        WHEN("The distribution is updated and a number is requested")
-        {
-            THEN("It should return the updated expected number")
-            {
-                instance.updateDistribution(std::vector<double> {0.0, 0.0, 1.0});
-                // NB: This is a pseudo test, in that it is unlikely to be wrong, but is not guaranteed to be right!
-                // In order to test this properly it would require understanding how to deterministically seed the RNG
-                // or Mock things (which I don't think is possible)
-                for (int i = 0; i < 100; i++) {
-                    REQUIRE(instance.getNumber() == 2);
-                }
-            }
-        }
-    }
-}
-
-SCENARIO("NumberGenerators::Serial")
+SCENARIO("Numbers::Serial")
 {
     GIVEN("The class is invoked with an inclusive range of 3")
     {
-        actlib::NumberGenerators::Serial instance(1, 3);
+        // TODO: This needs to be instantiated ONCE for ALL tests to use,
+        // ideally in the main.cpp of the tests
+        // It also needs to be handled by a smart pointer or Engine::Instance() needs to return a smart pointer
+        actlib::RNG::Engine *engine = actlib::RNG::Engine::Instance();
+        actlib::NumberGenerators::Serial instance(engine->getEngine(), 1, 3);
         int firstNumber = instance.getNumber();
         int secondNumber = instance.getNumber();
         int thirdNumber = instance.getNumber();

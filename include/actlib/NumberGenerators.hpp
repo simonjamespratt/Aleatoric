@@ -9,7 +9,8 @@
 #ifndef NumberGenerators_hpp
 #define NumberGenerators_hpp
 
-#include <random>
+#include <vector>
+#include "DiscreteGenerator.hpp"
 
 namespace actlib { namespace NumberGenerators {
 
@@ -37,46 +38,16 @@ namespace actlib { namespace NumberGenerators {
     private:
     };
 
-    // UniformNumberGenerator ====================================
-    // Class for getting random numbers according to a uniform distribution
-    class UniformNumberGenerator
-    {
-    public:
-        UniformNumberGenerator(int rangeStart, int rangeEnd);
-        ~UniformNumberGenerator();
-        virtual int getNumber(); // virtual for mocking in tests
-    private:
-        std::uniform_int_distribution<int> uniformDistribution;
-    };
-
-    // DiscreteNumberGenerator ===================================
-    // Class for getting random numbers according to a discrete distribution
-    class DiscreteNumberGenerator
-    {
-    public:
-        DiscreteNumberGenerator();
-        DiscreteNumberGenerator(std::vector<double> distribution);
-        ~DiscreteNumberGenerator();
-        virtual int getNumber(); // virtual for mocking in tests
-        void updateDistribution(std::vector<double> distribution);
-    private:
-        std::discrete_distribution<int> discreteDistribution;
-        // void setUniformDistribution(double value);
-        // void setEqualProbability();
-    };
-
     // Series ===================================================
     // xRandom from RTC
     class Serial : public NumberGeneratorInterface
     {
     public:
-        Serial(int rangeStart, int rangeEnd);
+        Serial(std::mt19937& engine, int rangeStart, int rangeEnd);
         ~Serial();
         int getNumber();
     private:
-        std::vector<double> distributionArray;
-        DiscreteNumberGenerator generator;
-        void setEqualProbability();
+        actlib::Numbers::DiscreteGenerator generator;
         bool seriesIsComplete();
     };
 } // namespace NumberGenerators

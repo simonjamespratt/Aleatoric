@@ -7,13 +7,14 @@ namespace actlib { namespace Numbers {
     class UniformGenerator
     {
     public:
-        UniformGenerator(int rangeStart, int rangeEnd);
-        ~UniformGenerator() {};
+        UniformGenerator(std::mt19937& engine, int rangeStart, int rangeEnd);
+        ~UniformGenerator();
         int getNumber();
         void setDistribution(int rangeStart, int rangeEnd);
 
     private:
-        std::uniform_int_distribution<int> uniformDistribution;
+        std::mt19937 _engine;
+        std::uniform_int_distribution<int> _distribution;
     };
 }}
 

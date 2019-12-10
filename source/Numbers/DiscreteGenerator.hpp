@@ -8,15 +8,21 @@ namespace actlib { namespace Numbers {
     class DiscreteGenerator
     {
     public:
-        DiscreteGenerator(std::vector<double> distribution);
-        ~DiscreteGenerator() {};
+        DiscreteGenerator(std::mt19937& engine, std::vector<double> distribution);
+        DiscreteGenerator(std::mt19937& engine, int vectorSize, double uniformValue);
+        ~DiscreteGenerator();
         int getNumber();
-        void setDistribution(std::vector<double> distribution);
-
-        // TODO: add the static methods for distribution manipulation here
+        void setDistributionVector(std::vector<double> distributionVector);
+        void setDistributionVector(int vectorSize, double uniformValue);
+        void updateDistributionVector(int index, double newValue);
+        void updateDistributionVector(double uniformValue);
+        std::vector<double> getDistributionVector();
 
     private:
-        std::discrete_distribution<int> discreteDistribution;
+        std::mt19937 _engine;
+        std::vector<double> _distributionVector;
+        std::discrete_distribution<int> _distribution;
+        void setDistribution();
     };
 }}
 
