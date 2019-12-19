@@ -1,7 +1,9 @@
 // {type:class}
 // {direction:topDown}
-[Client]-[(Context);Producer]
-[(Context);Producer]+->[<<StrategyInterface>>;Protocol|getNumber();reset()]
-[<<StrategyInterface>>;Protocol|getNumber();reset()]^-.-[Protocol_Implementation]
-[Protocol_Implementation]++->[UniformGenerator|getNumber();setDistribution()]
-[Protocol_Implementation]++->[DiscreteGenerator|getNumber();setDistribution()]
+[Client]-[<<Strategy-Context>>;Producer]
+[<<Strategy-Context>>;Producer]+->[<<Strategy-Interface>>;Protocol|getNumber();reset()]
+[<<Strategy-Interface>>;Protocol|getNumber();reset()]^-.-[<<Strategy-Concrete>>;(Implementation)]
+[<<Strategy-Interface>>;Protocol|getNumber();reset()]++->[<<Singleton>>;Engine]
+[<<Strategy-Concrete>>;(Implementation)]++->[UniformGenerator|getNumber();setDistribution()]
+[<<Strategy-Concrete>>;(Implementation)]++->[DiscreteGenerator|getNumber();setDistribution()]
+[Client]-[<<Singleton>>;Engine]

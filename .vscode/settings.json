@@ -76,5 +76,6 @@
         "vector": "cpp",
         "*.tcc": "cpp",
         "hashtable": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

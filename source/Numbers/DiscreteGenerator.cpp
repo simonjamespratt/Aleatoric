@@ -1,14 +1,57 @@
 #include "DiscreteGenerator.hpp"
-#include "../Engine/Engine.hpp" //TODO: check if the include paths can be added to the compilation
 
-actlib::Numbers::DiscreteGenerator::DiscreteGenerator(std::vector<double> distribution) : discreteDistribution(distribution.begin(), distribution.end()) {}
+namespace actlib { namespace Numbers {
+    DiscreteGenerator::DiscreteGenerator(std::mt19937& engine, std::vector<double> distributionVector) :
+        _engine(engine)
+    {
+        setDistributionVector(distributionVector);
+    }
 
-actlib::Numbers::DiscreteGenerator::~DiscreteGenerator() {}
+    DiscreteGenerator::DiscreteGenerator(std::mt19937& engine, int vectorSize, double uniformValue) :
+        _engine(engine)
+    {
+        setDistributionVector(vectorSize, uniformValue);
+    }
 
-int actlib::Numbers::DiscreteGenerator::getNumber() {
-    return discreteDistribution(actlib::RNG::engine);
-}
+    DiscreteGenerator::~DiscreteGenerator() {}
 
-void actlib::Numbers::DiscreteGenerator::setDistribution(std::vector<double> distribution) {
-    discreteDistribution = std::discrete_distribution<int>(distribution.begin(), distribution.end());
-}
+    int DiscreteGenerator::getNumber() {
+        return _distribution(_engine);
+    }
+
+    void DiscreteGenerator::setDistributionVector(std::vector<double> distributionVector) {
+        _distributionVector = distributionVector;
+        setDistribution();
+    }
+
+    void DiscreteGenerator::setDistributionVector(int vectorSize, double uniformValue) {
+        _distributionVector.clear();
+        for (int i = 0; i < vectorSize; i++)
+        {
+            _distributionVector.push_back(uniformValue);
+        }
+        setDistribution();
+    }
+
+    void DiscreteGenerator::updateDistributionVector(int index, double newValue) {
+        _distributionVector[index] = newValue;
+        setDistribution();
+    }
+
+    void DiscreteGenerator::updateDistributionVector(double uniformValue) {
+        for (auto &&i : _distributionVector)
+        {
+            i = uniformValue;
+        }
+        setDistribution();
+
+    }
+
+    std::vector<double> DiscreteGenerator::getDistributionVector() {
+        return _distributionVector;
+    }
+
+    void DiscreteGenerator::setDistribution() {
+        _distribution = std::discrete_distribution<int>(_distributionVector.begin(), _distributionVector.end());
+    }
+}}
