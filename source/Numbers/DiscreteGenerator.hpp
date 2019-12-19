@@ -1,29 +1,31 @@
-#ifndef DiscreteGenerators_hpp
-#define DiscreteGenerators_hpp
+#ifndef DiscreteGenerator_hpp
+#define DiscreteGenerator_hpp
 
-#include <vector>
+#include "IDiscreteGenerator.hpp"
 #include <random>
+#include <vector>
 
 namespace actlib { namespace Numbers {
-    class DiscreteGenerator
-    {
-    public:
-        DiscreteGenerator(std::mt19937& engine, std::vector<double> distribution);
-        DiscreteGenerator(std::mt19937& engine, int vectorSize, double uniformValue);
-        ~DiscreteGenerator();
-        int getNumber();
-        void setDistributionVector(std::vector<double> distributionVector);
-        void setDistributionVector(int vectorSize, double uniformValue);
-        void updateDistributionVector(int index, double newValue);
-        void updateDistributionVector(double uniformValue);
-        std::vector<double> getDistributionVector();
+class DiscreteGenerator : public IDiscreteGenerator {
+  public:
+    DiscreteGenerator(std::mt19937 &engine, std::vector<double> distribution);
+    DiscreteGenerator(std::mt19937 &engine,
+                      int vectorSize,
+                      double uniformValue);
+    ~DiscreteGenerator();
+    int getNumber() override;
+    void setDistributionVector(std::vector<double> distributionVector) override;
+    void setDistributionVector(int vectorSize, double uniformValue) override;
+    void updateDistributionVector(int index, double newValue) override;
+    void updateDistributionVector(double uniformValue) override;
+    std::vector<double> getDistributionVector() override;
 
-    private:
-        std::mt19937 _engine;
-        std::vector<double> _distributionVector;
-        std::discrete_distribution<int> _distribution;
-        void setDistribution();
-    };
-}}
+  private:
+    std::mt19937 _engine;
+    std::vector<double> _distributionVector;
+    std::discrete_distribution<int> _distribution;
+    void setDistribution();
+};
+}} // namespace actlib::Numbers
 
-#endif /* DiscreteGenerators_hpp */
+#endif /* DiscreteGenerator_hpp */

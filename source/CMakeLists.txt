@@ -1,10 +1,12 @@
 # TODO: could add the target sources from within the subdirectories if desired
 add_library(
     AleatoricCompositionTools
-    NumberGenerators.cpp
+    Engine/Engine.cpp
+    Numbers/Producer.cpp
+    Numbers/Serial.cpp
+    Numbers/Range.cpp
     Numbers/UniformGenerator.cpp
     Numbers/DiscreteGenerator.cpp
-    Engine/Engine.cpp
 )
 
 target_include_directories(AleatoricCompositionTools
