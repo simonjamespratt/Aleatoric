@@ -1,78 +1,91 @@
 #include "Serial.hpp"
-#include "DiscreteGenerator.hpp"
-#include "Engine.hpp"
+#include "IDiscreteGenerator.hpp"
 #include "Range.hpp"
 #include <array>
 #include <catch2/catch.hpp>
+#include <catch2/trompeloeil.hpp>
 
-// TODO: This needs to be instantiated ONCE for ALL tests to use,
-// ideally in the main.cpp of the tests
-// It also needs to be handled by a smart pointer or Engine::Instance() needs to
-// return a smart pointer
-actlib::RNG::Engine *engine = actlib::RNG::Engine::Instance();
+class DiscreteGeneratorMock : public actlib::Numbers::IDiscreteGenerator {
+  public:
+    MAKE_MOCK0(getNumber, int());
+    MAKE_MOCK1(setDistributionVector, void(std::vector<double>));
+    MAKE_MOCK2(setDistributionVector, void(int, double));
+    MAKE_MOCK2(updateDistributionVector, void(int, double));
+    MAKE_MOCK1(updateDistributionVector, void(double));
+    MAKE_MOCK0(getDistributionVector, std::vector<double>());
+};
 
 SCENARIO("Numbers::Serial") {
-    GIVEN("The class is invoked with an inclusive range of 3") {
+    GIVEN("The class is instantiated correctly") {
         actlib::Numbers::Range range(1, 3);
-        actlib::Numbers::DiscreteGenerator generator(
-            engine->getEngine(), range.size, 1.0);
+
+        DiscreteGeneratorMock generator;
         actlib::Numbers::Serial instance(generator, range);
-        int firstNumber = instance.getNumber();
-        int secondNumber = instance.getNumber();
-        int thirdNumber = instance.getNumber();
-        int fourthNumber = instance.getNumber();
 
-        WHEN("The first number is requested") {
-            THEN("The number returned should be within the range specified") {
-                REQUIRE(firstNumber >= 1);
-                REQUIRE(firstNumber <= 3);
+        int generatedNumber = 1;
+
+        // TODO: can these be set to ANY?
+        ALLOW_CALL(generator, getNumber()).RETURN(generatedNumber);
+        ALLOW_CALL(generator, updateDistributionVector(generatedNumber, 0.0));
+
+        // this is for reset()
+        ALLOW_CALL(generator, updateDistributionVector(1.0));
+
+        // ensures that seriesIsComplete returns true
+        ALLOW_CALL(generator, getDistributionVector())
+            .RETURN(std::vector<double> {1.0});
+
+        WHEN("A number is requested") {
+            THEN("It calls the generator to get a number") {
+                REQUIRE_CALL(generator, getNumber()).RETURN(generatedNumber);
+                instance.getNumber();
+            }
+
+            THEN("It updates the generator to disallow the selected number "
+                 "from being selected in future calls") {
+                REQUIRE_CALL(generator, getNumber()).RETURN(generatedNumber);
+                REQUIRE_CALL(generator,
+                             updateDistributionVector(generatedNumber, 0.0));
+                instance.getNumber();
+            }
+
+            THEN("It returns the selected number, offset by the range.offset") {
+                REQUIRE_CALL(generator, getNumber()).RETURN(generatedNumber);
+                auto number = instance.getNumber();
+                REQUIRE(number == generatedNumber + range.offset);
+            }
+
+            THEN("It gets the state of the generator distribution for "
+                 "determining if the series is complete") {
+                // NB: the return value for this test can be anything
+                REQUIRE_CALL(generator, getDistributionVector())
+                    .RETURN(std::vector<double> {1.0});
+                instance.getNumber();
+            }
+
+            AND_WHEN("The series is complete") {
+                THEN("It resets the generator distribution") {
+                    REQUIRE_CALL(generator, getDistributionVector())
+                        .RETURN(std::vector<double> {0.0});
+                    REQUIRE_CALL(generator, updateDistributionVector(1.0));
+                    instance.getNumber();
+                }
+            }
+
+            AND_WHEN("The series is not complete") {
+                THEN("It does not reset the generator distribution") {
+                    REQUIRE_CALL(generator, getDistributionVector())
+                        .RETURN(std::vector<double> {1.0});
+                    FORBID_CALL(generator, updateDistributionVector(1.0));
+                    instance.getNumber();
+                }
             }
         }
 
-        WHEN("The second number is requested") {
-            THEN("The number returned should be any within the range "
-                 "specified") {
-                REQUIRE(secondNumber >= 1);
-                REQUIRE(secondNumber <= 3);
-            }
-
-            THEN("The number returned should not be the first number "
-                 "requested") {
-                REQUIRE_FALSE(secondNumber == firstNumber);
-            }
-        }
-
-        WHEN("The third number is requested") {
-            THEN("The number returned should be any within the range "
-                 "specified") {
-                REQUIRE(thirdNumber >= 1);
-                REQUIRE(thirdNumber <= 3);
-            }
-
-            THEN("The number returned should not be the first or second number "
-                 "requested") {
-                REQUIRE_FALSE(thirdNumber == firstNumber);
-                REQUIRE_FALSE(thirdNumber == secondNumber);
-            }
-        }
-
-        WHEN("The fourth number is requested") {
-            THEN("The number returned should be any within the range "
-                 "specified") {
-                REQUIRE(fourthNumber >= 1);
-                REQUIRE(fourthNumber <= 3);
-            }
-
-            THEN("[reset] The probability should have reset to be equal and "
-                 "number returned should be one of the previously selected "
-                 "numbers") {
-                std::array<int, 3> previouslySelectedNumbers = {
-                    firstNumber, secondNumber, thirdNumber};
-                bool result = std::any_of(
-                    previouslySelectedNumbers.begin(),
-                    previouslySelectedNumbers.end(),
-                    [fourthNumber](int i) { return i == fourthNumber; });
-                REQUIRE(result == true);
+        WHEN("A reset is enforced") {
+            THEN("It resets the generator distribution") {
+                REQUIRE_CALL(generator, updateDistributionVector(1.0));
+                instance.reset();
             }
         }
     }
