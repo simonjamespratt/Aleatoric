@@ -3,16 +3,19 @@
 # which is based the principles here: https://cliutils.gitlab.io/modern-cmake/
 
 # Basic settings
-cmake_minimum_required(VERSION 3.1...3.15)
-if(${CMAKE_VERSION} VERSION_LESS 3.12)
-    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-endif()
+cmake_minimum_required(VERSION 3.14)
+project(
+    actlib
+    VERSION 0.1.0
+    DESCRIPTION "Static C++ library providing aleatoric composition tools"
+    LANGUAGES CXX)
 
-project(actlib VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # target_compile_features(calclib PUBLIC cxx_std_11)
 # this is another way to do this, but specifically for a particular target
+
+include(FetchContent)
 
 add_subdirectory(source)
 add_subdirectory(tests)

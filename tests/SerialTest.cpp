@@ -2,8 +2,8 @@
 #include "DiscreteGenerator.hpp"
 #include "Engine.hpp"
 #include "Range.hpp"
-#include "catch.hpp"
 #include <array>
+#include <catch2/catch.hpp>
 
 // TODO: This needs to be instantiated ONCE for ALL tests to use,
 // ideally in the main.cpp of the tests
