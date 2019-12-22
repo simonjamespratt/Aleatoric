@@ -1,21 +1,21 @@
-#ifndef UniformGenerators_hpp
-#define UniformGenerators_hpp
+#ifndef UniformGenerator_hpp
+#define UniformGenerator_hpp
 
+#include "IUniformGenerator.hpp"
 #include <random>
 
 namespace actlib { namespace Numbers {
-    class UniformGenerator
-    {
-    public:
-        UniformGenerator(std::mt19937& engine, int rangeStart, int rangeEnd);
-        ~UniformGenerator();
-        int getNumber();
-        void setDistribution(int rangeStart, int rangeEnd);
+class UniformGenerator : public IUniformGenerator {
+  public:
+    UniformGenerator(std::mt19937 &engine, int rangeStart, int rangeEnd);
+    ~UniformGenerator();
+    int getNumber() override;
+    void setDistribution(int rangeStart, int rangeEnd) override;
 
-    private:
-        std::mt19937 _engine;
-        std::uniform_int_distribution<int> _distribution;
-    };
-}}
+  private:
+    std::mt19937 _engine;
+    std::uniform_int_distribution<int> _distribution;
+};
+}} // namespace actlib::Numbers
 
-#endif /* UniformGenerators_hpp */
+#endif /* UniformGenerator_hpp */
