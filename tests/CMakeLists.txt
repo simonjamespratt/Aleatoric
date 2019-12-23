@@ -19,6 +19,7 @@ add_executable(Tests
     DiscreteGeneratorTest.cpp
     UniformGeneratorTest.cpp
     SerialTest.cpp
+    ProducerTest.cpp
 )
 
 target_link_libraries(Tests
