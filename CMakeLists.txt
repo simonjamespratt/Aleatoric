@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # this is another way to do this, but specifically for a particular target
 
 include(FetchContent)
+include(CTest)
 
 add_subdirectory(source)
 add_subdirectory(tests)

@@ -12,7 +12,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(trompeloeil)
 
-
 add_executable(Tests
     main.cpp
     # EngineTest.cpp
@@ -35,3 +34,5 @@ target_include_directories(Tests PRIVATE
     ${CMAKE_SOURCE_DIR}/source/Numbers
     ${CMAKE_SOURCE_DIR}/source/Engine
 )
+
+add_test(NAME Tests COMMAND Tests)
