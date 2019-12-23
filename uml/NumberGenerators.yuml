@@ -1,9 +1,17 @@
 // {type:class}
 // {direction:topDown}
-[Client]-[<<Strategy-Context>>;Producer]
-[<<Strategy-Context>>;Producer]+->[<<Strategy-Interface>>;Protocol|getNumber();reset()]
-[<<Strategy-Interface>>;Protocol|getNumber();reset()]^-.-[<<Strategy-Concrete>>;(Implementation)]
-[<<Strategy-Interface>>;Protocol|getNumber();reset()]++->[<<Singleton>>;Engine]
-[<<Strategy-Concrete>>;(Implementation)]++->[UniformGenerator|getNumber();setDistribution()]
-[<<Strategy-Concrete>>;(Implementation)]++->[DiscreteGenerator|getNumber();setDistribution()]
-[Client]-[<<Singleton>>;Engine]
+// {generate:true}
+
+[Client]-[Producer;(StrategyContext)|getNumber()]
+
+[Producer;(StrategyContext)|getNumber()]+->[<<Strategy-Interface>>;Protocol|getNumber();reset()]
+
+[<<Strategy-Interface>>;Protocol|getNumber();reset()]^-.-[Serial;(StrategyConcrete)|getNumber();reset()]
+
+[Serial;(StrategyConcrete)|getNumber();reset()]+->[<<DiscreteGeneratorInterface>>;IDiscreteGenerator|getNumber();setDistributionVector();updateDistributionVector();getDistributionVector()]
+[Serial;(StrategyConcrete)|getNumber();reset()]+->[Range|start;end;offset;size]
+[<<DiscreteGeneratorInterface>>;IDiscreteGenerator|getNumber();setDistributionVector();updateDistributionVector();getDistributionVector()]^-.-[DiscreteGenerator;(Concrete)|as above]
+
+[DiscreteGenerator;(Concrete)|as above]+->[Engine;(Singleton)]
+
+[<<UniformGeneratorInterface>>;IUniformGenerator|getNumber();setDistribution()]^-.-[UniformGenerator;(Concrete)|as above]
