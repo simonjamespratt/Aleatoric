@@ -5,6 +5,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(catch2)
 
+# NB: Having run FetchContent for catch, the CMAKE_MODULE_PATH is not populated with the helper scripts
+# Have to add them manually. Not sure why this is not beinig done automatically
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/_deps/catch2-src/contrib)
+include(Catch)
+
 FetchContent_Declare(
     trompeloeil
     GIT_REPOSITORY  https://github.com/rollbear/trompeloeil.git
@@ -35,4 +40,4 @@ target_include_directories(Tests PRIVATE
     ${CMAKE_SOURCE_DIR}/source/Engine
 )
 
-add_test(NAME Tests COMMAND Tests)
+catch_discover_tests(Tests)
