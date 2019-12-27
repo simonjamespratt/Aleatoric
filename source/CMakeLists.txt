@@ -8,6 +8,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Producer.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/ProtocolInterface.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Serial.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Basic.hpp
     Engine/Engine.hpp
     Numbers/DiscreteGenerator.hpp
     Numbers/Range.hpp
@@ -19,6 +20,7 @@ add_library(
     Engine/Engine.cpp
     Numbers/Producer.cpp
     Numbers/Serial.cpp
+    Numbers/Basic.cpp
     Numbers/Range.cpp
     Numbers/UniformGenerator.cpp
     Numbers/DiscreteGenerator.cpp

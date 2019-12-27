@@ -1,0 +1,6 @@
+RandomWithinRange               ->  Basic
+RandomWithoutDirectRepetition   ->  NoRepetition
+RandomNumberAdjacentSteps       ->  AdjacentSteps
+PeriodicRandomNumber            ->  Periodic
+RandomNumberWalk                ->  Walk
+RandomNumberWalkGranular        ->  WalkGranular

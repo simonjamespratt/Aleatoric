@@ -23,6 +23,7 @@ add_executable(Tests
     DiscreteGeneratorTest.cpp
     UniformGeneratorTest.cpp
     SerialTest.cpp
+    BasicTest.cpp
     ProducerTest.cpp
 )
 

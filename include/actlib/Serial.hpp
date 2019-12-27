@@ -15,7 +15,7 @@ class Serial : public Protocol {
     void reset() override;
 
   private:
-    actlib::Numbers::Range _range;
+    actlib::Numbers::Range &_range;
     actlib::Numbers::IDiscreteGenerator &_generator;
     bool seriesIsComplete();
 };
