@@ -24,6 +24,7 @@ add_executable(Tests
     UniformGeneratorTest.cpp
     SerialTest.cpp
     BasicTest.cpp
+    NoRepetitionTest.cpp
     ProducerTest.cpp
 )
 
@@ -39,6 +40,7 @@ target_link_libraries(Tests
 target_include_directories(Tests PRIVATE
     ${CMAKE_SOURCE_DIR}/source/Numbers
     ${CMAKE_SOURCE_DIR}/source/Engine
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mocks
 )
 
 catch_discover_tests(Tests)

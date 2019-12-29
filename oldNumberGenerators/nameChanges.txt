@@ -1,5 +1,5 @@
 RandomWithinRange               ->  Basic
-RandomWithoutDirectRepetition   ->  NoRepetition
+RandomNumberWithoutDirectRepetition   ->  NoRepetition
 RandomNumberAdjacentSteps       ->  AdjacentSteps
 PeriodicRandomNumber            ->  Periodic
 RandomNumberWalk                ->  Walk

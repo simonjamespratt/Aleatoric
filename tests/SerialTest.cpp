@@ -1,19 +1,10 @@
 #include "Serial.hpp"
+#include "DiscreteGeneratorMock.hpp"
 #include "IDiscreteGenerator.hpp"
 #include "Range.hpp"
 #include <array>
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
-
-class DiscreteGeneratorMock : public actlib::Numbers::IDiscreteGenerator {
-  public:
-    MAKE_MOCK0(getNumber, int());
-    MAKE_MOCK1(setDistributionVector, void(std::vector<double>));
-    MAKE_MOCK2(setDistributionVector, void(int, double));
-    MAKE_MOCK2(updateDistributionVector, void(int, double));
-    MAKE_MOCK1(updateDistributionVector, void(double));
-    MAKE_MOCK0(getDistributionVector, std::vector<double>());
-};
 
 SCENARIO("Numbers::Serial") {
     GIVEN("The class is instantiated correctly") {
