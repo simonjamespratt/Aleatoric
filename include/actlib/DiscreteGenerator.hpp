@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace actlib { namespace Numbers {
+/*! This is a comment */
 class DiscreteGenerator : public IDiscreteGenerator {
   public:
     DiscreteGenerator(std::mt19937 &engine, std::vector<double> distribution);

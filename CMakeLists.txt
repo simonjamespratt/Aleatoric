@@ -18,6 +18,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include(FetchContent)
 include(CTest)
 
+find_package(Doxygen
+             REQUIRED dot
+             OPTIONAL_COMPONENTS mscgen dia)
+
+if (DOXYGEN_FOUND)
+    add_subdirectory(docs)
+else()
+    message(STATUS "Doxygen not found, not building docs")
+endif (DOXYGEN_FOUND)
+
+
 add_subdirectory(source)
 add_subdirectory(tests)
 

@@ -10,10 +10,10 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Serial.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Basic.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/NoRepetition.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/DiscreteGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/UniformGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
     Engine/Engine.hpp
-    Numbers/DiscreteGenerator.hpp
-    Numbers/Range.hpp
-    Numbers/UniformGenerator.hpp
 )
 
 add_library(
@@ -34,5 +34,4 @@ target_include_directories(AleatoricCompositionTools
         ${CMAKE_SOURCE_DIR}/include/actlib
     PRIVATE
         Engine
-        Numbers
 )
