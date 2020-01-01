@@ -10,6 +10,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Serial.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Basic.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/NoRepetition.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/AdjacentSteps.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/DiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/UniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
@@ -23,6 +24,7 @@ add_library(
     Numbers/Serial.cpp
     Numbers/Basic.cpp
     Numbers/NoRepetition.cpp
+    Numbers/AdjacentSteps.cpp
     Numbers/Range.cpp
     Numbers/UniformGenerator.cpp
     Numbers/DiscreteGenerator.cpp

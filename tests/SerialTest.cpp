@@ -1,6 +1,5 @@
 #include "Serial.hpp"
 #include "DiscreteGeneratorMock.hpp"
-#include "IDiscreteGenerator.hpp"
 #include "Range.hpp"
 #include <array>
 #include <catch2/catch.hpp>

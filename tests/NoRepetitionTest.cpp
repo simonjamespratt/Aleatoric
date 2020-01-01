@@ -1,6 +1,5 @@
 #include "NoRepetition.hpp"
 #include "DiscreteGeneratorMock.hpp"
-#include "IDiscreteGenerator.hpp"
 #include "Range.hpp"
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>

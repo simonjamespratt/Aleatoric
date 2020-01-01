@@ -25,6 +25,7 @@ add_executable(Tests
     SerialTest.cpp
     BasicTest.cpp
     NoRepetitionTest.cpp
+    AdjacentStepsTest.cpp
     ProducerTest.cpp
 )
 
@@ -38,7 +39,6 @@ target_link_libraries(Tests
 # TODO: There are probably more elegant ways to get the tests to have access to the library's private includes
 # See: https://stackoverflow.com/questions/54652349/how-to-unit-test-private-features-of-library-tdd-with-cmake
 target_include_directories(Tests PRIVATE
-    ${CMAKE_SOURCE_DIR}/source/Numbers
     ${CMAKE_SOURCE_DIR}/source/Engine
     ${CMAKE_CURRENT_SOURCE_DIR}/Mocks
 )
