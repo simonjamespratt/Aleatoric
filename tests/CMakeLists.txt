@@ -26,6 +26,7 @@ add_executable(Tests
     BasicTest.cpp
     NoRepetitionTest.cpp
     AdjacentStepsTest.cpp
+    PeriodicTest.cpp
     ProducerTest.cpp
 )
 
