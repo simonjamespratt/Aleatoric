@@ -5,6 +5,8 @@
 #include "ProtocolInterface.hpp"
 #include "Range.hpp"
 
+// TODO: documentation
+
 namespace actlib { namespace Numbers {
 class Periodic : public Protocol {
   public:

@@ -2,15 +2,17 @@
 #include "DiscreteGeneratorMock.hpp"
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
+#include <stdexcept> // std::invalid_argument
 
 SCENARIO("Numbers::AdjacentSteps") {
     DiscreteGeneratorMock generator;
     ALLOW_CALL(generator, updateDistributionVector(ANY(double)));
     ALLOW_CALL(generator, updateDistributionVector(ANY(int), 1.0));
 
+    actlib::Numbers::Range range(1, 3);
+
     GIVEN("The class is instantiated WITHOUT an initial number selection") {
         int generatedNumber = 1;
-        actlib::Numbers::Range range(1, 3);
         actlib::Numbers::AdjacentSteps instance(generator, range);
 
         WHEN("A number is requested") {
@@ -104,8 +106,35 @@ SCENARIO("Numbers::AdjacentSteps") {
         }
     }
 
+    GIVEN("The class is instantiated with an invalid initialSelection value") {
+        WHEN("The value provided is greater than the range end") {
+            THEN("A standard invalid_argument exception is thrown") {
+                REQUIRE_THROWS_AS(actlib::Numbers::AdjacentSteps(
+                                      generator, range, (range.end + 1)),
+                                  std::invalid_argument);
+                REQUIRE_THROWS_WITH(
+                    actlib::Numbers::AdjacentSteps(
+                        generator, range, (range.end + 1)),
+                    "The value passed as argument for initialSelection must be "
+                    "within the range of 1 to 3");
+            }
+        }
+
+        WHEN("The value provided is less than the range start") {
+            THEN("A standard invalid_argument exception is thrown") {
+                REQUIRE_THROWS_AS(actlib::Numbers::AdjacentSteps(
+                                      generator, range, (range.start - 1)),
+                                  std::invalid_argument);
+                REQUIRE_THROWS_WITH(
+                    actlib::Numbers::AdjacentSteps(
+                        generator, range, (range.start - 1)),
+                    "The value passed as argument for initialSelection must be "
+                    "within the range of 1 to 3");
+            }
+        }
+    }
+
     GIVEN("The class is instantiated WITH an initial number selection") {
-        actlib::Numbers::Range range(1, 3);
         int initialSelection = 2; // a mid-range selection (within range)
         actlib::Numbers::AdjacentSteps instance(
             generator, range, initialSelection);

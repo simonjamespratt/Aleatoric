@@ -94,13 +94,13 @@ class AdjacentSteps : public Protocol {
     void reset() override;
 
   private:
-    Range &_range;
-    IDiscreteGenerator &_generator;
+    Range &m_range;
+    IDiscreteGenerator &m_generator;
     void prepareStepBasedDistribution(int numberPlacedWithinRange,
                                       int generatedNumber);
-    int _initialSelection;
-    bool _haveInitialSelection;
-    bool _haveRequestedFirstNumber;
+    int m_initialSelection;
+    bool m_haveInitialSelection;
+    bool m_haveRequestedFirstNumber;
 };
 }} // namespace actlib::Numbers
 
