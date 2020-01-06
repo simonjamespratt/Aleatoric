@@ -71,6 +71,7 @@ class AdjacentSteps : public Protocol {
     AdjacentSteps(IDiscreteGenerator &generator,
                   Range &range,
                   int initialSelection);
+
     ~AdjacentSteps();
 
     /*! @brief Returns a number according to the protocol.

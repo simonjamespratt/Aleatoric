@@ -1,6 +1,5 @@
 #include "AdjacentSteps.hpp"
 #include "DiscreteGeneratorMock.hpp"
-#include "IDiscreteGenerator.hpp"
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
