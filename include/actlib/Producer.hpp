@@ -1,7 +1,7 @@
 #ifndef Producer_hpp
 #define Producer_hpp
 
-#include "ProtocolInterface.hpp"
+#include "Protocol.hpp"
 
 namespace actlib { namespace Numbers {
 

@@ -2,7 +2,7 @@
 #define AdjacentSteps_hpp
 
 #include "IDiscreteGenerator.hpp"
-#include "ProtocolInterface.hpp"
+#include "Protocol.hpp"
 #include "Range.hpp"
 
 namespace actlib { namespace Numbers {

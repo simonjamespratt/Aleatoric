@@ -2,7 +2,7 @@
 #define Basic_hpp
 
 #include "IUniformGenerator.hpp"
-#include "ProtocolInterface.hpp"
+#include "Protocol.hpp"
 #include "Range.hpp"
 
 namespace actlib { namespace Numbers {

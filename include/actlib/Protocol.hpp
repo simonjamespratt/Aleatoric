@@ -1,7 +1,5 @@
-// TODO: rename this to just "Protocol"
-
-#ifndef ProtocolInterface_hpp
-#define ProtocolInterface_hpp
+#ifndef Protocol_hpp
+#define Protocol_hpp
 
 namespace actlib { namespace Numbers {
 
@@ -26,4 +24,4 @@ class Protocol {
 };
 }} // namespace actlib::Numbers
 
-#endif /* ProtocolInterface_hpp */
+#endif /* Protocol_hpp */

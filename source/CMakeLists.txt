@@ -6,7 +6,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/IDiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/IUniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Producer.hpp
-    ${CMAKE_SOURCE_DIR}/include/actlib/ProtocolInterface.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Protocol.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Serial.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Basic.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/NoRepetition.hpp
