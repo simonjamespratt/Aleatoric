@@ -54,7 +54,7 @@ class AdjacentSteps : public Protocol {
      * state of a uniform distribution and thus equal probability of selection
      * for each number in the range.
      *
-     * @param range should map to the vectorSize argument supplied tothe
+     * @param range should map to the vectorSize argument supplied to the
      * DiscreteGenerator. In other words, range.size should equal vectorSize
      */
     AdjacentSteps(IDiscreteGenerator &generator, Range &range);
@@ -80,7 +80,7 @@ class AdjacentSteps : public Protocol {
      */
     int getNumber() override;
 
-    /*! @brief Resets the  state of the class to the state upon instantiation
+    /*! @brief Resets the state of the class to the state upon instantiation
      *
      * This means that if the class was instantiated with no initial number
      * selection, upon the next call to getNumber(), a number will be selected
