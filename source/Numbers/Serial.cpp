@@ -1,14 +1,20 @@
 #include "Serial.hpp"
 
-namespace actlib { namespace Numbers {
-Serial::Serial(IDiscreteGenerator &generator, Range &range) :
-        _range(range), _generator(generator) {
+namespace actlib
+{
+namespace Numbers
+{
+Serial::Serial(IDiscreteGenerator &generator, Range &range)
+: _range(range), _generator(generator)
+{
 }
 
-Serial::~Serial() {
+Serial::~Serial()
+{
 }
 
-int Serial::getNumber() {
+int Serial::getNumber()
+{
     if(seriesIsComplete()) {
         reset();
     }
@@ -18,12 +24,14 @@ int Serial::getNumber() {
     return selectedNumber + _range.offset;
 }
 
-void Serial::reset() {
+void Serial::reset()
+{
     // Set all vector values back to uniform (equal probability)
     _generator.updateDistributionVector(1.0);
 }
 
-bool Serial::seriesIsComplete() {
+bool Serial::seriesIsComplete()
+{
     auto distributionVector = _generator.getDistributionVector();
     for(auto &&item : distributionVector) {
         if(item > 0.0) {
@@ -32,4 +40,5 @@ bool Serial::seriesIsComplete() {
     }
     return true;
 }
-}} // namespace actlib::Numbers
+} // namespace Numbers
+} // namespace actlib

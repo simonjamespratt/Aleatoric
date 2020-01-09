@@ -10,15 +10,18 @@
 // is though!
 
 namespace actlib { namespace Numbers {
-AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator, Range &range) :
-        m_range(range), m_generator(generator) {
+AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator, Range &range)
+: m_range(range), m_generator(generator)
+{
     m_haveInitialSelection = false;
     m_haveRequestedFirstNumber = false;
 }
+
 AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator,
                              Range &range,
-                             int initialSelection) :
-        AdjacentSteps(generator, range) {
+                             int initialSelection)
+: AdjacentSteps(generator, range)
+{
     if(initialSelection < range.start || initialSelection > range.end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
@@ -29,10 +32,11 @@ AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator,
     m_haveInitialSelection = true;
 }
 
-AdjacentSteps::~AdjacentSteps() {
-}
+AdjacentSteps::~AdjacentSteps()
+{}
 
-int AdjacentSteps::getNumber() {
+int AdjacentSteps::getNumber()
+{
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         // step configuring in preparation for next call
         prepareStepBasedDistribution(m_initialSelection,
@@ -54,12 +58,14 @@ int AdjacentSteps::getNumber() {
     return numberPlacedWithinRange;
 }
 
-void AdjacentSteps::reset() {
+void AdjacentSteps::reset()
+{
     m_generator.updateDistributionVector(1.0);
     m_haveRequestedFirstNumber = false;
 }
 
-void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex) {
+void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
+{
     m_generator.updateDistributionVector(0.0);
 
     if(number == m_range.start) {

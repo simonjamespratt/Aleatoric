@@ -1,7 +1,8 @@
 #include "Range.hpp"
 
 namespace actlib { namespace Numbers {
-Range::Range(int rangeStart, int rangeEnd) {
+Range::Range(int rangeStart, int rangeEnd)
+{
     start = rangeStart;
     end = rangeEnd;
     offset = rangeStart;

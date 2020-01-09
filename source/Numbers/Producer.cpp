@@ -1,13 +1,14 @@
 #include "Producer.hpp"
 
 namespace actlib { namespace Numbers {
-Producer::Producer(Protocol &protocol) : _protocol(protocol) {
-}
+Producer::Producer(Protocol &protocol) : _protocol(protocol)
+{}
 
-Producer::~Producer() {
-}
+Producer::~Producer()
+{}
 
-int Producer::getNumber() {
+int Producer::getNumber()
+{
     return _protocol.getNumber();
 }
 }} // namespace actlib::Numbers

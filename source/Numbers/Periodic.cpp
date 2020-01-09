@@ -1,4 +1,5 @@
 #include "Periodic.hpp"
+
 #include <assert.h>
 #include <numeric>   // std::accumulate
 #include <stdexcept> // std::invalid_argument
@@ -7,10 +8,13 @@
 namespace actlib { namespace Numbers {
 Periodic::Periodic(IDiscreteGenerator &generator,
                    Range &range,
-                   double chanceOfRepetition) :
-        m_range(range),
-        m_generator(generator), m_periodicity(chanceOfRepetition),
-        m_haveInitialSelection(false), m_haveRequestedFirstNumber(false) {
+                   double chanceOfRepetition)
+: m_range(range),
+  m_generator(generator),
+  m_periodicity(chanceOfRepetition),
+  m_haveInitialSelection(false),
+  m_haveRequestedFirstNumber(false)
+{
     if(chanceOfRepetition < 0.0 || chanceOfRepetition > 1.0) {
         throw std::invalid_argument(
             "The value passed as argument for chanceOfRepetition must be "
@@ -30,8 +34,9 @@ Periodic::Periodic(IDiscreteGenerator &generator,
 Periodic::Periodic(IDiscreteGenerator &generator,
                    Range &range,
                    double chanceOfRepetition,
-                   int initialSelection) :
-        Periodic(generator, range, chanceOfRepetition) {
+                   int initialSelection)
+: Periodic(generator, range, chanceOfRepetition)
+{
     if(initialSelection < range.start || initialSelection > range.end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
@@ -43,10 +48,11 @@ Periodic::Periodic(IDiscreteGenerator &generator,
     m_haveInitialSelection = true;
 }
 
-Periodic::~Periodic() {
-}
+Periodic::~Periodic()
+{}
 
-int Periodic::getNumber() {
+int Periodic::getNumber()
+{
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         setPeriodicDistribution(m_initialSelection - m_range.offset);
         m_haveRequestedFirstNumber = true;
@@ -58,12 +64,14 @@ int Periodic::getNumber() {
     return generatedNumber + m_range.offset;
 }
 
-void Periodic::reset() {
+void Periodic::reset()
+{
     m_generator.updateDistributionVector(1.0);
     m_haveRequestedFirstNumber = false;
 }
 
-void Periodic::setPeriodicDistribution(int selectedIndex) {
+void Periodic::setPeriodicDistribution(int selectedIndex)
+{
     // The total of all values in the vector must equal 1.0.
     // The value at the index of the last selected number
     // must have the value of the periodicity (chanceOfRepetition).
@@ -77,8 +85,9 @@ void Periodic::setPeriodicDistribution(int selectedIndex) {
         distributionVector[i] = newVectorValue;
     }
 
-    auto vectorValuesTotal = std::accumulate(
-        distributionVector.begin(), distributionVector.end(), 0.0);
+    auto vectorValuesTotal = std::accumulate(distributionVector.begin(),
+                                             distributionVector.end(),
+                                             0.0);
     assert(vectorValuesTotal == 1.0);
 
     m_generator.setDistributionVector(distributionVector);
