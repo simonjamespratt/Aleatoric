@@ -12,6 +12,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/NoRepetition.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/AdjacentSteps.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Periodic.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Walk.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/DiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/UniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
@@ -27,6 +28,7 @@ add_library(
     Numbers/NoRepetition.cpp
     Numbers/AdjacentSteps.cpp
     Numbers/Periodic.cpp
+    Numbers/Walk.cpp
     Numbers/Range.cpp
     Numbers/UniformGenerator.cpp
     Numbers/DiscreteGenerator.cpp
