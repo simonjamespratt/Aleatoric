@@ -1,6 +1,6 @@
 #include "Producer.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 Producer::Producer(Protocol &protocol) : _protocol(protocol)
 {}
 
@@ -11,4 +11,4 @@ int Producer::getNumber()
 {
     return _protocol.getNumber();
 }
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps

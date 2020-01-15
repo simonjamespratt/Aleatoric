@@ -2,6 +2,7 @@
 #define DiscreteGenerator_hpp
 
 #include "IDiscreteGenerator.hpp"
+
 #include <random>
 
 namespace actlib { namespace Numbers {

@@ -5,7 +5,7 @@
 #include "Protocol.hpp"
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 
 /*! @brief A protocol for producing random numbers
  *
@@ -63,9 +63,9 @@ class NoRepetition : public Protocol {
     void reset() override;
 
   private:
-    actlib::Numbers::Range &_range;
-    actlib::Numbers::IDiscreteGenerator &_generator;
+    Range &_range;
+    IDiscreteGenerator &_generator;
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps
 
 #endif /* NoRepetition_hpp */

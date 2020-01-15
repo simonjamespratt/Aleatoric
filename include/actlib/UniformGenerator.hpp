@@ -2,6 +2,7 @@
 #define UniformGenerator_hpp
 
 #include "IUniformGenerator.hpp"
+
 #include <random>
 
 namespace actlib { namespace Numbers {

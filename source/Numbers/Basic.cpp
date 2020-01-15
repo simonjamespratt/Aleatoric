@@ -1,6 +1,6 @@
 #include "Basic.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 Basic::Basic(IUniformGenerator &generator, Range &range) :
         _range(range), _generator(generator) {
 }
@@ -17,4 +17,4 @@ void Basic::reset() {
     // reset to do anything. So for now, this is an empty method definition.
     // Consider whether this is the correct solution.
 }
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers

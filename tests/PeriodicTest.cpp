@@ -14,7 +14,7 @@ SCENARIO("Numbers::Periodic")
         .RETURN(initialGeneratorDistributionState);
     ALLOW_CALL(generator, setDistributionVector(ANY(std::vector<double>)));
 
-    actlib::Numbers::Range range(1, 3);
+    actlib::Numbers::Steps::Range range(1, 3);
 
     GIVEN("The class is instantiated with an invalid chanceOfRepetition value")
     {
@@ -23,10 +23,10 @@ SCENARIO("Numbers::Periodic")
             THEN("A standard invalid_argument exeception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Periodic(generator, range, 1.1),
+                    actlib::Numbers::Steps::Periodic(generator, range, 1.1),
                     std::invalid_argument);
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Periodic(generator, range, 1.1),
+                    actlib::Numbers::Steps::Periodic(generator, range, 1.1),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
             }
@@ -37,11 +37,11 @@ SCENARIO("Numbers::Periodic")
             THEN("A standard invalid_argument exeception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Periodic(generator, range, -1.0),
+                    actlib::Numbers::Steps::Periodic(generator, range, -1.0),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Periodic(generator, range, 1.1),
+                    actlib::Numbers::Steps::Periodic(generator, range, 1.1),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
             }
@@ -51,9 +51,9 @@ SCENARIO("Numbers::Periodic")
     GIVEN("The class is instantiated without an initial number selection")
     {
         double chanceOfRepetition = 0.5;
-        actlib::Numbers::Periodic instance(generator,
-                                           range,
-                                           chanceOfRepetition);
+        actlib::Numbers::Steps::Periodic instance(generator,
+                                                  range,
+                                                  chanceOfRepetition);
 
         int generatedNumber = 1; // mid range selection
 
@@ -107,16 +107,17 @@ SCENARIO("Numbers::Periodic")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                REQUIRE_THROWS_AS(actlib::Numbers::Periodic(generator,
-                                                            range,
-                                                            0.5,
-                                                            (range.end + 1)),
-                                  std::invalid_argument);
+                REQUIRE_THROWS_AS(
+                    actlib::Numbers::Steps::Periodic(generator,
+                                                     range,
+                                                     0.5,
+                                                     (range.end + 1)),
+                    std::invalid_argument);
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Periodic(generator,
-                                              range,
-                                              0.5,
-                                              (range.end + 1)),
+                    actlib::Numbers::Steps::Periodic(generator,
+                                                     range,
+                                                     0.5,
+                                                     (range.end + 1)),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }
@@ -126,16 +127,17 @@ SCENARIO("Numbers::Periodic")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                REQUIRE_THROWS_AS(actlib::Numbers::Periodic(generator,
-                                                            range,
-                                                            0.5,
-                                                            (range.start - 1)),
-                                  std::invalid_argument);
+                REQUIRE_THROWS_AS(
+                    actlib::Numbers::Steps::Periodic(generator,
+                                                     range,
+                                                     0.5,
+                                                     (range.start - 1)),
+                    std::invalid_argument);
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Periodic(generator,
-                                              range,
-                                              0.5,
-                                              (range.start - 1)),
+                    actlib::Numbers::Steps::Periodic(generator,
+                                                     range,
+                                                     0.5,
+                                                     (range.start - 1)),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }
@@ -146,10 +148,10 @@ SCENARIO("Numbers::Periodic")
     {
         double chanceOfRepetition = 0.5;
         int initialSelection = 1; // start of range selection
-        actlib::Numbers::Periodic instance(generator,
-                                           range,
-                                           chanceOfRepetition,
-                                           initialSelection);
+        actlib::Numbers::Steps::Periodic instance(generator,
+                                                  range,
+                                                  chanceOfRepetition,
+                                                  initialSelection);
 
         WHEN("The first number is requested")
         {

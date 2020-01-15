@@ -1,17 +1,12 @@
 #include "Serial.hpp"
 
-namespace actlib
-{
-namespace Numbers
-{
+namespace actlib { namespace Numbers { namespace Steps {
 Serial::Serial(IDiscreteGenerator &generator, Range &range)
 : _range(range), _generator(generator)
-{
-}
+{}
 
 Serial::~Serial()
-{
-}
+{}
 
 int Serial::getNumber()
 {
@@ -40,5 +35,4 @@ bool Serial::seriesIsComplete()
     }
     return true;
 }
-} // namespace Numbers
-} // namespace actlib
+}}} // namespace actlib::Numbers::Steps

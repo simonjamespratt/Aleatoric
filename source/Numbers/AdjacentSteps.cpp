@@ -9,7 +9,7 @@
 // vector and the numbers the generator returns. Not sure what the right answer
 // is though!
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator, Range &range)
 : m_range(range), m_generator(generator)
 {
@@ -79,4 +79,4 @@ void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
         m_generator.updateDistributionVector(vectorIndex - 1, 1.0);
     }
 }
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers

@@ -1,7 +1,7 @@
 #ifndef Protocol_hpp
 #define Protocol_hpp
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 
 /*! @brief Interface to which concrete protocol classes that produce random
  * numbers must conform
@@ -22,6 +22,6 @@ class Protocol {
 
     virtual ~Protocol() = default;
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers
 
 #endif /* Protocol_hpp */

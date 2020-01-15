@@ -11,7 +11,7 @@ SCENARIO("Numbers::Walk")
     UniformGeneratorMock generator;
     ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
 
-    actlib::Numbers::Range range(1, 10);
+    actlib::Numbers::Steps::Range range(1, 10);
 
     GIVEN("The class is instantiated with an invalid max step")
     {
@@ -20,12 +20,15 @@ SCENARIO("Numbers::Walk")
             THEN("A standard invalid_argument exception is thrown")
             {
                 auto invalidMaxStep = range.size + 1;
-                REQUIRE_THROWS_AS(
-                    actlib::Numbers::Walk(generator, range, invalidMaxStep),
-                    std::invalid_argument);
+                REQUIRE_THROWS_AS(actlib::Numbers::Steps::Walk(generator,
+                                                               range,
+                                                               invalidMaxStep),
+                                  std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Walk(generator, range, invalidMaxStep),
+                    actlib::Numbers::Steps::Walk(generator,
+                                                 range,
+                                                 invalidMaxStep),
                     "The value passed as argument for maxStep must be less "
                     "than or equal to 10");
             }
@@ -35,7 +38,7 @@ SCENARIO("Numbers::Walk")
     GIVEN("The class is instantiated without an initial number selection")
     {
         int maxStep = 2;
-        actlib::Numbers::Walk instance(generator, range, maxStep);
+        actlib::Numbers::Steps::Walk instance(generator, range, maxStep);
 
         WHEN("A number is requested")
         {
@@ -122,17 +125,18 @@ SCENARIO("Numbers::Walk")
             {
                 auto initialSelection = range.end + 1;
 
-                REQUIRE_THROWS_AS(actlib::Numbers::Walk(generator,
-                                                        range,
-                                                        maxStep,
-                                                        initialSelection),
-                                  std::invalid_argument);
+                REQUIRE_THROWS_AS(
+                    actlib::Numbers::Steps::Walk(generator,
+                                                 range,
+                                                 maxStep,
+                                                 initialSelection),
+                    std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Walk(generator,
-                                          range,
-                                          maxStep,
-                                          initialSelection),
+                    actlib::Numbers::Steps::Walk(generator,
+                                                 range,
+                                                 maxStep,
+                                                 initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -144,17 +148,18 @@ SCENARIO("Numbers::Walk")
             {
                 auto initialSelection = range.start - 1;
 
-                REQUIRE_THROWS_AS(actlib::Numbers::Walk(generator,
-                                                        range,
-                                                        maxStep,
-                                                        initialSelection),
-                                  std::invalid_argument);
+                REQUIRE_THROWS_AS(
+                    actlib::Numbers::Steps::Walk(generator,
+                                                 range,
+                                                 maxStep,
+                                                 initialSelection),
+                    std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Walk(generator,
-                                          range,
-                                          maxStep,
-                                          initialSelection),
+                    actlib::Numbers::Steps::Walk(generator,
+                                                 range,
+                                                 maxStep,
+                                                 initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -165,10 +170,10 @@ SCENARIO("Numbers::Walk")
     {
         int maxStep = 2;
         int initialSelection = 4;
-        actlib::Numbers::Walk instance(generator,
-                                       range,
-                                       maxStep,
-                                       initialSelection);
+        actlib::Numbers::Steps::Walk instance(generator,
+                                              range,
+                                              maxStep,
+                                              initialSelection);
 
         WHEN("The first number is requested")
         {

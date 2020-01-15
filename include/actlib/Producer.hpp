@@ -3,7 +3,7 @@
 
 #include "Protocol.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 
 /*! @brief Context in which to select a protocol to use for producing random
  * numbers
@@ -32,6 +32,6 @@ class Producer {
   private:
     Protocol &_protocol;
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps
 
 #endif /* Producer_hpp */
