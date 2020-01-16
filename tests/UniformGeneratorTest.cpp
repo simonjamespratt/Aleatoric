@@ -1,5 +1,7 @@
 #include "UniformGenerator.hpp"
+
 #include "Engine.hpp"
+
 #include <catch2/catch.hpp>
 
 // TODO: This needs to be instantiated ONCE for ALL tests to use,
@@ -8,12 +10,16 @@
 // return a smart pointer
 static actlib::RNG::Engine *engine = actlib::RNG::Engine::Instance();
 
-SCENARIO("UniformGenerator") {
-    GIVEN("The class is instantiated correctly") {
+SCENARIO("UniformGenerator")
+{
+    GIVEN("The class is instantiated correctly")
+    {
         actlib::Numbers::UniformGenerator instance(engine->getEngine(), 1, 2);
 
-        WHEN("A number is requested") {
-            THEN("It should produce random numbers within provided the range") {
+        WHEN("A number is requested")
+        {
+            THEN("It should produce random numbers within provided the range")
+            {
                 // NB: This is a pseudo test, in that it is unlikely to be
                 // wrong, but is not guaranteed to be right! In order to test
                 // this properly it would require understanding how to
@@ -27,12 +33,15 @@ SCENARIO("UniformGenerator") {
             }
         }
 
-        WHEN("The distribution is changed") {
+        WHEN("The distribution is changed")
+        {
             instance.setDistribution(2, 3);
 
-            AND_WHEN("A number is requested") {
+            AND_WHEN("A number is requested")
+            {
                 THEN("It should produce random numbers within provided the "
-                     "range") {
+                     "range")
+                {
                     // NB: This is a pseudo test, in that it is unlikely to be
                     // wrong, but is not guaranteed to be right! In order to
                     // test this properly it would require understanding how to

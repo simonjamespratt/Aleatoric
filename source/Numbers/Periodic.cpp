@@ -5,7 +5,7 @@
 #include <stdexcept> // std::invalid_argument
 #include <string>
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 Periodic::Periodic(IDiscreteGenerator &generator,
                    Range &range,
                    double chanceOfRepetition)
@@ -92,4 +92,4 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
 
     m_generator.setDistributionVector(distributionVector);
 }
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers

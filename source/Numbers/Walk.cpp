@@ -3,7 +3,7 @@
 #include <stdexcept> // std::invalid_argument
 #include <string>
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 
 Walk::Walk(IUniformGenerator &generator, Range &range, int maxStep)
 : m_range(range),
@@ -81,4 +81,4 @@ bool Walk::isOutOfRange(int number)
     return number < m_range.start || number > m_range.end;
 };
 
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers

@@ -2,6 +2,7 @@
 #define DiscreteGeneratorMock_hpp
 
 #include "IDiscreteGenerator.hpp"
+
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 

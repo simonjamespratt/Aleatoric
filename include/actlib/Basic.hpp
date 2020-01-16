@@ -5,7 +5,7 @@
 #include "Protocol.hpp"
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 /*!
     @brief A protocol for producing a basic random number
 
@@ -39,9 +39,9 @@ class Basic : public Protocol {
     void reset() override;
 
   private:
-    actlib::Numbers::Range &_range;
-    actlib::Numbers::IUniformGenerator &_generator;
+    Range &_range;
+    IUniformGenerator &_generator;
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps
 
 #endif /* Basic_hpp */

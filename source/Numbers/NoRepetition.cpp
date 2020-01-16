@@ -1,6 +1,6 @@
 #include "NoRepetition.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 NoRepetition::NoRepetition(IDiscreteGenerator &generator, Range &range)
 : _generator(generator), _range(range)
 {}
@@ -23,4 +23,4 @@ void NoRepetition::reset()
     _generator.updateDistributionVector(1.0);
 }
 
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers

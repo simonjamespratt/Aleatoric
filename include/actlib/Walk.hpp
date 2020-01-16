@@ -5,7 +5,7 @@
 #include "Protocol.hpp"
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 /*!
  * @brief A protocol for producing random numbers
  *
@@ -126,6 +126,6 @@ class Walk : public Protocol {
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers
 
 #endif /* Walk_hpp */

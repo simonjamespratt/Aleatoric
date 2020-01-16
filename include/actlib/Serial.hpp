@@ -5,7 +5,7 @@
 #include "Protocol.hpp"
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers {
+namespace actlib { namespace Numbers { namespace Steps {
 
 /*!
  * @brief A protocol for producing random numbers
@@ -66,6 +66,6 @@ class Serial : public Protocol {
     IDiscreteGenerator &_generator;
     bool seriesIsComplete();
 };
-}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers
 
 #endif /* Serial_hpp */
