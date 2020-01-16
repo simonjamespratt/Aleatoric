@@ -11,7 +11,7 @@ SCENARIO("Numbers::Walk")
     UniformGeneratorMock generator;
     ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
 
-    actlib::Numbers::Steps::Range range(1, 10);
+    actlib::Numbers::Range range(1, 10);
 
     GIVEN("The class is instantiated with an invalid max step")
     {

@@ -1,5 +1,7 @@
 #include "Walk.hpp"
 
+#include "Utilities.hpp"
+
 #include <stdexcept> // std::invalid_argument
 #include <string>
 
@@ -26,8 +28,8 @@ Walk::Walk(IUniformGenerator &generator,
 : Walk(generator, range, maxStep)
 {
     // TODO: this initialSelection check turns up a lot now. Should really
-    // derive a custom exception from invalid_argument specifically for this and
-    // use it wherever this check is made.
+    // derive a custom exception from invalid_argument specifically for this
+    // and use it wherever this check is made.
     if(initialSelection < range.start || initialSelection > range.end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
@@ -63,22 +65,13 @@ void Walk::reset()
 
 void Walk::setForNextStep(int lastSelectedNumber)
 {
-    auto newRangeStart = lastSelectedNumber - m_maxStep;
-    if(isOutOfRange(newRangeStart)) {
-        newRangeStart = m_range.start;
-    }
+    auto newSubRange = actlib::Utilities::getMaxStepSubRange(lastSelectedNumber,
+                                                             m_maxStep,
+                                                             m_range.start,
+                                                             m_range.end);
 
-    auto newRangeEnd = lastSelectedNumber + m_maxStep;
-    if(isOutOfRange(newRangeEnd)) {
-        newRangeEnd = m_range.end;
-    }
-
-    m_generator.setDistribution(newRangeStart, newRangeEnd);
+    m_generator.setDistribution(std::get<0>(newSubRange),
+                                std::get<1>(newSubRange));
 }
 
-bool Walk::isOutOfRange(int number)
-{
-    return number < m_range.start || number > m_range.end;
-};
-
-}}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps

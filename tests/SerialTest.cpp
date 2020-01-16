@@ -11,7 +11,7 @@ SCENARIO("Numbers::Serial")
 {
     GIVEN("The class is instantiated correctly")
     {
-        actlib::Numbers::Steps::Range range(1, 3);
+        actlib::Numbers::Range range(1, 3);
 
         DiscreteGeneratorMock generator;
         actlib::Numbers::Steps::Serial instance(generator, range);

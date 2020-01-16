@@ -10,7 +10,7 @@ SCENARIO("Numbers::Basic")
 {
     GIVEN("The class is instantiated correctly")
     {
-        actlib::Numbers::Steps::Range range(1, 3);
+        actlib::Numbers::Range range(1, 3);
         UniformGeneratorMock generator;
         actlib::Numbers::Steps::Basic instance(generator, range);
         WHEN("A number is requested")

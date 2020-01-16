@@ -28,7 +28,9 @@ add_executable(Tests
     AdjacentStepsTest.cpp
     PeriodicTest.cpp
     WalkTest.cpp
-    ProducerTest.cpp
+    GranularWalkTest.cpp
+    ProducerStepsTest.cpp
+    ProducerGranularTest.cpp
 )
 
 target_link_libraries(Tests

@@ -1,6 +1,6 @@
-#include "Producer.hpp"
+#include "ProducerSteps.hpp"
 
-#include "Protocol.hpp"
+#include "ProtocolSteps.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
@@ -11,7 +11,7 @@ class ConcreteProtocolMock : public actlib::Numbers::Steps::Protocol {
     MAKE_MOCK0(reset, void());
 };
 
-SCENARIO("Numbers::Producer")
+SCENARIO("Numbers::Steps::Producer")
 {
     GIVEN("The class is instantiated correctly")
     {

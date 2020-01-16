@@ -1,6 +1,6 @@
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace actlib { namespace Numbers {
 Range::Range(int rangeStart, int rangeEnd)
 {
     start = rangeStart;
@@ -8,4 +8,4 @@ Range::Range(int rangeStart, int rangeEnd)
     offset = rangeStart;
     size = rangeEnd - rangeStart + 1;
 }
-}}} // namespace actlib::Numbers
+}} // namespace actlib::Numbers

@@ -10,7 +10,7 @@ SCENARIO("Numbers::NoRepetition")
 {
     GIVEN("The class is instantiated correctly")
     {
-        actlib::Numbers::Steps::Range range(1, 3);
+        actlib::Numbers::Range range(1, 3);
         DiscreteGeneratorMock generator;
         int generatedNumber = 1;
         ALLOW_CALL(generator, updateDistributionVector(1.0));
