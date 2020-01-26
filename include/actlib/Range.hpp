@@ -1,7 +1,7 @@
 #ifndef Range_hpp
 #define Range_hpp
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace actlib { namespace Numbers {
 /*! @brief Describes the properties of a defined range within which to create
  * numbers */
 struct Range {
@@ -24,6 +24,6 @@ struct Range {
     /*! @brief range size. This is inclusive of the start and end */
     int size;
 };
-}}} // namespace actlib::Numbers
+}} // namespace actlib::Numbers
 
 #endif /* Range_hpp */

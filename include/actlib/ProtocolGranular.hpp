@@ -1,7 +1,7 @@
-#ifndef Protocol_hpp
-#define Protocol_hpp
+#ifndef ProtocolGranular_hpp
+#define ProtocolGranular_hpp
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace actlib { namespace Numbers { namespace Granular {
 
 /*! @brief Interface to which concrete protocol classes that produce random
  * numbers must conform
@@ -15,13 +15,13 @@ namespace actlib { namespace Numbers { namespace Steps {
 class Protocol {
   public:
     /*! Pure virtual method for getting random numbers from a protocol */
-    virtual int getNumber() = 0;
+    virtual double getNumber() = 0;
 
     /*! Pure virtual method for resetting a protocol to its initial state */
     virtual void reset() = 0;
 
     virtual ~Protocol() = default;
 };
-}}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Granular
 
-#endif /* Protocol_hpp */
+#endif /* ProtocolGranular_hpp */

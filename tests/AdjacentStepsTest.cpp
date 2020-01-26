@@ -12,7 +12,7 @@ SCENARIO("Numbers::AdjacentSteps")
     ALLOW_CALL(generator, updateDistributionVector(ANY(double)));
     ALLOW_CALL(generator, updateDistributionVector(ANY(int), 1.0));
 
-    actlib::Numbers::Steps::Range range(1, 3);
+    actlib::Numbers::Range range(1, 3);
 
     GIVEN("The class is instantiated WITHOUT an initial number selection")
     {

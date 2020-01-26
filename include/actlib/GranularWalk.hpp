@@ -1,11 +1,11 @@
-#ifndef Walk_hpp
-#define Walk_hpp
+#ifndef GranularWalk_hpp
+#define GranularWalk_hpp
 
 #include "IUniformGenerator.hpp"
-#include "ProtocolSteps.hpp"
+#include "ProducerGranular.hpp"
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace actlib { namespace Numbers { namespace Granular {
 /*!
  * @brief A protocol for producing random numbers
  *
@@ -13,10 +13,13 @@ namespace actlib { namespace Numbers { namespace Steps {
  * [Strategy](https://en.wikipedia.org/wiki/Strategy_pattern) design pattern
  * (see Protocol for more information).
  *
- *
  * Places a constraint on the production of numbers where only numbers within a
  * _sub-range around the last selected number_ can be selected. This forms a
  * variable stepwise traversal - or __walk__ - through the overall range.
+ *
+ * In contrast to Walk, GranularWalk will produce numbers within the range with
+ * a _fractional part_ rather than integral steps. Consequently, a call to
+ * getNumber() will return a double rather than an int.
  *
  * __Further detail__:
  *
@@ -35,6 +38,12 @@ namespace actlib { namespace Numbers { namespace Steps {
  *
  * With each selection of a number, the sub-range is moved to surround the
  * number selected in readiness for the next call to get a number.
+ *
+ * GranularWalk requires the caller to provide a _deviation factor_ rather than
+ * an absolute value for the maximum step (as is the case for Walk). The
+ * deviation factor can be thought of as a _fraction_ or percentage of the whole
+ * range. GranularWalk will calculate the absolute value for the maximum step
+ * from the deviation factor supplied to it.
  *
  * Note that traversal of the range does _not_ wrap. In other words, if a
  * sub-range would otherwise encompass numbers outside the main range, the
@@ -59,10 +68,10 @@ namespace actlib { namespace Numbers { namespace Steps {
  * get a number will pick one from the main range at random (equal probability /
  * uniform distribution).
  */
-class Walk : public Protocol {
+class GranularWalk : public Protocol {
   public:
     /*!
-     * @brief Construct a new Walk object
+     * @brief Construct a new GranularWalk object
      *
      * @param generator An instance of UniformGenerator, derived from
      * IUniformGenerator. It should have been instantiated with an Engine, a
@@ -75,12 +84,16 @@ class Walk : public Protocol {
      * @param range The range supplied should map to the rangeStart and rangeEnd
      * supplied to the generator.
      *
-     * @param maxStep The maximum step value used for calculating the sub-range
-     * for the walk through the main range. For a detailed description of its
-     * use in the protocol, see above. Note that the value supplied must not
-     * exceed the size of the main range.
+     * @param deviationFactor The value represents a fraction of the whole range
+     * which is used internally to calculate an absolute value for the maximum
+     * step which in turn is used for calculating the sub-range for the walk
+     * through the main range. For a detailed description of the use of the
+     * maximum step and sub-ranges, see above. Note that the value provided must
+     * be between 0.0 and 1.0 (inclusive).
      */
-    Walk(IUniformGenerator &generator, Range &range, int maxStep);
+    GranularWalk(IUniformGenerator &generator,
+                 Range &range,
+                 double deviationFactor);
 
     /*!
      * @overload
@@ -90,17 +103,18 @@ class Walk : public Protocol {
      * range from thereon. Note that the number supplied must be within the
      * limits of the range supplied.
      */
-    Walk(IUniformGenerator &generator,
-         Range &range,
-         int maxStep,
-         int initialSelection);
+    GranularWalk(IUniformGenerator &generator,
+                 Range &range,
+                 double deviationFactor,
+                 int initialSelection);
 
-    ~Walk();
+    ~GranularWalk();
 
     /*!
      * @return a number according to the protocol. See above.
+     *
      */
-    int getNumber() override;
+    double getNumber() override;
 
     /*!
      * @brief Resets the state of the class to the state upon instantiation
@@ -117,14 +131,21 @@ class Walk : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
+    struct InternalRange {
+        int start;
+        int end;
+        int maxStep;
+    };
+    Range &m_externalRange;
     IUniformGenerator &m_generator;
-    int m_maxStep;
+    InternalRange m_internalRange;
+    double scaleToRange(double normalizedValue, int rangeMin, int rangeMax);
+    double normalize(int value, int rangeMin, int rangeMax);
     void setForNextStep(int lastSelectedNumber);
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
 };
-}}} // namespace actlib::Numbers::Steps
+}}} // namespace actlib::Numbers::Granular
 
-#endif /* Walk_hpp */
+#endif /* GranularWalk_hpp */

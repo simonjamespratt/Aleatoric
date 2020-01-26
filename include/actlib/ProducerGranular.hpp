@@ -1,9 +1,9 @@
-#ifndef Producer_hpp
-#define Producer_hpp
+#ifndef ProducerGranular_hpp
+#define ProducerGranular_hpp
 
-#include "Protocol.hpp"
+#include "ProtocolGranular.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace actlib { namespace Numbers { namespace Granular {
 
 /*! @brief Context in which to select a protocol to use for producing random
  * numbers
@@ -27,11 +27,11 @@ class Producer {
 
     /*! @brief Returns a random number created according to the selected
      * protocol */
-    int getNumber();
+    double getNumber();
 
   private:
     Protocol &_protocol;
 };
-}}} // namespace actlib::Numbers::Steps
+}}} // namespace actlib::Numbers::Granular
 
-#endif /* Producer_hpp */
+#endif /* ProducerGranular_hpp */

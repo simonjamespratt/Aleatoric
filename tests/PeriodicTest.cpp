@@ -14,7 +14,7 @@ SCENARIO("Numbers::Periodic")
         .RETURN(initialGeneratorDistributionState);
     ALLOW_CALL(generator, setDistributionVector(ANY(std::vector<double>)));
 
-    actlib::Numbers::Steps::Range range(1, 3);
+    actlib::Numbers::Range range(1, 3);
 
     GIVEN("The class is instantiated with an invalid chanceOfRepetition value")
     {

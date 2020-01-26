@@ -2,7 +2,7 @@
 #define Periodic_hpp
 
 #include "IDiscreteGenerator.hpp"
-#include "Protocol.hpp"
+#include "ProtocolSteps.hpp"
 #include "Range.hpp"
 
 namespace actlib { namespace Numbers { namespace Steps {
