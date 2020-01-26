@@ -1,6 +1,0 @@
-RandomWithinRange               ->  Basic
-RandomNumberWithoutDirectRepetition   ->  NoRepetition
-RandomNumberAdjacentSteps       ->  AdjacentSteps
-PeriodicRandomNumber            ->  Periodic
-RandomNumberWalk                ->  Walk
-RandomNumberWalkGranular        ->  WalkGranular
