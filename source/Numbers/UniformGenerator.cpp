@@ -1,10 +1,8 @@
 #include "UniformGenerator.hpp"
 
 namespace actlib { namespace Numbers {
-UniformGenerator::UniformGenerator(std::mt19937 &engine,
-                                   int rangeStart,
-                                   int rangeEnd)
-: _engine(engine), _distribution(rangeStart, rangeEnd)
+UniformGenerator::UniformGenerator(int rangeStart, int rangeEnd)
+: m_distribution(rangeStart, rangeEnd), m_engine(m_seedSource)
 {}
 
 UniformGenerator::~UniformGenerator()
@@ -12,11 +10,11 @@ UniformGenerator::~UniformGenerator()
 
 int UniformGenerator::getNumber()
 {
-    return _distribution(_engine);
+    return m_distribution(m_engine);
 }
 
 void UniformGenerator::setDistribution(int startRange, int endRange)
 {
-    _distribution = std::uniform_int_distribution<int>(startRange, endRange);
+    m_distribution = std::uniform_int_distribution<int>(startRange, endRange);
 }
 }} // namespace actlib::Numbers

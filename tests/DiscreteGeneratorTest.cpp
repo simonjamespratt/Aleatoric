@@ -1,22 +1,13 @@
 #include "DiscreteGenerator.hpp"
 
-#include "Engine.hpp"
-
 #include <catch2/catch.hpp>
-
-// TODO: This needs to be instantiated ONCE for ALL tests to use,
-// ideally in the main.cpp of the tests
-// It also needs to be handled by a smart pointer or Engine::Instance() needs to
-// return a smart pointer
-static actlib::RNG::Engine *engine = actlib::RNG::Engine::Instance();
 
 SCENARIO("DiscreteGenerator")
 {
     GIVEN("The class is constructed with a vector")
     {
         std::vector<double> distributionVector = {0.0, 1.0};
-        actlib::Numbers::DiscreteGenerator instance(engine->getEngine(),
-                                                    distributionVector);
+        actlib::Numbers::DiscreteGenerator instance(distributionVector);
 
         WHEN("The distribution vector is requested")
         {
@@ -45,9 +36,7 @@ SCENARIO("DiscreteGenerator")
 
     GIVEN("The class is constructed with a vectorSize and uniformValue")
     {
-        actlib::Numbers::DiscreteGenerator instance(engine->getEngine(),
-                                                    3,
-                                                    1.0);
+        actlib::Numbers::DiscreteGenerator instance(3, 1.0);
 
         WHEN("The distribution vector is requested")
         {
@@ -82,8 +71,7 @@ SCENARIO("DiscreteGenerator")
         // calling getNumber() after vector manipulation They could be added if
         // it is really desired / needed
 
-        actlib::Numbers::DiscreteGenerator instance(engine->getEngine(),
-                                                    std::vector<double> {});
+        actlib::Numbers::DiscreteGenerator instance(std::vector<double> {});
 
         WHEN("The distribution vector is (re)set by providing a new vector")
         {
@@ -125,7 +113,6 @@ SCENARIO("DiscreteGenerator")
              "in the vector")
         {
             actlib::Numbers::DiscreteGenerator instance(
-                engine->getEngine(),
                 std::vector<double> {1.0, 1.0});
             instance.updateDistributionVector(1, 0.0);
 
@@ -143,7 +130,6 @@ SCENARIO("DiscreteGenerator")
              "uniformly")
         {
             actlib::Numbers::DiscreteGenerator instance(
-                engine->getEngine(),
                 std::vector<double> {1.0, 1.0});
             instance.updateDistributionVector(0.0);
 

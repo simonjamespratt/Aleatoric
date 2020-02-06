@@ -29,10 +29,10 @@ class NoRepetition : public Protocol {
      * and a Range
      *
      * @param generator should be an instance of DiscreteGenerator that has been
-     * instantiated with an Engine, a vectorSize and a uniformValue. For
+     * instantiated with a vectorSize and a uniformValue. For
      * example:
      *
-     *      DiscreteGenerator generator(engine, vectorSize, uniformValue)
+     *      DiscreteGenerator generator(vectorSize, uniformValue)
      *
      * An instance of the generator initialised as above will provide an initial
      * state of a uniform distribution and thus equal probability of selection

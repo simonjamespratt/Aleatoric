@@ -3,13 +3,15 @@
 
 #include "IDiscreteGenerator.hpp"
 
+#include <pcg_random.hpp>
 #include <random>
 
 namespace actlib { namespace Numbers {
 /*!
 @brief Implementation class for generating numbers from a discrete distribution
 
-Uses a Mersenne Twister 19937 generator as an engine through which to produce
+Uses a [Permuted Congruential Generator -
+PCG](https://github.com/imneme/pcg-cpp) engine through which to produce
 random numbers according to a discrete distribution.
 
 The discrete distribution is realised with  __std::discrete_distribution__
@@ -20,11 +22,10 @@ class DiscreteGenerator : public IDiscreteGenerator {
     @brief Constructor for instantiating an instance of the class by
      * providing a fully customised distribution vector
      *
-     * @param engine a Mersenne Twister 19937 generator of type **std::mt19937**
      * @param distribution fully formed vector representing the discrete
     distribution to be used by the class
      */
-    DiscreteGenerator(std::mt19937 &engine, std::vector<double> distribution);
+    DiscreteGenerator(std::vector<double> distribution);
 
     /*! @brief Constructor for instantiating an instance of the class by
      * specifying a distribution size and uniform value
@@ -32,17 +33,14 @@ class DiscreteGenerator : public IDiscreteGenerator {
      * Creates a distribution vector by setting the entire vector to have equal
      * values and therefore produces a uniform distribution
      *
-     * @param engine a Mersenne Twister 19937 generator of type **std::mt19937**
      * @param vectorSize the size of the distribution vector to create
      * @param uniformValue the value to set for each item in the vector
      */
-    DiscreteGenerator(std::mt19937 &engine,
-                      int vectorSize,
-                      double uniformValue);
+    DiscreteGenerator(int vectorSize, double uniformValue);
 
     ~DiscreteGenerator();
 
-    /*! @brief returns generated numbers according to the discrete dsitribution
+    /*! @brief returns generated numbers according to the discrete distribution
      * created */
     int getNumber() override;
 
@@ -80,9 +78,10 @@ class DiscreteGenerator : public IDiscreteGenerator {
     std::vector<double> getDistributionVector() override;
 
   private:
-    std::mt19937 _engine;
-    std::vector<double> _distributionVector;
-    std::discrete_distribution<int> _distribution;
+    pcg_extras::seed_seq_from<std::random_device> m_seedSource;
+    pcg32 m_engine;
+    std::vector<double> m_distributionVector;
+    std::discrete_distribution<int> m_distribution;
     void setDistribution();
 };
 }} // namespace actlib::Numbers

@@ -1,17 +1,14 @@
 #include "DiscreteGenerator.hpp"
 
 namespace actlib { namespace Numbers {
-DiscreteGenerator::DiscreteGenerator(std::mt19937 &engine,
-                                     std::vector<double> distributionVector)
-: _engine(engine)
+DiscreteGenerator::DiscreteGenerator(std::vector<double> distributionVector)
+: m_engine(m_seedSource)
 {
     setDistributionVector(distributionVector);
 }
 
-DiscreteGenerator::DiscreteGenerator(std::mt19937 &engine,
-                                     int vectorSize,
-                                     double uniformValue)
-: _engine(engine)
+DiscreteGenerator::DiscreteGenerator(int vectorSize, double uniformValue)
+: m_engine(m_seedSource)
 {
     setDistributionVector(vectorSize, uniformValue);
 }
@@ -21,35 +18,35 @@ DiscreteGenerator::~DiscreteGenerator()
 
 int DiscreteGenerator::getNumber()
 {
-    return _distribution(_engine);
+    return m_distribution(m_engine);
 }
 
 void DiscreteGenerator::setDistributionVector(
     std::vector<double> distributionVector)
 {
-    _distributionVector = distributionVector;
+    m_distributionVector = distributionVector;
     setDistribution();
 }
 
 void DiscreteGenerator::setDistributionVector(int vectorSize,
                                               double uniformValue)
 {
-    _distributionVector.clear();
+    m_distributionVector.clear();
     for(int i = 0; i < vectorSize; i++) {
-        _distributionVector.push_back(uniformValue);
+        m_distributionVector.push_back(uniformValue);
     }
     setDistribution();
 }
 
 void DiscreteGenerator::updateDistributionVector(int index, double newValue)
 {
-    _distributionVector[index] = newValue;
+    m_distributionVector[index] = newValue;
     setDistribution();
 }
 
 void DiscreteGenerator::updateDistributionVector(double uniformValue)
 {
-    for(auto &&i : _distributionVector) {
+    for(auto &&i : m_distributionVector) {
         i = uniformValue;
     }
     setDistribution();
@@ -57,12 +54,13 @@ void DiscreteGenerator::updateDistributionVector(double uniformValue)
 
 std::vector<double> DiscreteGenerator::getDistributionVector()
 {
-    return _distributionVector;
+    return m_distributionVector;
 }
 
 void DiscreteGenerator::setDistribution()
 {
-    _distribution = std::discrete_distribution<int>(_distributionVector.begin(),
-                                                    _distributionVector.end());
+    m_distribution =
+        std::discrete_distribution<int>(m_distributionVector.begin(),
+                                        m_distributionVector.end());
 }
 }} // namespace actlib::Numbers
