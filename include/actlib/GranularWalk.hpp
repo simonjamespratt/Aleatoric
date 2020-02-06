@@ -74,7 +74,7 @@ class GranularWalk : public Protocol {
      * @brief Construct a new GranularWalk object
      *
      * @param generator An instance of UniformGenerator, derived from
-     * IUniformGenerator. It should have been instantiated with an Engine, a
+     * IUniformGenerator. It should have been instantiated with a
      * rangeStart and a rangeEnd. The rangeStart and rangeEnd should map to the
      * start and end of the range supplied respectively. An instance of the
      * generator initialised as above will provide an initial state of a uniform

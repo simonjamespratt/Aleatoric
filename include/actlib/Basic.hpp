@@ -23,10 +23,10 @@ class Basic : public Protocol {
         Range
 
         @param generator should be an instance of UniformGenerator that
-        has been instantiated with an Engine and values for rangeStart and
+        has been instantiated with values for rangeStart and
        rangeEnd. For example:
 
-            UniformGenerator generator(engine, rangeStart, rangeEnd)
+            UniformGenerator generator(rangeStart, rangeEnd)
 
         @param range should map to the rangeStart and rangeEnd supplied to the
         UniformGenerator
