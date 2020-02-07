@@ -13,6 +13,7 @@ SCENARIO("Numbers::Periodic")
     ALLOW_CALL(generator, getDistributionVector())
         .RETURN(initialGeneratorDistributionState);
     ALLOW_CALL(generator, setDistributionVector(ANY(std::vector<double>)));
+    ALLOW_CALL(generator, setDistributionVector(ANY(int), 1.0));
 
     actlib::Numbers::Range range(1, 3);
 
@@ -56,6 +57,17 @@ SCENARIO("Numbers::Periodic")
                                                   chanceOfRepetition);
 
         int generatedNumber = 1; // mid range selection
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::Periodic(generator,
+                                                 range,
+                                                 chanceOfRepetition);
+            }
+        }
 
         WHEN("A number is requested")
         {
@@ -152,6 +164,18 @@ SCENARIO("Numbers::Periodic")
                                                   range,
                                                   chanceOfRepetition,
                                                   initialSelection);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::Periodic(generator,
+                                                 range,
+                                                 chanceOfRepetition,
+                                                 initialSelection);
+            }
+        }
 
         WHEN("The first number is requested")
         {

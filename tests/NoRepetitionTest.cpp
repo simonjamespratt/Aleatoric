@@ -8,14 +8,24 @@
 
 SCENARIO("Numbers::NoRepetition")
 {
-    GIVEN("The class is instantiated correctly")
+    GIVEN("The class is instantiated")
     {
         actlib::Numbers::Range range(1, 3);
         DiscreteGeneratorMock generator;
         int generatedNumber = 1;
         ALLOW_CALL(generator, updateDistributionVector(1.0));
         ALLOW_CALL(generator, updateDistributionVector(generatedNumber, 0.0));
+        ALLOW_CALL(generator, setDistributionVector(ANY(int), 1.0));
         actlib::Numbers::Steps::NoRepetition instance(generator, range);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::NoRepetition(generator, range);
+            }
+        }
 
         WHEN("A number is requested")
         {

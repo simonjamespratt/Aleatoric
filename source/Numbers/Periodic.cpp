@@ -21,9 +21,7 @@ Periodic::Periodic(IDiscreteGenerator &generator,
             "within the range of 0.0 - 1.0");
     }
 
-    // TODO: may want to check that range.size is == to m_generator's vector
-    // size. In fact, probably should do this for every concrete protocol that
-    // has a DiscreteGenerator dependency
+    m_generator.setDistributionVector(m_range.size, 1.0);
 
     // calculate the remainder allocation
     double vectorSize =
@@ -92,4 +90,4 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
 
     m_generator.setDistributionVector(distributionVector);
 }
-}}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps

@@ -20,11 +20,28 @@ The uniform distribution is realised with __std::uniform_int_distribution__
 class UniformGenerator : public IUniformGenerator {
   public:
     /*!
-    @brief Constructor
+     * @brief Constructor
+     *
+     * Creates a generator with a default distribution that has a range of 0 to
+     * 1 (heads or tails). Calling getNumber() will output 0 or 1 with equal
+     * probability of selection.
+     *
+     * The range of the distribution can be changed at any time by calling
+     * setDistribution().
+     *
+     */
+    UniformGenerator();
 
-    @param rangeStart start value for the uniform distribution
-    @param rangeEnd end value for the uniform distribution
-    */
+    /*!
+     * @brief Constructor
+     *
+     * Creates a generator with a distribution as defined by the rangeStart and
+     * rangeEnd provided (inclusive / closed range). Each integer within the
+     * range has an equal probability of selection when calling getNumber().
+     *
+     * @param rangeStart start value for the uniform distribution
+     * @param rangeEnd end value for the uniform distribution
+     */
     UniformGenerator(int rangeStart, int rangeEnd);
 
     ~UniformGenerator();

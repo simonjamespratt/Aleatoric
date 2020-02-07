@@ -1,6 +1,10 @@
 #include "UniformGenerator.hpp"
 
 namespace actlib { namespace Numbers {
+UniformGenerator::UniformGenerator()
+: m_distribution(0, 1), m_engine(m_seedSource)
+{}
+
 UniformGenerator::UniformGenerator(int rangeStart, int rangeEnd)
 : m_distribution(rangeStart, rangeEnd), m_engine(m_seedSource)
 {}

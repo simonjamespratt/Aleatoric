@@ -19,6 +19,8 @@ Walk::Walk(IUniformGenerator &generator, Range &range, int maxStep)
                                     "must be less than or equal to " +
                                     std::to_string(range.size));
     }
+
+    m_generator.setDistribution(m_range.start, m_range.end);
 }
 
 Walk::Walk(IUniformGenerator &generator,

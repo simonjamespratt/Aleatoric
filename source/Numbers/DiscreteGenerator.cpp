@@ -1,6 +1,11 @@
 #include "DiscreteGenerator.hpp"
 
 namespace actlib { namespace Numbers {
+DiscreteGenerator::DiscreteGenerator() : m_engine(m_seedSource)
+{
+    setDistributionVector(std::vector<double> {1.0, 1.0});
+}
+
 DiscreteGenerator::DiscreteGenerator(std::vector<double> distributionVector)
 : m_engine(m_seedSource)
 {

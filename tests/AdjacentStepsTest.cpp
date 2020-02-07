@@ -11,6 +11,7 @@ SCENARIO("Numbers::AdjacentSteps")
     DiscreteGeneratorMock generator;
     ALLOW_CALL(generator, updateDistributionVector(ANY(double)));
     ALLOW_CALL(generator, updateDistributionVector(ANY(int), 1.0));
+    ALLOW_CALL(generator, setDistributionVector(ANY(int), 1.0));
 
     actlib::Numbers::Range range(1, 3);
 
@@ -18,6 +19,15 @@ SCENARIO("Numbers::AdjacentSteps")
     {
         int generatedNumber = 1;
         actlib::Numbers::Steps::AdjacentSteps instance(generator, range);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::AdjacentSteps(generator, range);
+            }
+        }
 
         WHEN("A number is requested")
         {
@@ -169,6 +179,17 @@ SCENARIO("Numbers::AdjacentSteps")
         actlib::Numbers::Steps::AdjacentSteps instance(generator,
                                                        range,
                                                        initialSelection);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::AdjacentSteps(generator,
+                                                      range,
+                                                      initialSelection);
+            }
+        }
 
         WHEN("A number is first requested")
         {

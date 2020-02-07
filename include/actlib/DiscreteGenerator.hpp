@@ -19,11 +19,24 @@ The discrete distribution is realised with  __std::discrete_distribution__
 class DiscreteGenerator : public IDiscreteGenerator {
   public:
     /*!
-    @brief Constructor for instantiating an instance of the class by
+     * @brief Default constructor
+     *
+     * Creates a generator with a distribution that has a range of 0 to 1 (heads
+     * or tails). Calling getNumber() will output 0 or 1 with equal probability
+     * of selection.
+     *
+     * The range of the distribution can be changed at any time by calling
+     * setDistributionVector() and the probability weighting of the existing
+     * distribution can be changed by calling updateDistributionVector().
+     */
+    DiscreteGenerator();
+
+    /*!
+     * @brief Constructor for instantiating an instance of the class by
      * providing a fully customised distribution vector
      *
      * @param distribution fully formed vector representing the discrete
-    distribution to be used by the class
+     * distribution to be used by the class
      */
     DiscreteGenerator(std::vector<double> distribution);
 

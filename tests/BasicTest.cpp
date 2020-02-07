@@ -8,11 +8,23 @@
 
 SCENARIO("Numbers::Basic")
 {
-    GIVEN("The class is instantiated correctly")
+    GIVEN("The class is instantiated")
     {
         actlib::Numbers::Range range(1, 3);
         UniformGeneratorMock generator;
+        ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
         actlib::Numbers::Steps::Basic instance(generator, range);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range start and end")
+            {
+                REQUIRE_CALL(generator,
+                             setDistribution(range.start, range.end));
+                actlib::Numbers::Steps::Basic(generator, range);
+            }
+        }
+
         WHEN("A number is requested")
         {
             int generatedNumber = 2;

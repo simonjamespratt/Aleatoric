@@ -65,15 +65,9 @@ class Walk : public Protocol {
      * @brief Construct a new Walk object
      *
      * @param generator An instance of UniformGenerator, derived from
-     * IUniformGenerator. It should have been instantiated with a
-     * rangeStart and a rangeEnd. The rangeStart and rangeEnd should map to the
-     * start and end of the range supplied respectively. An instance of the
-     * generator initialised as above will provide an initial state of a uniform
-     * distribution, and thus equal probability of selection, for each number
-     * within the range.
+     * IUniformGenerator. Default construction is fine.
      *
-     * @param range The range supplied should map to the rangeStart and rangeEnd
-     * supplied to the generator.
+     * @param range The range within which to produce numbers.
      *
      * @param maxStep The maximum step value used for calculating the sub-range
      * for the walk through the main range. For a detailed description of its
