@@ -22,14 +22,10 @@ class Basic : public Protocol {
         @brief Takes a UniformGenerator derived from the IUniformGenerator and a
         Range
 
-        @param generator should be an instance of UniformGenerator that
-        has been instantiated with values for rangeStart and
-       rangeEnd. For example:
+        @param generator Should be an instance of UniformGenerator. Default
+       construction is fine.
 
-            UniformGenerator generator(rangeStart, rangeEnd)
-
-        @param range should map to the rangeStart and rangeEnd supplied to the
-        UniformGenerator
+        @param range The range within which to produce numbers.
     */
     Basic(IUniformGenerator &generator, Range &range);
     ~Basic();
@@ -39,8 +35,8 @@ class Basic : public Protocol {
     void reset() override;
 
   private:
-    Range &_range;
-    IUniformGenerator &_generator;
+    Range &m_range;
+    IUniformGenerator &m_generator;
 };
 }}} // namespace actlib::Numbers::Steps
 

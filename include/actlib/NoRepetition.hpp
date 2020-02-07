@@ -28,18 +28,10 @@ class NoRepetition : public Protocol {
     /*! @brief Takes a DiscreteGenerator derived from the IDiscreteGenerator,
      * and a Range
      *
-     * @param generator should be an instance of DiscreteGenerator that has been
-     * instantiated with a vectorSize and a uniformValue. For
-     * example:
+     * @param generator should be an instance of DiscreteGenerator. Default
+     * construction is fine.
      *
-     *      DiscreteGenerator generator(vectorSize, uniformValue)
-     *
-     * An instance of the generator initialised as above will provide an initial
-     * state of a uniform distribution and thus equal probability of selection
-     * for each number in the range.
-     *
-     * @param range should map to the vectorSize argument supplied to the
-     * DiscreteGenerator. In other words, range.size should equal vectorSize
+     * @param range The range within which to produce numbers.
      */
     NoRepetition(IDiscreteGenerator &generator, Range &range);
 
@@ -63,8 +55,8 @@ class NoRepetition : public Protocol {
     void reset() override;
 
   private:
-    Range &_range;
-    IDiscreteGenerator &_generator;
+    Range &m_range;
+    IDiscreteGenerator &m_generator;
 };
 }}} // namespace actlib::Numbers::Steps
 

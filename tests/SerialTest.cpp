@@ -9,25 +9,35 @@
 
 SCENARIO("Numbers::Serial")
 {
-    GIVEN("The class is instantiated correctly")
-    {
-        actlib::Numbers::Range range(1, 3);
+    actlib::Numbers::Range range(1, 3);
+    DiscreteGeneratorMock generator;
+    int generatedNumber = 1;
 
-        DiscreteGeneratorMock generator;
+    ALLOW_CALL(generator, setDistributionVector(ANY(int), 1.0));
+
+    // TODO: can these be set to ANY?
+    ALLOW_CALL(generator, getNumber()).RETURN(generatedNumber);
+    ALLOW_CALL(generator, updateDistributionVector(generatedNumber, 0.0));
+
+    // this is for reset()
+    ALLOW_CALL(generator, updateDistributionVector(1.0));
+
+    // ensures that seriesIsComplete returns true
+    ALLOW_CALL(generator, getDistributionVector())
+        .RETURN(std::vector<double> {1.0});
+
+    GIVEN("The class is instantiated")
+    {
         actlib::Numbers::Steps::Serial instance(generator, range);
 
-        int generatedNumber = 1;
-
-        // TODO: can these be set to ANY?
-        ALLOW_CALL(generator, getNumber()).RETURN(generatedNumber);
-        ALLOW_CALL(generator, updateDistributionVector(generatedNumber, 0.0));
-
-        // this is for reset()
-        ALLOW_CALL(generator, updateDistributionVector(1.0));
-
-        // ensures that seriesIsComplete returns true
-        ALLOW_CALL(generator, getDistributionVector())
-            .RETURN(std::vector<double> {1.0});
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range size")
+            {
+                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
+                actlib::Numbers::Steps::Serial(generator, range);
+            }
+        }
 
         WHEN("A number is requested")
         {

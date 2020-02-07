@@ -1,4 +1,5 @@
 #include "AdjacentSteps.hpp"
+
 #include <stdexcept> // std::invalid_argument
 #include <string>
 
@@ -13,6 +14,7 @@ namespace actlib { namespace Numbers { namespace Steps {
 AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator, Range &range)
 : m_range(range), m_generator(generator)
 {
+    m_generator.setDistributionVector(m_range.size, 1.0);
     m_haveInitialSelection = false;
     m_haveRequestedFirstNumber = false;
 }
@@ -79,4 +81,4 @@ void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
         m_generator.updateDistributionVector(vectorIndex - 1, 1.0);
     }
 }
-}}} // namespace actlib::Numbers
+}}} // namespace actlib::Numbers::Steps

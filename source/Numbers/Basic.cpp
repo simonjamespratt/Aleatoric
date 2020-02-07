@@ -2,15 +2,17 @@
 
 namespace actlib { namespace Numbers { namespace Steps {
 Basic::Basic(IUniformGenerator &generator, Range &range)
-: _range(range), _generator(generator)
-{}
+: m_range(range), m_generator(generator)
+{
+    m_generator.setDistribution(m_range.start, m_range.end);
+}
 
 Basic::~Basic()
 {}
 
 int Basic::getNumber()
 {
-    return _generator.getNumber();
+    return m_generator.getNumber();
 }
 
 void Basic::reset()

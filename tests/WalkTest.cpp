@@ -40,6 +40,16 @@ SCENARIO("Numbers::Walk")
         int maxStep = 2;
         actlib::Numbers::Steps::Walk instance(generator, range, maxStep);
 
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range start and end")
+            {
+                REQUIRE_CALL(generator,
+                             setDistribution(range.start, range.end));
+                actlib::Numbers::Steps::Walk(generator, range, maxStep);
+            }
+        }
+
         WHEN("A number is requested")
         {
             THEN("It returns a generated number")
@@ -174,6 +184,19 @@ SCENARIO("Numbers::Walk")
                                               range,
                                               maxStep,
                                               initialSelection);
+
+        WHEN("The object is constructed")
+        {
+            THEN("The generator distribution is set to the range start and end")
+            {
+                REQUIRE_CALL(generator,
+                             setDistribution(range.start, range.end));
+                actlib::Numbers::Steps::Walk(generator,
+                                             range,
+                                             maxStep,
+                                             initialSelection);
+            }
+        }
 
         WHEN("The first number is requested")
         {
