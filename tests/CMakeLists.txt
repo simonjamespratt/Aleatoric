@@ -30,6 +30,7 @@ add_executable(Tests
     GranularWalkTest.cpp
     ProducerStepsTest.cpp
     ProducerGranularTest.cpp
+    NumbersIntegrationTests.cpp
 )
 
 target_link_libraries(Tests

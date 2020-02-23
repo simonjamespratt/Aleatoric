@@ -29,5 +29,14 @@ SCENARIO("Numbers::Granular::Producer")
                 REQUIRE(number == acquiredNumber);
             }
         }
+
+        WHEN("A reset is made")
+        {
+            THEN("It should call the given protocol reset method")
+            {
+                REQUIRE_CALL(protocol, reset());
+                instance.reset();
+            }
+        }
     }
 }

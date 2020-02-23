@@ -29,8 +29,13 @@ class Producer {
      * protocol */
     double getNumber();
 
+    /*!
+     * @brief Resets the protocol being used
+     */
+    void reset();
+
   private:
-    Protocol &_protocol;
+    Protocol &m_protocol;
 };
 }}} // namespace actlib::Numbers::Granular
 
