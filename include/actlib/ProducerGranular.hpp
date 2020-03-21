@@ -3,6 +3,8 @@
 
 #include "ProtocolGranular.hpp"
 
+#include <memory>
+
 namespace actlib { namespace Numbers { namespace Granular {
 
 /*! @brief Context in which to select a protocol to use for producing random
@@ -21,7 +23,7 @@ class Producer {
      * @param protocol a concrete protocol strategy, passed by reference to the
      * Procotol interface
      */
-    Producer(Protocol &protocol);
+    Producer(std::unique_ptr<Protocol> protocol);
 
     ~Producer();
 
@@ -35,7 +37,7 @@ class Producer {
     void reset();
 
   private:
-    Protocol &m_protocol;
+    std::unique_ptr<Protocol> m_protocol;
 };
 }}} // namespace actlib::Numbers::Granular
 

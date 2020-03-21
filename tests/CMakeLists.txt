@@ -30,6 +30,7 @@ add_executable(Tests
     GranularWalkTest.cpp
     ProducerStepsTest.cpp
     ProducerGranularTest.cpp
+    NumbersTest.cpp
     NumbersIntegrationTests.cpp
 )
 

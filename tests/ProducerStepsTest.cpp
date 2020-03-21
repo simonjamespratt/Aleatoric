@@ -4,6 +4,7 @@
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
+#include <memory>
 
 class ConcreteProtocolMock : public actlib::Numbers::Steps::Protocol {
   public:
@@ -15,16 +16,17 @@ SCENARIO("Numbers::Steps::Producer")
 {
     GIVEN("The class is instantiated correctly")
     {
-        ConcreteProtocolMock protocol;
-        actlib::Numbers::Steps::Producer instance(protocol);
+        auto protocol = std::make_unique<ConcreteProtocolMock>();
+        auto protocolPointer = protocol.get();
+        actlib::Numbers::Steps::Producer instance(std::move(protocol));
 
         WHEN("A number is requested")
         {
-            THEN("It should call the given protocol for a number and return "
-                 "it")
+            THEN("It should call the given protocol for a number and return it")
             {
                 int acquiredNumber = 1;
-                REQUIRE_CALL(protocol, getNumber()).RETURN(acquiredNumber);
+                REQUIRE_CALL(*protocolPointer, getNumber())
+                    .RETURN(acquiredNumber);
                 auto number = instance.getNumber();
                 REQUIRE(number == acquiredNumber);
             }
@@ -34,7 +36,7 @@ SCENARIO("Numbers::Steps::Producer")
         {
             THEN("It should call the given protocol reset method")
             {
-                REQUIRE_CALL(protocol, reset());
+                REQUIRE_CALL(*protocolPointer, reset());
                 instance.reset();
             }
         }

@@ -3,6 +3,7 @@
 #include "DiscreteGenerator.hpp"
 #include "GranularWalk.hpp"
 #include "NoRepetition.hpp"
+#include "Numbers.hpp"
 #include "Periodic.hpp"
 #include "ProducerGranular.hpp"
 #include "ProducerSteps.hpp"
@@ -13,16 +14,19 @@
 #include <algorithm> // std::adjacent_find, std::find
 #include <array>
 #include <catch2/catch.hpp>
+#include <memory>
+
+actlib::Numbers::Numbers factory;
 
 SCENARIO("Numbers: Integration using Basic")
 {
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::UniformGenerator generator;
-    actlib::Numbers::Steps::Basic protocol(generator, range);
-    actlib::Numbers::Steps::Producer instance(protocol);
+    actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated")
     {
+        actlib::Numbers::Steps::Producer instance(
+            factory.createBasic(referenceRange.start, referenceRange.end));
+
         WHEN("A sample has been gathered")
         {
             std::array<int, 1000> sample;
@@ -35,15 +39,15 @@ SCENARIO("Numbers: Integration using Basic")
                  "spacified range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
             THEN("All possible numbers within the range should have been "
                  "chosen at least once")
             {
-                for(int i = 0; i < range.size; i++) {
+                for(int i = 0; i < referenceRange.size; i++) {
                     auto findResult =
                         std::find(sample.begin(), sample.end(), i);
                     REQUIRE(findResult != sample.end());
@@ -55,13 +59,12 @@ SCENARIO("Numbers: Integration using Basic")
 
 SCENARIO("Numbers: Integration using Serial")
 {
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::DiscreteGenerator generator;
-    actlib::Numbers::Steps::Serial protocol(generator, range);
+    actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated")
     {
-        actlib::Numbers::Steps::Producer instance(protocol);
+        actlib::Numbers::Steps::Producer instance(
+            factory.createSerial(referenceRange.start, referenceRange.end));
 
         WHEN("A full series sample set has been gathered")
         {
@@ -75,15 +78,15 @@ SCENARIO("Numbers: Integration using Serial")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
             THEN("The sample should include every number from the range and "
                  "only once")
             {
-                for(int i = 0; i < range.size; i++) {
+                for(int i = 0; i < referenceRange.size; i++) {
                     int count = std::count(sample.begin(), sample.end(), i);
                     REQUIRE(count == 1);
                 }
@@ -129,7 +132,7 @@ SCENARIO("Numbers: Integration using Serial")
                 THEN("The full post-reset sample should include every number "
                      "from the range and only once")
                 {
-                    for(int i = 0; i < range.size; i++) {
+                    for(int i = 0; i < referenceRange.size; i++) {
                         int count =
                             std::count(fullSample.begin(), fullSample.end(), i);
                         REQUIRE(count == 1);
@@ -159,14 +162,13 @@ SCENARIO("Numbers: Integration using NoRepetition")
     // for, seeing as all the numbers (except the last selected) have equal
     // proability of selection?
 
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::DiscreteGenerator generator;
-    actlib::Numbers::Steps::NoRepetition protocol(generator, range);
+    actlib::Numbers::Range referenceRange(0, 9);
+
+    actlib::Numbers::Steps::Producer instance(
+        factory.createNoRepetition(referenceRange.start, referenceRange.end));
 
     GIVEN("The Producer has been instantiated")
     {
-        actlib::Numbers::Steps::Producer instance(protocol);
-
         WHEN("A sample has been gathered")
         {
             std::array<int, 1000> sample;
@@ -179,8 +181,8 @@ SCENARIO("Numbers: Integration using NoRepetition")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -200,8 +202,7 @@ SCENARIO("Numbers: Integration using NoRepetition")
 
 SCENARIO("Numbers: Integration using Periodic")
 {
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::DiscreteGenerator generator;
+    actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
@@ -210,8 +211,10 @@ SCENARIO("Numbers: Integration using Periodic")
 
         AND_GIVEN("The chance of repetition is mid range")
         {
-            actlib::Numbers::Steps::Periodic protocol(generator, range, 0.5);
-            actlib::Numbers::Steps::Producer instance(protocol);
+            actlib::Numbers::Steps::Producer instance(
+                factory.createPeriodic(referenceRange.start,
+                                       referenceRange.end,
+                                       0.5));
 
             WHEN("A sample has been gathered")
             {
@@ -225,8 +228,8 @@ SCENARIO("Numbers: Integration using Periodic")
                      "specified range")
                 {
                     for(auto &&i : sample) {
-                        REQUIRE(i >= range.start);
-                        REQUIRE(i <= range.end);
+                        REQUIRE(i >= referenceRange.start);
+                        REQUIRE(i <= referenceRange.end);
                     }
                 }
 
@@ -242,8 +245,10 @@ SCENARIO("Numbers: Integration using Periodic")
 
         AND_GIVEN("There is no chance of repetition")
         {
-            actlib::Numbers::Steps::Periodic protocol(generator, range, 0.0);
-            actlib::Numbers::Steps::Producer instance(protocol);
+            actlib::Numbers::Steps::Producer instance(
+                factory.createPeriodic(referenceRange.start,
+                                       referenceRange.end,
+                                       0.0));
 
             WHEN("A sample has been gathered")
             {
@@ -264,7 +269,7 @@ SCENARIO("Numbers: Integration using Periodic")
                 THEN("All possible numbers within the range should have been "
                      "chosen at least once")
                 {
-                    for(int i = 0; i < range.size; i++) {
+                    for(int i = 0; i < referenceRange.size; i++) {
                         auto findResult =
                             std::find(sample.begin(), sample.end(), i);
                         REQUIRE(findResult != sample.end());
@@ -275,8 +280,10 @@ SCENARIO("Numbers: Integration using Periodic")
 
         AND_GIVEN("There can only be the chance of repetition")
         {
-            actlib::Numbers::Steps::Periodic protocol(generator, range, 1.0);
-            actlib::Numbers::Steps::Producer instance(protocol);
+            actlib::Numbers::Steps::Producer instance(
+                factory.createPeriodic(referenceRange.start,
+                                       referenceRange.end,
+                                       1.0));
 
             WHEN("A sample has been gathered")
             {
@@ -300,11 +307,11 @@ SCENARIO("Numbers: Integration using Periodic")
     {
         // NB: chance of repetition is not important for these tests
         int initialSelection = 5;
-        actlib::Numbers::Steps::Periodic protocol(generator,
-                                                  range,
-                                                  0.5,
-                                                  initialSelection);
-        actlib::Numbers::Steps::Producer instance(protocol);
+        actlib::Numbers::Steps::Producer instance(
+            factory.createPeriodic(referenceRange.start,
+                                   referenceRange.end,
+                                   0.5,
+                                   initialSelection));
 
         WHEN("A sample has been gathered")
         {
@@ -323,8 +330,8 @@ SCENARIO("Numbers: Integration using Periodic")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
         }
@@ -345,8 +352,8 @@ SCENARIO("Numbers: Integration using Periodic")
 
 SCENARIO("Numbers: Integration using AdjacentSteps")
 {
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::DiscreteGenerator generator;
+    int rangeStart = 0;
+    int rangeEnd = 9;
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
@@ -357,8 +364,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
         // before a reset is 5, there is nothing to say that the first number
         // after reset won't be either a 4 or a 6.
 
-        actlib::Numbers::Steps::AdjacentSteps protocol(generator, range);
-        actlib::Numbers::Steps::Producer instance(protocol);
+        actlib::Numbers::Steps::Producer instance(
+            factory.createAdjacentSteps(rangeStart, rangeEnd));
 
         WHEN("A sample has been gathered")
         {
@@ -372,8 +379,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= rangeStart);
+                    REQUIRE(i <= rangeEnd);
                 }
             }
 
@@ -397,10 +404,11 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
     GIVEN("The Producer has been instantiated with an initial selection")
     {
         int initialSelection = 5;
-        actlib::Numbers::Steps::AdjacentSteps protocol(generator,
-                                                       range,
-                                                       initialSelection);
-        actlib::Numbers::Steps::Producer instance(protocol);
+
+        actlib::Numbers::Steps::Producer instance(
+            factory.createAdjacentSteps(rangeStart,
+                                        rangeEnd,
+                                        initialSelection));
 
         WHEN("A sample has been gathered")
         {
@@ -419,8 +427,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= rangeStart);
+                    REQUIRE(i <= rangeEnd);
                 }
             }
 
@@ -456,8 +464,7 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
 
 SCENARIO("Numbers: Integration using Walk")
 {
-    actlib::Numbers::Range range(0, 9);
-    actlib::Numbers::UniformGenerator generator;
+    actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
@@ -469,8 +476,10 @@ SCENARIO("Numbers: Integration using Walk")
         // after reset won't be within the max step range.
 
         int maxStep = 3;
-        actlib::Numbers::Steps::Walk protocol(generator, range, maxStep);
-        actlib::Numbers::Steps::Producer instance(protocol);
+        actlib::Numbers::Steps::Producer instance(
+            factory.createWalk(referenceRange.start,
+                               referenceRange.end,
+                               maxStep));
 
         WHEN("A sample has been gathered")
         {
@@ -484,8 +493,8 @@ SCENARIO("Numbers: Integration using Walk")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -509,11 +518,11 @@ SCENARIO("Numbers: Integration using Walk")
     {
         int maxStep = 3;
         int initialSelection = 5;
-        actlib::Numbers::Steps::Walk protocol(generator,
-                                              range,
-                                              maxStep,
-                                              initialSelection);
-        actlib::Numbers::Steps::Producer instance(protocol);
+        actlib::Numbers::Steps::Producer instance(
+            factory.createWalk(referenceRange.start,
+                               referenceRange.end,
+                               maxStep,
+                               initialSelection));
 
         WHEN("A sample has been gathered")
         {
@@ -532,8 +541,8 @@ SCENARIO("Numbers: Integration using Walk")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -568,7 +577,7 @@ SCENARIO("Numbers: Integration using Walk")
 
 SCENARIO("Numbers: Integration using GranularWalk")
 {
-    actlib::Numbers::Range range(0, 10);
+    actlib::Numbers::Range referenceRange(0, 10);
     actlib::Numbers::UniformGenerator generator;
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -582,10 +591,11 @@ SCENARIO("Numbers: Integration using GranularWalk")
 
         double deviationFactor = 0.3;
         double dfRange = 3.0;
-        actlib::Numbers::Granular::GranularWalk protocol(generator,
-                                                         range,
-                                                         deviationFactor);
-        actlib::Numbers::Granular::Producer instance(protocol);
+
+        actlib::Numbers::Granular::Producer instance(
+            factory.createGranularWalk(referenceRange.start,
+                                       referenceRange.end,
+                                       deviationFactor));
 
         WHEN("A sample has been gathered")
         {
@@ -599,8 +609,8 @@ SCENARIO("Numbers: Integration using GranularWalk")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -626,11 +636,12 @@ SCENARIO("Numbers: Integration using GranularWalk")
         double deviationFactor = 0.3;
         double dfRange = 3.0;
         int initialSelection = 5;
-        actlib::Numbers::Granular::GranularWalk protocol(generator,
-                                                         range,
-                                                         deviationFactor,
-                                                         initialSelection);
-        actlib::Numbers::Granular::Producer instance(protocol);
+
+        actlib::Numbers::Granular::Producer instance(
+            factory.createGranularWalk(referenceRange.start,
+                                       referenceRange.end,
+                                       deviationFactor,
+                                       initialSelection));
 
         WHEN("A sample has been gathered")
         {
@@ -649,8 +660,8 @@ SCENARIO("Numbers: Integration using GranularWalk")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= range.start);
-                    REQUIRE(i <= range.end);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 

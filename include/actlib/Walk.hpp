@@ -5,6 +5,8 @@
 #include "ProtocolSteps.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace actlib { namespace Numbers { namespace Steps {
 /*!
  * @brief A protocol for producing random numbers
@@ -74,7 +76,9 @@ class Walk : public Protocol {
      * use in the protocol, see above. Note that the value supplied must not
      * exceed the size of the main range.
      */
-    Walk(IUniformGenerator &generator, Range &range, int maxStep);
+    Walk(std::unique_ptr<IUniformGenerator> generator,
+         std::unique_ptr<Range> range,
+         int maxStep);
 
     /*!
      * @overload
@@ -84,8 +88,8 @@ class Walk : public Protocol {
      * range from thereon. Note that the number supplied must be within the
      * limits of the range supplied.
      */
-    Walk(IUniformGenerator &generator,
-         Range &range,
+    Walk(std::unique_ptr<IUniformGenerator> generator,
+         std::unique_ptr<Range> range,
          int maxStep,
          int initialSelection);
 
@@ -111,8 +115,8 @@ class Walk : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IUniformGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IUniformGenerator> m_generator;
     int m_maxStep;
     void setForNextStep(int lastSelectedNumber);
     int m_initialSelection;

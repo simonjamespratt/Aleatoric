@@ -7,36 +7,39 @@
 
 namespace actlib { namespace Numbers { namespace Steps {
 
-Walk::Walk(IUniformGenerator &generator, Range &range, int maxStep)
-: m_range(range),
-  m_generator(generator),
+Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
+           std::unique_ptr<Range> range,
+           int maxStep)
+: m_range(std::move(range)),
+  m_generator(std::move(generator)),
   m_maxStep(maxStep),
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
-    if(maxStep > range.size) {
+    if(maxStep > m_range->size) {
         throw std::invalid_argument("The value passed as argument for maxStep "
                                     "must be less than or equal to " +
-                                    std::to_string(range.size));
+                                    std::to_string(m_range->size));
     }
 
-    m_generator.setDistribution(m_range.start, m_range.end);
+    m_generator->setDistribution(m_range->start, m_range->end);
 }
 
-Walk::Walk(IUniformGenerator &generator,
-           Range &range,
+Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
+           std::unique_ptr<Range> range,
            int maxStep,
            int initialSelection)
-: Walk(generator, range, maxStep)
+: Walk(std::move(generator), std::move(range), maxStep)
 {
     // TODO: this initialSelection check turns up a lot now. Should really
     // derive a custom exception from invalid_argument specifically for this
     // and use it wherever this check is made.
-    if(initialSelection < range.start || initialSelection > range.end) {
+    if(initialSelection < m_range->start || initialSelection > m_range->end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
             "within the range of " +
-            std::to_string(range.start) + " to " + std::to_string(range.end));
+            std::to_string(m_range->start) + " to " +
+            std::to_string(m_range->end));
     }
 
     m_initialSelection = initialSelection;
@@ -54,14 +57,14 @@ int Walk::getNumber()
         return m_initialSelection;
     }
 
-    auto generatedNumber = m_generator.getNumber();
+    auto generatedNumber = m_generator->getNumber();
     setForNextStep(generatedNumber);
     return generatedNumber;
 }
 
 void Walk::reset()
 {
-    m_generator.setDistribution(m_range.start, m_range.end);
+    m_generator->setDistribution(m_range->start, m_range->end);
     m_haveRequestedFirstNumber = false;
 }
 
@@ -69,11 +72,11 @@ void Walk::setForNextStep(int lastSelectedNumber)
 {
     auto newSubRange = actlib::Utilities::getMaxStepSubRange(lastSelectedNumber,
                                                              m_maxStep,
-                                                             m_range.start,
-                                                             m_range.end);
+                                                             m_range->start,
+                                                             m_range->end);
 
-    m_generator.setDistribution(std::get<0>(newSubRange),
-                                std::get<1>(newSubRange));
+    m_generator->setDistribution(std::get<0>(newSubRange),
+                                 std::get<1>(newSubRange));
 }
 
 }}} // namespace actlib::Numbers::Steps

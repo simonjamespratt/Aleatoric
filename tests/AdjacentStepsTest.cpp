@@ -1,61 +1,80 @@
 #include "AdjacentSteps.hpp"
 
+#include "DiscreteGenerator.hpp"
 #include "DiscreteGeneratorMock.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
+#include <memory>
 #include <stdexcept> // std::invalid_argument
 
 SCENARIO("Numbers::AdjacentSteps")
 {
-    DiscreteGeneratorMock generator;
-    ALLOW_CALL(generator, updateDistributionVector(ANY(double)));
-    ALLOW_CALL(generator, updateDistributionVector(ANY(int), 1.0));
-    ALLOW_CALL(generator, setDistributionVector(ANY(int), 1.0));
-
-    actlib::Numbers::Range range(1, 3);
-
-    GIVEN("The class is instantiated WITHOUT an initial number selection")
+    GIVEN("The class is instantiated without an initial number selection")
     {
-        int generatedNumber = 1;
-        actlib::Numbers::Steps::AdjacentSteps instance(generator, range);
+        auto generator = std::make_unique<DiscreteGeneratorMock>();
+        auto generatorPointer = generator.get();
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto rangePointer = range.get();
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
-                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
-                actlib::Numbers::Steps::AdjacentSteps(generator, range);
+                REQUIRE_CALL(*generatorPointer,
+                             setDistributionVector(rangePointer->size, 1.0));
+                actlib::Numbers::Steps::AdjacentSteps(std::move(generator),
+                                                      std::move(range));
             }
         }
+    }
+
+    GIVEN("The class is instantiated without an initial number selection")
+    {
+        auto generator = std::make_unique<DiscreteGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(double)));
+        ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
+        ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto rangePointer = range.get();
+
+        int generatedNumber = 1;
+        actlib::Numbers::Steps::AdjacentSteps instance(std::move(generator),
+                                                       std::move(range));
 
         WHEN("A number is requested")
         {
             THEN("It returns a generated number with the range offset added")
             {
-                REQUIRE_CALL(generator, getNumber()).RETURN(generatedNumber);
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(generatedNumber);
                 auto returnedNumber = instance.getNumber();
-                REQUIRE(returnedNumber == generatedNumber + range.offset);
+                REQUIRE(returnedNumber ==
+                        generatedNumber + rangePointer->offset);
             }
 
             AND_WHEN("The returned number is mid range")
             {
-                auto midRangeGeneratedNumber = 2 - range.offset;
+                auto midRangeGeneratedNumber = 2 - rangePointer->offset;
                 auto stepUp = midRangeGeneratedNumber + 1;
                 auto stepDown = midRangeGeneratedNumber - 1;
 
                 THEN("A stepwise distribution is set such that a step can be "
                      "taken either up or down")
                 {
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(midRangeGeneratedNumber);
-                    REQUIRE_CALL(generator, updateDistributionVector(0.0));
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(stepUp, 1.0));
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(stepDown, 1.0));
                     FORBID_CALL(
-                        generator,
+                        *generatorPointer,
                         updateDistributionVector(midRangeGeneratedNumber, 1.0));
                     instance.getNumber();
                 }
@@ -63,22 +82,24 @@ SCENARIO("Numbers::AdjacentSteps")
 
             AND_WHEN("The returned number is the bottom (start) of the range")
             {
-                auto startOfRangeGeneratedNumber = range.start - range.offset;
+                auto startOfRangeGeneratedNumber =
+                    rangePointer->start - rangePointer->offset;
                 auto stepUp = startOfRangeGeneratedNumber + 1;
                 auto stepDown = startOfRangeGeneratedNumber - 1;
 
                 THEN("A stepwise distribution is set such that a step can "
                      "only be taken upwards")
                 {
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(startOfRangeGeneratedNumber);
-                    REQUIRE_CALL(generator, updateDistributionVector(0.0));
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(stepUp, 1.0));
-                    FORBID_CALL(generator,
+                    FORBID_CALL(*generatorPointer,
                                 updateDistributionVector(stepDown, 1.0));
                     FORBID_CALL(
-                        generator,
+                        *generatorPointer,
                         updateDistributionVector(startOfRangeGeneratedNumber,
                                                  1.0));
                     instance.getNumber();
@@ -87,22 +108,24 @@ SCENARIO("Numbers::AdjacentSteps")
 
             AND_WHEN("The returned number is the top (end) of the range")
             {
-                auto endOfRangeGeneratedNumber = range.end - range.offset;
+                auto endOfRangeGeneratedNumber =
+                    rangePointer->end - rangePointer->offset;
                 auto stepUp = endOfRangeGeneratedNumber + 1;
                 auto stepDown = endOfRangeGeneratedNumber - 1;
 
                 THEN("A stepwise distribution is set such that a step can "
                      "only be taken downwards")
                 {
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(endOfRangeGeneratedNumber);
-                    REQUIRE_CALL(generator, updateDistributionVector(0.0));
-                    FORBID_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    FORBID_CALL(*generatorPointer,
                                 updateDistributionVector(stepUp, 1.0));
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(stepDown, 1.0));
                     FORBID_CALL(
-                        generator,
+                        *generatorPointer,
                         updateDistributionVector(endOfRangeGeneratedNumber,
                                                  1.0));
                     instance.getNumber();
@@ -115,7 +138,7 @@ SCENARIO("Numbers::AdjacentSteps")
             THEN("The generator distribution is set to uniform (equal "
                  "probability")
             {
-                REQUIRE_CALL(generator, updateDistributionVector(1.0));
+                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
                 instance.reset();
             }
 
@@ -124,11 +147,12 @@ SCENARIO("Numbers::AdjacentSteps")
                 THEN("It calls the generator to get one and returns it with "
                      "the range offset added")
                 {
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(generatedNumber);
                     instance.reset();
                     auto returnedNumber = instance.getNumber();
-                    REQUIRE(returnedNumber == generatedNumber + range.offset);
+                    REQUIRE(returnedNumber ==
+                            generatedNumber + rangePointer->offset);
                 }
             }
         }
@@ -140,15 +164,20 @@ SCENARIO("Numbers::AdjacentSteps")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
+                int initialSelectionOutOfRange = 4;
+
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::AdjacentSteps(generator,
-                                                          range,
-                                                          (range.end + 1)),
+                    actlib::Numbers::Steps::AdjacentSteps(
+                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                        initialSelectionOutOfRange),
                     std::invalid_argument);
+
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::AdjacentSteps(generator,
-                                                          range,
-                                                          (range.end + 1)),
+                    actlib::Numbers::Steps::AdjacentSteps(
+                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                        initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }
@@ -158,45 +187,70 @@ SCENARIO("Numbers::AdjacentSteps")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
+                int initialSelectionOutOfRange = 0;
+
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::AdjacentSteps(generator,
-                                                          range,
-                                                          (range.start - 1)),
+                    actlib::Numbers::Steps::AdjacentSteps(
+                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                        initialSelectionOutOfRange),
                     std::invalid_argument);
+
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::AdjacentSteps(generator,
-                                                          range,
-                                                          (range.start - 1)),
+                    actlib::Numbers::Steps::AdjacentSteps(
+                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                        initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }
         }
     }
 
-    GIVEN("The class is instantiated WITH an initial number selection")
+    GIVEN("The class is instantiated with an initial number selection")
     {
-        int initialSelection = 2; // a mid-range selection (within range)
-        actlib::Numbers::Steps::AdjacentSteps instance(generator,
-                                                       range,
-                                                       initialSelection);
+        auto generator = std::make_unique<DiscreteGeneratorMock>();
+        auto generatorPointer = generator.get();
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto rangePointer = range.get();
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
-                REQUIRE_CALL(generator, setDistributionVector(range.size, 1.0));
-                actlib::Numbers::Steps::AdjacentSteps(generator,
-                                                      range,
-                                                      initialSelection);
+                REQUIRE_CALL(*generatorPointer,
+                             setDistributionVector(rangePointer->size, 1.0));
+                actlib::Numbers::Steps::AdjacentSteps(std::move(generator),
+                                                      std::move(range));
             }
         }
+    }
+
+    GIVEN("The class is instantiated with an initial number selection")
+    {
+        int initialSelection = 2; // a mid-range selection (within range)
+
+        auto generator = std::make_unique<DiscreteGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(double)));
+        ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
+        ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto rangePointer = range.get();
+
+        int generatedNumber = 1;
+        actlib::Numbers::Steps::AdjacentSteps instance(std::move(generator),
+                                                       std::move(range),
+                                                       initialSelection);
 
         WHEN("A number is first requested")
         {
             THEN("The given initial selection is returned and no number is "
                  "generated")
             {
-                FORBID_CALL(generator, getNumber());
+                FORBID_CALL(*generatorPointer, getNumber());
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
@@ -204,19 +258,20 @@ SCENARIO("Numbers::AdjacentSteps")
             AND_THEN("The stepwise distribution logic is run, having stripped "
                      "the range offset from the provided initial selection")
             {
-                REQUIRE_CALL(generator, updateDistributionVector(0.0));
-                REQUIRE_CALL(generator,
+                REQUIRE_CALL(*generatorPointer, updateDistributionVector(0.0));
+                REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(
-                                 (initialSelection - range.offset) - 1,
+                                 (initialSelection - rangePointer->offset) - 1,
                                  1.0));
-                REQUIRE_CALL(generator,
+                REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(
-                                 (initialSelection - range.offset) + 1,
+                                 (initialSelection - rangePointer->offset) + 1,
                                  1.0));
-                FORBID_CALL(
-                    generator,
-                    updateDistributionVector((initialSelection - range.offset),
-                                             1.0));
+                FORBID_CALL(*generatorPointer,
+                            updateDistributionVector(
+                                (initialSelection - rangePointer->offset),
+                                1.0));
+
                 instance.getNumber();
             }
         }
@@ -228,21 +283,25 @@ SCENARIO("Numbers::AdjacentSteps")
 
             THEN("It returns a generated number with the range offset added")
             {
-                REQUIRE_CALL(generator, getNumber())
+                REQUIRE_CALL(*generatorPointer, getNumber())
                     .TIMES(1)
                     .RETURN(generatedNumber);
 
                 auto secondCallResult = instance.getNumber(); // subsequent call
-                REQUIRE(secondCallResult == generatedNumber + range.offset);
+
+                REQUIRE(secondCallResult ==
+                        generatedNumber + rangePointer->offset);
             }
 
             AND_THEN("The stepwise distribution logic is run")
             {
-                REQUIRE_CALL(generator, getNumber())
+                REQUIRE_CALL(*generatorPointer, getNumber())
                     .TIMES(1)
                     .RETURN(generatedNumber);
-                REQUIRE_CALL(generator, updateDistributionVector(0.0)).TIMES(1);
-                REQUIRE_CALL(generator, updateDistributionVector(ANY(int), 1.0))
+                REQUIRE_CALL(*generatorPointer, updateDistributionVector(0.0))
+                    .TIMES(1);
+                REQUIRE_CALL(*generatorPointer,
+                             updateDistributionVector(ANY(int), 1.0))
                     .TIMES(1);
                 instance.getNumber(); // subsequent call
             }
@@ -253,7 +312,7 @@ SCENARIO("Numbers::AdjacentSteps")
             THEN("The generator distribution is set to uniform (equal "
                  "probability")
             {
-                REQUIRE_CALL(generator, updateDistributionVector(1.0));
+                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
                 instance.reset();
             }
 
@@ -262,9 +321,9 @@ SCENARIO("Numbers::AdjacentSteps")
                 THEN("It returns the initial number provided on instantiation "
                      "and does not call the generator")
                 {
-                    FORBID_CALL(generator, getNumber());
+                    FORBID_CALL(*generatorPointer, getNumber());
                     instance.getNumber(); // this call makes sure to switch the
-                                          // state of _haveRequestedFirstNumber
+                                          // state of m_haveRequestedFirstNumber
                                           // to true
 
                     instance.reset(); // this resets _haveRequestedFirstNumber

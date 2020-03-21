@@ -5,23 +5,27 @@
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
+#include <memory>
 
 SCENARIO("Numbers::Basic")
 {
     GIVEN("The class is instantiated")
     {
-        actlib::Numbers::Range range(1, 3);
-        UniformGeneratorMock generator;
-        ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
-        actlib::Numbers::Steps::Basic instance(generator, range);
-
         WHEN("The object is constructed")
         {
+            auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+            auto rangePointer = range.get();
+
+            auto generator = std::make_unique<UniformGeneratorMock>();
+            auto generatorPointer = generator.get();
+
             THEN("The generator distribution is set to the range start and end")
             {
-                REQUIRE_CALL(generator,
-                             setDistribution(range.start, range.end));
-                actlib::Numbers::Steps::Basic(generator, range);
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistribution(rangePointer->start, rangePointer->end));
+                actlib::Numbers::Steps::Basic(std::move(generator),
+                                              std::move(range));
             }
         }
 
@@ -29,9 +33,20 @@ SCENARIO("Numbers::Basic")
         {
             int generatedNumber = 2;
 
+            auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+            auto rangePointer = range.get();
+
+            auto generator = std::make_unique<UniformGeneratorMock>();
+            auto generatorPointer = generator.get();
+
+            ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+            actlib::Numbers::Steps::Basic instance(std::move(generator),
+                                                   std::move(range));
+
             THEN("It calls the generator to get a number and returns it")
             {
-                REQUIRE_CALL(generator, getNumber()).RETURN(generatedNumber);
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(generatedNumber);
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(generatedNumber == returnedNumber);
             }
