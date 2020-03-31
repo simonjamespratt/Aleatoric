@@ -1,6 +1,7 @@
 #include "GranularWalk.hpp"
 
 #include "Range.hpp"
+#include "UniformGenerator.hpp"
 #include "UniformGeneratorMock.hpp"
 
 #include <catch2/catch.hpp>
@@ -8,8 +9,8 @@
 
 SCENARIO("Numbers::GranularWalk")
 {
-    UniformGeneratorMock generator;
-    actlib::Numbers::Range range(10, 20);
+    int internalRangeMin = 0;
+    int internalRangeMax = 65000;
 
     GIVEN("The class is instantiated with an invalid deviation factor")
     {
@@ -18,16 +19,19 @@ SCENARIO("Numbers::GranularWalk")
             THEN("A standard invalid_argument exception is thrown")
             {
                 double invalidDeviation = -0.01;
+
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            invalidDeviation),
+                    actlib::Numbers::Granular::GranularWalk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                        invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            invalidDeviation),
+                    actlib::Numbers::Granular::GranularWalk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                        invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -39,15 +43,17 @@ SCENARIO("Numbers::GranularWalk")
             {
                 double invalidDeviation = 1.01;
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            invalidDeviation),
+                    actlib::Numbers::Granular::GranularWalk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                        invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            invalidDeviation),
+                    actlib::Numbers::Granular::GranularWalk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                        invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -56,37 +62,52 @@ SCENARIO("Numbers::GranularWalk")
 
     GIVEN("The class is instantiated without an initial number selection")
     {
-        ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
-
         double deviationFactor = 0.25;
-        int internalRangeMin = 0;
-        int internalRangeMax = 65000;
-        auto expectedMaxStep = deviationFactor * internalRangeMax;
-        int internalRangeMidValue = 32500;
 
-        actlib::Numbers::Granular::GranularWalk instance(generator,
-                                                         range,
-                                                         deviationFactor);
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
 
-        WHEN("The class is instantiated, in the constructor")
+        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto rangePointer = range.get();
+
+        WHEN("The object is constructed")
         {
             THEN("It sets the generator range to that of the internal range")
             {
                 REQUIRE_CALL(
-                    generator,
+                    *generatorPointer,
                     setDistribution(internalRangeMin, internalRangeMax));
 
-                actlib::Numbers::Granular::GranularWalk(generator,
-                                                        range,
+                actlib::Numbers::Granular::GranularWalk(std::move(generator),
+                                                        std::move(range),
                                                         deviationFactor);
             }
         }
+    }
+
+    GIVEN("The class is instantiated without an initial number selection")
+    {
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+
+        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto rangePointer = range.get();
+
+        double deviationFactor = 0.25;
+        auto expectedMaxStep = deviationFactor * internalRangeMax;
+        int internalRangeMidValue = 32500;
+
+        actlib::Numbers::Granular::GranularWalk instance(std::move(generator),
+                                                         std::move(range),
+                                                         deviationFactor);
 
         WHEN("A number is requested")
         {
             THEN("A random number from within the internal range is generated")
             {
-                REQUIRE_CALL(generator, getNumber())
+                REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(internalRangeMidValue);
                 instance.getNumber();
             }
@@ -94,7 +115,7 @@ SCENARIO("Numbers::GranularWalk")
             THEN("That generated number is normalised and returned, scaled to "
                  "the range provided by the calling client")
             {
-                REQUIRE_CALL(generator, getNumber())
+                REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(internalRangeMidValue);
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == 15.0); // ((20 - 10) / 2) + 10
@@ -121,10 +142,10 @@ SCENARIO("Numbers::GranularWalk")
                     // dF * internalRange - rounded if necessary
                     // so here, it should be 0.25 * 65000 = 16250
 
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(internalRangeMidValue);
                     REQUIRE_CALL(
-                        generator,
+                        *generatorPointer,
                         setDistribution(
                             (internalRangeMidValue - expectedMaxStep),
                             (internalRangeMidValue + expectedMaxStep)));
@@ -143,9 +164,9 @@ SCENARIO("Numbers::GranularWalk")
                     // The logic does not account for wrapping and maxStep range
                     // is curtailed if it hits either end of the main range
                     int startOfRangeNumber = internalRangeMin + 1;
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(startOfRangeNumber);
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer,
                                  setDistribution(
                                      internalRangeMin,
                                      (startOfRangeNumber + expectedMaxStep)));
@@ -164,10 +185,10 @@ SCENARIO("Numbers::GranularWalk")
                     // The logic does not account for wrapping and maxStep range
                     // is curtailed if it hits either end of the main range
                     int endOfRangeNumber = internalRangeMax - 1;
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(endOfRangeNumber);
                     REQUIRE_CALL(
-                        generator,
+                        *generatorPointer,
                         setDistribution((endOfRangeNumber - expectedMaxStep),
                                         internalRangeMax));
 
@@ -182,10 +203,22 @@ SCENARIO("Numbers::GranularWalk")
                      "to create the sub range")
                 {
                     double devFactorThatCausesRounding = 0.12345;
+
+                    auto roundingGenerator =
+                        std::make_unique<UniformGeneratorMock>();
+                    auto roundingGeneratorPointer = roundingGenerator.get();
+
+                    ALLOW_CALL(*roundingGeneratorPointer,
+                               setDistribution(ANY(int), ANY(int)));
+
+                    auto roundingRange =
+                        std::make_unique<actlib::Numbers::Range>(10, 20);
+                    auto roundingRangePointer = roundingRange.get();
+
                     actlib::Numbers::Granular::GranularWalk
                         instanceNeedingStepRounding(
-                            generator,
-                            range,
+                            std::move(roundingGenerator),
+                            std::move(roundingRange),
                             devFactorThatCausesRounding);
 
                     // With this set up, the scaling of the deviationFactor will
@@ -198,10 +231,10 @@ SCENARIO("Numbers::GranularWalk")
                     // (generatedNumber - 8024) and (generatedNumber + 8024)
 
                     int expectedMaxStepRounded = 8024;
-                    REQUIRE_CALL(generator, getNumber())
+                    REQUIRE_CALL(*roundingGeneratorPointer, getNumber())
                         .RETURN(internalRangeMidValue);
                     REQUIRE_CALL(
-                        generator,
+                        *roundingGeneratorPointer,
                         setDistribution(
                             (internalRangeMidValue - expectedMaxStepRounded),
                             (internalRangeMidValue + expectedMaxStepRounded)));
@@ -216,7 +249,7 @@ SCENARIO("Numbers::GranularWalk")
             THEN("The generator distribution is set to the full internal range")
             {
                 REQUIRE_CALL(
-                    generator,
+                    *generatorPointer,
                     setDistribution(internalRangeMin, internalRangeMax));
                 instance.reset();
             }
@@ -225,29 +258,44 @@ SCENARIO("Numbers::GranularWalk")
 
     GIVEN("The class is instantiated with an invalid initial number selection")
     {
-        ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
-
         WHEN("The value provided is greater than the range end provided by the "
              "calling client")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                auto initialSelection = range.end + 1;
+                int initialSelection = 21;
 
-                REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            0.25,
-                                                            initialSelection),
-                    std::invalid_argument);
+                {
+                    auto generator = std::make_unique<UniformGeneratorMock>();
+                    auto generatorPointer = generator.get();
+                    ALLOW_CALL(*generatorPointer,
+                               setDistribution(ANY(int), ANY(int)));
 
-                REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            0.25,
-                                                            initialSelection),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 10 to 20");
+                    REQUIRE_THROWS_AS(
+                        actlib::Numbers::Granular::GranularWalk(
+                            std::move(generator),
+                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            0.25,
+                            initialSelection),
+                        std::invalid_argument);
+                }
+
+                {
+                    auto generator = std::make_unique<UniformGeneratorMock>();
+                    auto generatorPointer = generator.get();
+                    ALLOW_CALL(*generatorPointer,
+                               setDistribution(ANY(int), ANY(int)));
+
+                    REQUIRE_THROWS_WITH(
+                        actlib::Numbers::Granular::GranularWalk(
+                            std::move(generator),
+                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            0.25,
+                            initialSelection),
+                        "The value passed as argument for "
+                        "initialSelection must be "
+                        "within the range of 10 to 20");
+                }
             }
         }
 
@@ -256,38 +304,59 @@ SCENARIO("Numbers::GranularWalk")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                auto initialSelection = range.start - 1;
+                int initialSelection = 9;
 
-                REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            0.25,
-                                                            initialSelection),
-                    std::invalid_argument);
+                {
+                    auto generator = std::make_unique<UniformGeneratorMock>();
+                    auto generatorPointer = generator.get();
+                    ALLOW_CALL(*generatorPointer,
+                               setDistribution(ANY(int), ANY(int)));
 
-                REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(generator,
-                                                            range,
-                                                            0.25,
-                                                            initialSelection),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 10 to 20");
+                    REQUIRE_THROWS_AS(
+                        actlib::Numbers::Granular::GranularWalk(
+                            std::move(generator),
+                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            0.25,
+                            initialSelection),
+                        std::invalid_argument);
+                }
+
+                {
+                    auto generator = std::make_unique<UniformGeneratorMock>();
+                    auto generatorPointer = generator.get();
+                    ALLOW_CALL(*generatorPointer,
+                               setDistribution(ANY(int), ANY(int)));
+
+                    REQUIRE_THROWS_WITH(
+                        actlib::Numbers::Granular::GranularWalk(
+                            std::move(generator),
+                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            0.25,
+                            initialSelection),
+                        "The value passed as argument for "
+                        "initialSelection must be "
+                        "within the range of 10 to 20");
+                }
             }
         }
     }
 
     GIVEN("The class is instantiated with a valid initial number selection")
     {
-        ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto rangePointer = range.get();
+
         double deviationFactor = 0.25;
         int initialSelection = 15; // halfway between range start and end
-        int internalRangeMin = 0;
-        int internalRangeMax = 65000;
         auto expectedMaxStep = deviationFactor * internalRangeMax;
         int internalRangeHalfwayValue = 32500;
 
-        actlib::Numbers::Granular::GranularWalk instance(generator,
-                                                         range,
+        actlib::Numbers::Granular::GranularWalk instance(std::move(generator),
+                                                         std::move(range),
                                                          deviationFactor,
                                                          initialSelection);
 
@@ -296,7 +365,7 @@ SCENARIO("Numbers::GranularWalk")
             THEN("It should not call the generator for a number, but return "
                  "the initial selection")
             {
-                FORBID_CALL(generator, getNumber());
+                FORBID_CALL(*generatorPointer, getNumber());
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
@@ -322,7 +391,7 @@ SCENARIO("Numbers::GranularWalk")
                     // (32500 - 16250) and (32500 + 16250)
 
                     REQUIRE_CALL(
-                        generator,
+                        *generatorPointer,
                         setDistribution(
                             (internalRangeHalfwayValue - expectedMaxStep),
                             (internalRangeHalfwayValue + expectedMaxStep)));
@@ -337,13 +406,26 @@ SCENARIO("Numbers::GranularWalk")
                      "range applied, but to a rounded version of the scaled "
                      "initial selection")
                 {
+                    auto roundingGenerator =
+                        std::make_unique<UniformGeneratorMock>();
+                    auto roundingGeneratorPointer = roundingGenerator.get();
+
+                    ALLOW_CALL(*roundingGeneratorPointer,
+                               setDistribution(ANY(int), ANY(int)));
+
+                    auto rangeRoundingRequired =
+                        std::make_unique<actlib::Numbers::Range>(0, 9);
+                    auto rangeRoundingRequiredPointer =
+                        rangeRoundingRequired.get();
+
                     int initSelection = 3;
-                    actlib::Numbers::Range rangeRoundingRequired(0, 9);
+
                     actlib::Numbers::Granular::GranularWalk
-                        instanceWithRoundingRequired(generator,
-                                                     rangeRoundingRequired,
-                                                     deviationFactor,
-                                                     initSelection);
+                        instanceWithRoundingRequired(
+                            std::move(roundingGenerator),
+                            std::move(rangeRoundingRequired),
+                            deviationFactor,
+                            initSelection);
 
                     // NB: Rounding here will be required:
 
@@ -360,7 +442,7 @@ SCENARIO("Numbers::GranularWalk")
                     int expectedScaledInitialSelection = 21667;
 
                     REQUIRE_CALL(
-                        generator,
+                        *roundingGeneratorPointer,
                         setDistribution(
                             (expectedScaledInitialSelection - expectedMaxStep),
                             (expectedScaledInitialSelection +
@@ -377,14 +459,14 @@ SCENARIO("Numbers::GranularWalk")
 
             THEN("It does call the generator for a number")
             {
-                REQUIRE_CALL(generator, getNumber()).TIMES(1).RETURN(1);
+                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
                 instance.getNumber();
             }
 
             AND_THEN("It normalises the generated number and returns it scaled "
                      "to the range provided by the calling client")
             {
-                REQUIRE_CALL(generator, getNumber())
+                REQUIRE_CALL(*generatorPointer, getNumber())
                     .TIMES(1)
                     .RETURN(internalRangeHalfwayValue);
                 auto returnedNumber = instance.getNumber();
@@ -394,8 +476,9 @@ SCENARIO("Numbers::GranularWalk")
             AND_THEN("It sets the generator distribution in readiness for the "
                      "next call to get a number")
             {
-                REQUIRE_CALL(generator, getNumber()).TIMES(1).RETURN(1);
-                REQUIRE_CALL(generator, setDistribution(ANY(int), ANY(int)));
+                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(ANY(int), ANY(int)));
                 instance.getNumber();
             }
         }
@@ -410,7 +493,7 @@ SCENARIO("Numbers::GranularWalk")
                      "state having been reinstated during the reset")
                 {
                     instance.reset();
-                    FORBID_CALL(generator, getNumber());
+                    FORBID_CALL(*generatorPointer, getNumber());
                     auto returnedNumber = instance.getNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }

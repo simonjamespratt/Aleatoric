@@ -85,8 +85,8 @@ class GranularWalk : public Protocol {
      * maximum step and sub-ranges, see above. Note that the value provided must
      * be between 0.0 and 1.0 (inclusive).
      */
-    GranularWalk(IUniformGenerator &generator,
-                 Range &range,
+    GranularWalk(std::unique_ptr<IUniformGenerator> generator,
+                 std::unique_ptr<Range> range,
                  double deviationFactor);
 
     /*!
@@ -97,8 +97,8 @@ class GranularWalk : public Protocol {
      * range from thereon. Note that the number supplied must be within the
      * limits of the range supplied.
      */
-    GranularWalk(IUniformGenerator &generator,
-                 Range &range,
+    GranularWalk(std::unique_ptr<IUniformGenerator> generator,
+                 std::unique_ptr<Range> range,
                  double deviationFactor,
                  int initialSelection);
 
@@ -130,8 +130,8 @@ class GranularWalk : public Protocol {
         int end;
         int maxStep;
     };
-    Range &m_externalRange;
-    IUniformGenerator &m_generator;
+    std::unique_ptr<Range> m_externalRange;
+    std::unique_ptr<IUniformGenerator> m_generator;
     InternalRange m_internalRange;
     double scaleToRange(double normalizedValue, int rangeMin, int rangeMax);
     double normalize(int value, int rangeMin, int rangeMax);

@@ -5,6 +5,8 @@
 #include "ProtocolSteps.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace actlib { namespace Numbers { namespace Steps {
 /*!
     @brief A protocol for producing a basic random number
@@ -27,7 +29,8 @@ class Basic : public Protocol {
 
         @param range The range within which to produce numbers.
     */
-    Basic(IUniformGenerator &generator, Range &range);
+    Basic(std::unique_ptr<IUniformGenerator> generator,
+          std::unique_ptr<Range> range);
     ~Basic();
     /*! @brief returns a random number */
     int getNumber() override;
@@ -35,8 +38,8 @@ class Basic : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IUniformGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IUniformGenerator> m_generator;
 };
 }}} // namespace actlib::Numbers::Steps
 

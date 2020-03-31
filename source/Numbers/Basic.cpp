@@ -1,10 +1,11 @@
 #include "Basic.hpp"
 
 namespace actlib { namespace Numbers { namespace Steps {
-Basic::Basic(IUniformGenerator &generator, Range &range)
-: m_range(range), m_generator(generator)
+Basic::Basic(std::unique_ptr<IUniformGenerator> generator,
+             std::unique_ptr<Range> range)
+: m_range(std::move(range)), m_generator(std::move(generator))
 {
-    m_generator.setDistribution(m_range.start, m_range.end);
+    m_generator->setDistribution(m_range->start, m_range->end);
 }
 
 Basic::~Basic()
@@ -12,7 +13,7 @@ Basic::~Basic()
 
 int Basic::getNumber()
 {
-    return m_generator.getNumber();
+    return m_generator->getNumber();
 }
 
 void Basic::reset()

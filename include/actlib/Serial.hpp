@@ -33,7 +33,8 @@ class Serial : public Protocol {
      *
      * @param range The range within which to produce numbers.
      */
-    Serial(IDiscreteGenerator &generator, Range &range);
+    Serial(std::unique_ptr<IDiscreteGenerator> generator,
+           std::unique_ptr<Range> range);
 
     ~Serial();
 
@@ -54,8 +55,8 @@ class Serial : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IDiscreteGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IDiscreteGenerator> m_generator;
     bool seriesIsComplete();
 };
 }}} // namespace actlib::Numbers::Steps

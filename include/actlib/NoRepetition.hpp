@@ -5,6 +5,8 @@
 #include "ProtocolSteps.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace actlib { namespace Numbers { namespace Steps {
 
 /*! @brief A protocol for producing random numbers
@@ -33,7 +35,8 @@ class NoRepetition : public Protocol {
      *
      * @param range The range within which to produce numbers.
      */
-    NoRepetition(IDiscreteGenerator &generator, Range &range);
+    NoRepetition(std::unique_ptr<IDiscreteGenerator> generator,
+                 std::unique_ptr<Range> range);
 
     ~NoRepetition();
 
@@ -55,8 +58,8 @@ class NoRepetition : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IDiscreteGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IDiscreteGenerator> m_generator;
 };
 }}} // namespace actlib::Numbers::Steps
 

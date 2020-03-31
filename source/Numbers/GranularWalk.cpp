@@ -7,11 +7,11 @@
 #include <string>
 
 namespace actlib { namespace Numbers { namespace Granular {
-GranularWalk::GranularWalk(IUniformGenerator &generator,
-                           Range &range,
+GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
+                           std::unique_ptr<Range> range,
                            double deviationFactor)
-: m_externalRange(range),
-  m_generator(generator),
+: m_externalRange(std::move(range)),
+  m_generator(std::move(generator)),
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
@@ -27,20 +27,22 @@ GranularWalk::GranularWalk(IUniformGenerator &generator,
                                   m_internalRange.end);
     m_internalRange.maxStep = static_cast<int>(round(maxStep));
 
-    m_generator.setDistribution(m_internalRange.start, m_internalRange.end);
+    m_generator->setDistribution(m_internalRange.start, m_internalRange.end);
 }
 
-GranularWalk::GranularWalk(IUniformGenerator &generator,
-                           Range &range,
+GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
+                           std::unique_ptr<Range> range,
                            double deviationFactor,
                            int initialSelection)
-: GranularWalk(generator, range, deviationFactor)
+: GranularWalk(std::move(generator), std::move(range), deviationFactor)
 {
-    if(initialSelection < range.start || initialSelection > range.end) {
+    if(initialSelection < m_externalRange->start ||
+       initialSelection > m_externalRange->end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
             "within the range of " +
-            std::to_string(range.start) + " to " + std::to_string(range.end));
+            std::to_string(m_externalRange->start) + " to " +
+            std::to_string(m_externalRange->end));
     }
 
     m_initialSelection = initialSelection;
@@ -56,8 +58,8 @@ double GranularWalk::getNumber()
         m_haveRequestedFirstNumber = true;
 
         auto normalized = normalize(m_initialSelection,
-                                    m_externalRange.start,
-                                    m_externalRange.end);
+                                    m_externalRange->start,
+                                    m_externalRange->end);
 
         auto scaled = scaleToRange(normalized,
                                    m_internalRange.start,
@@ -68,16 +70,18 @@ double GranularWalk::getNumber()
         return static_cast<double>(m_initialSelection);
     }
 
-    auto selectedNumber = m_generator.getNumber();
+    auto selectedNumber = m_generator->getNumber();
     setForNextStep(selectedNumber);
     auto normalized =
         normalize(selectedNumber, m_internalRange.start, m_internalRange.end);
-    return scaleToRange(normalized, m_externalRange.start, m_externalRange.end);
+    return scaleToRange(normalized,
+                        m_externalRange->start,
+                        m_externalRange->end);
 }
 
 void GranularWalk::reset()
 {
-    m_generator.setDistribution(m_internalRange.start, m_internalRange.end);
+    m_generator->setDistribution(m_internalRange.start, m_internalRange.end);
     m_haveRequestedFirstNumber = false;
 }
 
@@ -101,8 +105,8 @@ void GranularWalk::setForNextStep(int lastSelectedNumber)
                                               m_internalRange.start,
                                               m_internalRange.end);
 
-    m_generator.setDistribution(std::get<0>(newSubRange),
-                                std::get<1>(newSubRange));
+    m_generator->setDistribution(std::get<0>(newSubRange),
+                                 std::get<1>(newSubRange));
 }
 
 }}} // namespace actlib::Numbers::Granular

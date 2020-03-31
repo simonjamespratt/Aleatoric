@@ -7,11 +7,11 @@
 #include <string>
 
 namespace actlib { namespace Numbers { namespace Steps {
-Periodic::Periodic(IDiscreteGenerator &generator,
-                   Range &range,
+Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
+                   std::unique_ptr<Range> range,
                    double chanceOfRepetition)
-: m_range(range),
-  m_generator(generator),
+: m_range(std::move(range)),
+  m_generator(std::move(generator)),
   m_periodicity(chanceOfRepetition),
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
@@ -22,25 +22,26 @@ Periodic::Periodic(IDiscreteGenerator &generator,
             "within the range of 0.0 - 1.0");
     }
 
-    m_generator.setDistributionVector(m_range.size, 1.0);
+    m_generator->setDistributionVector(m_range->size, 1.0);
 
     // calculate the remainder allocation
     double vectorSize =
-        static_cast<double>(m_generator.getDistributionVector().size());
+        static_cast<double>(m_generator->getDistributionVector().size());
     m_remainderAllocation = (1.0 - m_periodicity) / (vectorSize - 1.0);
 }
 
-Periodic::Periodic(IDiscreteGenerator &generator,
-                   Range &range,
+Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
+                   std::unique_ptr<Range> range,
                    double chanceOfRepetition,
                    int initialSelection)
-: Periodic(generator, range, chanceOfRepetition)
+: Periodic(std::move(generator), std::move(range), chanceOfRepetition)
 {
-    if(initialSelection < range.start || initialSelection > range.end) {
+    if(initialSelection < m_range->start || initialSelection > m_range->end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
             "within the range of " +
-            std::to_string(range.start) + " to " + std::to_string(range.end));
+            std::to_string(m_range->start) + " to " +
+            std::to_string(m_range->end));
     }
 
     m_initialSelection = initialSelection;
@@ -53,19 +54,19 @@ Periodic::~Periodic()
 int Periodic::getNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        setPeriodicDistribution(m_initialSelection - m_range.offset);
+        setPeriodicDistribution(m_initialSelection - m_range->offset);
         m_haveRequestedFirstNumber = true;
         return m_initialSelection;
     }
 
-    auto generatedNumber = m_generator.getNumber();
+    auto generatedNumber = m_generator->getNumber();
     setPeriodicDistribution(generatedNumber);
-    return generatedNumber + m_range.offset;
+    return generatedNumber + m_range->offset;
 }
 
 void Periodic::reset()
 {
-    m_generator.updateDistributionVector(1.0);
+    m_generator->updateDistributionVector(1.0);
     m_haveRequestedFirstNumber = false;
 }
 
@@ -76,7 +77,7 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
     // must have the value of the periodicity (chanceOfRepetition).
     // The remainder of 1.0 - periodicity is shared equally amongst
     // the remaining vector indices.
-    auto distributionVector = m_generator.getDistributionVector();
+    auto distributionVector = m_generator->getDistributionVector();
 
     for(int i = 0; i < distributionVector.size(); i++) {
         auto newVectorValue =
@@ -93,6 +94,6 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
     // not exactly 1.0. At time of writing I don't know why that is!
     assert(round(vectorValuesTotal) == 1.0);
 
-    m_generator.setDistributionVector(distributionVector);
+    m_generator->setDistributionVector(distributionVector);
 }
 }}} // namespace actlib::Numbers::Steps

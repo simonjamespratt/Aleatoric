@@ -5,6 +5,8 @@
 #include "ProtocolSteps.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace actlib { namespace Numbers { namespace Steps {
 
 /*! @brief A protocol for producing random numbers
@@ -64,8 +66,8 @@ class Periodic : public Protocol {
      * number being selected again upon another call to getNumber(). See
      * detailed description for more details.
      */
-    Periodic(IDiscreteGenerator &generator,
-             Range &range,
+    Periodic(std::unique_ptr<IDiscreteGenerator> generator,
+             std::unique_ptr<Range> range,
              double chanceOfRepetition);
 
     /*! @overload
@@ -77,8 +79,8 @@ class Periodic : public Protocol {
      * getNumber() and will have the periodicity bias applied to it for the next
      * call to getNumber()
      */
-    Periodic(IDiscreteGenerator &generator,
-             Range &range,
+    Periodic(std::unique_ptr<IDiscreteGenerator> generator,
+             std::unique_ptr<Range> range,
              double chanceOfRepetition,
              int initialSelection);
 
@@ -104,8 +106,8 @@ class Periodic : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IDiscreteGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IDiscreteGenerator> m_generator;
     double m_periodicity;
     double m_remainderAllocation;
     void setPeriodicDistribution(int selectedIndex);

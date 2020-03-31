@@ -1,6 +1,7 @@
 #include "Walk.hpp"
 
 #include "Range.hpp"
+#include "UniformGenerator.hpp"
 #include "UniformGeneratorMock.hpp"
 
 #include <catch2/catch.hpp>
@@ -8,27 +9,26 @@
 
 SCENARIO("Numbers::Walk")
 {
-    UniformGeneratorMock generator;
-    ALLOW_CALL(generator, setDistribution(ANY(int), ANY(int)));
-
-    actlib::Numbers::Range range(1, 10);
-
     GIVEN("The class is instantiated with an invalid max step")
     {
         WHEN("The value provided is greater than the range size")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                auto invalidMaxStep = range.size + 1;
-                REQUIRE_THROWS_AS(actlib::Numbers::Steps::Walk(generator,
-                                                               range,
-                                                               invalidMaxStep),
-                                  std::invalid_argument);
+                int invalidMaxStep = 11;
+
+                REQUIRE_THROWS_AS(
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        invalidMaxStep),
+                    std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(generator,
-                                                 range,
-                                                 invalidMaxStep),
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        invalidMaxStep),
                     "The value passed as argument for maxStep must be less "
                     "than or equal to 10");
             }
@@ -38,17 +38,41 @@ SCENARIO("Numbers::Walk")
     GIVEN("The class is instantiated without an initial number selection")
     {
         int maxStep = 2;
-        actlib::Numbers::Steps::Walk instance(generator, range, maxStep);
+
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto rangePointer = range.get();
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range start and end")
             {
-                REQUIRE_CALL(generator,
-                             setDistribution(range.start, range.end));
-                actlib::Numbers::Steps::Walk(generator, range, maxStep);
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistribution(rangePointer->start, rangePointer->end));
+                actlib::Numbers::Steps::Walk(std::move(generator),
+                                             std::move(range),
+                                             maxStep);
             }
         }
+    }
+
+    GIVEN("The class is instantiated without an initial number selection")
+    {
+        int maxStep = 2;
+
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto rangePointer = range.get();
+
+        actlib::Numbers::Steps::Walk instance(std::move(generator),
+                                              std::move(range),
+                                              maxStep);
 
         WHEN("A number is requested")
         {
@@ -56,7 +80,7 @@ SCENARIO("Numbers::Walk")
             {
                 // no need for adding of offset as UniformDistribution takes the
                 // range.start and range.end as its range
-                REQUIRE_CALL(generator, getNumber()).RETURN(1);
+                REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(1);
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == 1);
             }
@@ -75,8 +99,8 @@ SCENARIO("Numbers::Walk")
                     // rangeStart = lastSelected - maxStep,
                     // rangeEnd = lastSelected + maxStep
 
-                    REQUIRE_CALL(generator, getNumber()).RETURN(4);
-                    REQUIRE_CALL(generator, setDistribution(2, 6));
+                    REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(4);
+                    REQUIRE_CALL(*generatorPointer, setDistribution(2, 6));
                     instance.getNumber();
                 }
             }
@@ -90,8 +114,8 @@ SCENARIO("Numbers::Walk")
                 {
                     // The logic does not account for wrapping and maxStep range
                     // is curtailed if it hits either end of the main range
-                    REQUIRE_CALL(generator, getNumber()).RETURN(2);
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(2);
+                    REQUIRE_CALL(*generatorPointer,
                                  setDistribution(1, 4)); // instead of (0, 4)
                     instance.getNumber();
                 }
@@ -106,8 +130,8 @@ SCENARIO("Numbers::Walk")
                 {
                     // The logic does not account for wrapping and maxStep range
                     // is curtailed if it hits either end of the main range
-                    REQUIRE_CALL(generator, getNumber()).RETURN(9);
-                    REQUIRE_CALL(generator,
+                    REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(9);
+                    REQUIRE_CALL(*generatorPointer,
                                  setDistribution(7, 10)); // instead of (7, 11)
                     instance.getNumber();
                 }
@@ -118,8 +142,9 @@ SCENARIO("Numbers::Walk")
         {
             THEN("The generator distribution is set to the full range")
             {
-                REQUIRE_CALL(generator,
-                             setDistribution(range.start, range.end));
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistribution(rangePointer->start, rangePointer->end));
                 instance.reset();
             }
         }
@@ -133,20 +158,22 @@ SCENARIO("Numbers::Walk")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                auto initialSelection = range.end + 1;
+                auto initialSelection = 11;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Walk(generator,
-                                                 range,
-                                                 maxStep,
-                                                 initialSelection),
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        maxStep,
+                        initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(generator,
-                                                 range,
-                                                 maxStep,
-                                                 initialSelection),
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        maxStep,
+                        initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -156,20 +183,22 @@ SCENARIO("Numbers::Walk")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                auto initialSelection = range.start - 1;
+                auto initialSelection = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Walk(generator,
-                                                 range,
-                                                 maxStep,
-                                                 initialSelection),
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        maxStep,
+                        initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(generator,
-                                                 range,
-                                                 maxStep,
-                                                 initialSelection),
+                    actlib::Numbers::Steps::Walk(
+                        std::make_unique<actlib::Numbers::UniformGenerator>(),
+                        std::make_unique<actlib::Numbers::Range>(1, 10),
+                        maxStep,
+                        initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -180,30 +209,53 @@ SCENARIO("Numbers::Walk")
     {
         int maxStep = 2;
         int initialSelection = 4;
-        actlib::Numbers::Steps::Walk instance(generator,
-                                              range,
-                                              maxStep,
-                                              initialSelection);
+
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto rangePointer = range.get();
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range start and end")
             {
-                REQUIRE_CALL(generator,
-                             setDistribution(range.start, range.end));
-                actlib::Numbers::Steps::Walk(generator,
-                                             range,
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistribution(rangePointer->start, rangePointer->end));
+
+                actlib::Numbers::Steps::Walk(std::move(generator),
+                                             std::move(range),
                                              maxStep,
                                              initialSelection);
             }
         }
+    }
+
+    GIVEN("The class is instantiated with a valid initial number selection")
+    {
+        int maxStep = 2;
+        int initialSelection = 4;
+
+        auto generator = std::make_unique<UniformGeneratorMock>();
+        auto generatorPointer = generator.get();
+        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
+
+        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto rangePointer = range.get();
+
+        actlib::Numbers::Steps::Walk instance(std::move(generator),
+                                              std::move(range),
+                                              maxStep,
+                                              initialSelection);
 
         WHEN("The first number is requested")
         {
             THEN("It should not call the generator for a number but return the "
                  "initial selection")
             {
-                FORBID_CALL(generator, getNumber());
+                FORBID_CALL(*generatorPointer, getNumber());
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
@@ -211,7 +263,8 @@ SCENARIO("Numbers::Walk")
             AND_THEN("Sets the the generator distribution in readiness for "
                      "next call to get a number")
             {
-                REQUIRE_CALL(generator, setDistribution(ANY(int), ANY(int)));
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(ANY(int), ANY(int)));
                 instance.getNumber();
             }
         }
@@ -222,7 +275,7 @@ SCENARIO("Numbers::Walk")
 
             THEN("It does call the generator for a number and return it")
             {
-                REQUIRE_CALL(generator, getNumber()).TIMES(1).RETURN(1);
+                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
                 auto returnedNumber = instance.getNumber();
                 REQUIRE(returnedNumber == 1);
             }
@@ -230,8 +283,9 @@ SCENARIO("Numbers::Walk")
             AND_THEN("Sets the the generator distribution in readiness for "
                      "next call to get a number")
             {
-                REQUIRE_CALL(generator, getNumber()).TIMES(1).RETURN(1);
-                REQUIRE_CALL(generator, setDistribution(ANY(int), ANY(int)));
+                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(ANY(int), ANY(int)));
                 instance.getNumber();
             }
         }
@@ -246,7 +300,7 @@ SCENARIO("Numbers::Walk")
                      "state having been reinstated during the reset")
                 {
                     instance.reset();
-                    FORBID_CALL(generator, getNumber());
+                    FORBID_CALL(*generatorPointer, getNumber());
                     auto returnedNumber = instance.getNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }

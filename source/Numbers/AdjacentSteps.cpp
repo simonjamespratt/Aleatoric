@@ -11,24 +11,26 @@
 // is though!
 
 namespace actlib { namespace Numbers { namespace Steps {
-AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator, Range &range)
-: m_range(range), m_generator(generator)
+AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
+                             std::unique_ptr<Range> range)
+: m_generator(std::move(generator)), m_range(std::move(range))
 {
-    m_generator.setDistributionVector(m_range.size, 1.0);
+    m_generator->setDistributionVector(m_range->size, 1.0);
     m_haveInitialSelection = false;
     m_haveRequestedFirstNumber = false;
 }
 
-AdjacentSteps::AdjacentSteps(IDiscreteGenerator &generator,
-                             Range &range,
+AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
+                             std::unique_ptr<Range> range,
                              int initialSelection)
-: AdjacentSteps(generator, range)
+: AdjacentSteps(std::move(generator), std::move(range))
 {
-    if(initialSelection < range.start || initialSelection > range.end) {
+    if(initialSelection < m_range->start || initialSelection > m_range->end) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
             "within the range of " +
-            std::to_string(range.start) + " to " + std::to_string(range.end));
+            std::to_string(m_range->start) + " to " +
+            std::to_string(m_range->end));
     }
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -42,7 +44,7 @@ int AdjacentSteps::getNumber()
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         // step configuring in preparation for next call
         prepareStepBasedDistribution(m_initialSelection,
-                                     m_initialSelection - m_range.offset);
+                                     m_initialSelection - m_range->offset);
 
         // this only needs to be in here for now as it is only used in the above
         // if statement
@@ -51,8 +53,8 @@ int AdjacentSteps::getNumber()
         return m_initialSelection;
     }
 
-    auto generatedNumber = m_generator.getNumber();
-    auto numberPlacedWithinRange = generatedNumber + m_range.offset;
+    auto generatedNumber = m_generator->getNumber();
+    auto numberPlacedWithinRange = generatedNumber + m_range->offset;
 
     // step configuring in preparation for next call
     prepareStepBasedDistribution(numberPlacedWithinRange, generatedNumber);
@@ -62,23 +64,23 @@ int AdjacentSteps::getNumber()
 
 void AdjacentSteps::reset()
 {
-    m_generator.updateDistributionVector(1.0);
+    m_generator->updateDistributionVector(1.0);
     m_haveRequestedFirstNumber = false;
 }
 
 void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
 {
-    m_generator.updateDistributionVector(0.0);
+    m_generator->updateDistributionVector(0.0);
 
-    if(number == m_range.start) {
-        m_generator.updateDistributionVector(vectorIndex + 1, 1.0);
+    if(number == m_range->start) {
+        m_generator->updateDistributionVector(vectorIndex + 1, 1.0);
 
-    } else if(number == m_range.end) {
-        m_generator.updateDistributionVector(vectorIndex - 1, 1.0);
+    } else if(number == m_range->end) {
+        m_generator->updateDistributionVector(vectorIndex - 1, 1.0);
 
     } else {
-        m_generator.updateDistributionVector(vectorIndex + 1, 1.0);
-        m_generator.updateDistributionVector(vectorIndex - 1, 1.0);
+        m_generator->updateDistributionVector(vectorIndex + 1, 1.0);
+        m_generator->updateDistributionVector(vectorIndex - 1, 1.0);
     }
 }
 }}} // namespace actlib::Numbers::Steps

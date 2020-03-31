@@ -49,7 +49,8 @@ class AdjacentSteps : public Protocol {
      *
      * @param range The range within which to producde numbers.
      */
-    AdjacentSteps(IDiscreteGenerator &generator, Range &range);
+    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
+                  std::unique_ptr<Range> range);
 
     /*! @overload
      *
@@ -60,8 +61,8 @@ class AdjacentSteps : public Protocol {
      * getNumber() and will be the starting point for the range traversal from
      * thereon
      */
-    AdjacentSteps(IDiscreteGenerator &generator,
-                  Range &range,
+    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
+                  std::unique_ptr<Range> range,
                   int initialSelection);
 
     ~AdjacentSteps();
@@ -86,8 +87,8 @@ class AdjacentSteps : public Protocol {
     void reset() override;
 
   private:
-    Range &m_range;
-    IDiscreteGenerator &m_generator;
+    std::unique_ptr<Range> m_range;
+    std::unique_ptr<IDiscreteGenerator> m_generator;
     void prepareStepBasedDistribution(int numberPlacedWithinRange,
                                       int generatedNumber);
     int m_initialSelection;
