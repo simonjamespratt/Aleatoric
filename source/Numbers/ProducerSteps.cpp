@@ -13,6 +13,17 @@ int Producer::getNumber()
     return m_protocol->getNumber();
 }
 
+std::vector<int> Producer::getCollection(int size)
+{
+    std::vector<int> collection(size);
+
+    for(auto &&it : collection) {
+        it = m_protocol->getNumber();
+    }
+
+    return collection;
+}
+
 void Producer::reset()
 {
     m_protocol->reset();
