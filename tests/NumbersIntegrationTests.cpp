@@ -29,11 +29,7 @@ SCENARIO("Numbers: Integration using Basic")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("All the numbers of the sample should fall within the "
                  "spacified range")
@@ -68,11 +64,7 @@ SCENARIO("Numbers: Integration using Serial")
 
         WHEN("A full series sample set has been gathered")
         {
-            std::array<int, 10> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(10);
 
             THEN("All numbers of the sample should fall within the specified "
                  "range")
@@ -110,24 +102,16 @@ SCENARIO("Numbers: Integration using Serial")
             }
         }
 
-        WHEN("An partial series sample set is gathered")
+        WHEN("A partial series sample set is gathered")
         {
-            std::array<int, 3> partialSample;
-
-            for(auto &&i : partialSample) {
-                i = instance.getNumber();
-            }
+            auto partialSample = instance.getCollection(3);
 
             AND_WHEN("A reset is made followed by the gathering of a full "
                      "series sample set")
             {
                 instance.reset();
 
-                std::array<int, 10> fullSample;
-
-                for(auto &&i : fullSample) {
-                    i = instance.getNumber();
-                }
+                auto fullSample = instance.getCollection(10);
 
                 THEN("The full post-reset sample should include every number "
                      "from the range and only once")
@@ -171,11 +155,7 @@ SCENARIO("Numbers: Integration using NoRepetition")
     {
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("All numbers of the sample should fall within the specified "
                  "range")
@@ -218,11 +198,7 @@ SCENARIO("Numbers: Integration using Periodic")
 
             WHEN("A sample has been gathered")
             {
-                std::array<int, 1000> sample;
-
-                for(auto &&i : sample) {
-                    i = instance.getNumber();
-                }
+                auto sample = instance.getCollection(1000);
 
                 THEN("All numbers of the sample should fall within the "
                      "specified range")
@@ -252,11 +228,7 @@ SCENARIO("Numbers: Integration using Periodic")
 
             WHEN("A sample has been gathered")
             {
-                std::array<int, 1000> sample;
-
-                for(auto &&i : sample) {
-                    i = instance.getNumber();
-                }
+                auto sample = instance.getCollection(1000);
 
                 THEN("No direct repetition of numbers should occur")
                 {
@@ -287,11 +259,7 @@ SCENARIO("Numbers: Integration using Periodic")
 
             WHEN("A sample has been gathered")
             {
-                std::array<int, 1000> sample;
-
-                for(auto &&i : sample) {
-                    i = instance.getNumber();
-                }
+                auto sample = instance.getCollection(1000);
 
                 THEN("Only one number should appear within the sample")
                 {
@@ -315,11 +283,7 @@ SCENARIO("Numbers: Integration using Periodic")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("The first number produced should be the initial selection")
             {
@@ -369,11 +333,7 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("All numbers of the sample should fall within the specified "
                  "range")
@@ -412,11 +372,7 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("The first number produced should be the initial selection")
             {
@@ -483,11 +439,7 @@ SCENARIO("Numbers: Integration using Walk")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("All numbers of the sample should fall within the specified "
                  "range")
@@ -526,11 +478,7 @@ SCENARIO("Numbers: Integration using Walk")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("The first number produced should be the initial selection")
             {
@@ -599,11 +547,7 @@ SCENARIO("Numbers: Integration using GranularWalk")
 
         WHEN("A sample has been gathered")
         {
-            std::array<double, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("All numbers of the sample should fall within the specified "
                  "range")
@@ -645,11 +589,7 @@ SCENARIO("Numbers: Integration using GranularWalk")
 
         WHEN("A sample has been gathered")
         {
-            std::array<int, 1000> sample;
-
-            for(auto &&i : sample) {
-                i = instance.getNumber();
-            }
+            auto sample = instance.getCollection(1000);
 
             THEN("The first number produced should be the initial selection")
             {

@@ -32,6 +32,34 @@ SCENARIO("Numbers::Steps::Producer")
             }
         }
 
+        WHEN("A collection of numbers is requested")
+        {
+            THEN("It should call the protocol for a number enough times to "
+                 "fill the requested collection size")
+            {
+                REQUIRE_CALL(*protocolPointer, getNumber())
+                    .TIMES(100)
+                    .RETURN(1);
+
+                instance.getCollection(100);
+            }
+
+            THEN("It should return a collection of the specified size "
+                 "containing the results of calling the protocol for a number")
+            {
+                int acquiredNumber = 1;
+                ALLOW_CALL(*protocolPointer, getNumber())
+                    .RETURN(acquiredNumber);
+
+                auto collection = instance.getCollection(100);
+                REQUIRE(collection.size() == 100);
+
+                for(auto &&it : collection) {
+                    REQUIRE(it == acquiredNumber);
+                }
+            }
+        }
+
         WHEN("A reset is made")
         {
             THEN("It should call the given protocol reset method")

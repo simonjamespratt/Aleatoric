@@ -4,6 +4,7 @@
 #include "ProtocolGranular.hpp"
 
 #include <memory>
+#include <vector>
 
 namespace actlib { namespace Numbers { namespace Granular {
 
@@ -30,6 +31,8 @@ class Producer {
     /*! @brief Returns a random number created according to the selected
      * protocol */
     double getNumber();
+
+    std::vector<double> getCollection(int size);
 
     /*!
      * @brief Resets the protocol being used

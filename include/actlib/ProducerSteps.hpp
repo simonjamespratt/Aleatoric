@@ -4,6 +4,7 @@
 #include "ProtocolSteps.hpp"
 
 #include <memory>
+#include <vector>
 
 namespace actlib { namespace Numbers { namespace Steps {
 
@@ -35,6 +36,8 @@ class Producer {
     /*! @brief Returns a random number created according to the selected
      * protocol */
     int getNumber();
+
+    std::vector<int> getCollection(int size);
 
     /*!
      * @brief Resets the protocol being used
