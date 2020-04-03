@@ -27,6 +27,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/UniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Numbers.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Cycle.hpp
     Utilities/Utilities.hpp
 )
 
@@ -46,6 +47,7 @@ add_library(
     Numbers/UniformGenerator.cpp
     Numbers/DiscreteGenerator.cpp
     Numbers/Numbers.cpp
+    Numbers/Cycle.cpp
     ${HEADER_LIST}
 )
 
