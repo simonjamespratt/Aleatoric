@@ -28,6 +28,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Numbers.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Cycle.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Precision.hpp
     Utilities/Utilities.hpp
 )
 
@@ -48,6 +49,7 @@ add_library(
     Numbers/DiscreteGenerator.cpp
     Numbers/Numbers.cpp
     Numbers/Cycle.cpp
+    Numbers/Precision.cpp
     ${HEADER_LIST}
 )
 
