@@ -32,6 +32,7 @@ add_executable(Tests
     ProducerGranularTest.cpp
     NumbersTest.cpp
     NumbersIntegrationTests.cpp
+    CycleTest.cpp
 )
 
 target_link_libraries(Tests
