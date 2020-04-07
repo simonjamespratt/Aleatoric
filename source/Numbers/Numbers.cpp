@@ -2,10 +2,12 @@
 
 #include "AdjacentSteps.hpp"
 #include "Basic.hpp"
+#include "Cycle.hpp"
 #include "DiscreteGenerator.hpp"
 #include "GranularWalk.hpp"
 #include "NoRepetition.hpp"
 #include "Periodic.hpp"
+#include "Precision.hpp"
 #include "Range.hpp"
 #include "Serial.hpp"
 #include "UniformGenerator.hpp"
@@ -40,6 +42,29 @@ Numbers::createBasic(int rangeStart, int rangeEnd)
         std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd));
 }
 
+std::unique_ptr<actlib::Numbers::Steps::Protocol> Numbers::createCycle(
+    int rangeStart, int rangeEnd, bool bidirectional, bool reverseDirection)
+{
+    return std::make_unique<actlib::Numbers::Steps::Cycle>(
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        bidirectional,
+        reverseDirection);
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol>
+Numbers::createCycle(int rangeStart,
+                     int rangeEnd,
+                     int initialSelection,
+                     bool bidirectional,
+                     bool reverseDirection)
+{
+    return std::make_unique<actlib::Numbers::Steps::Cycle>(
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        initialSelection,
+        bidirectional,
+        reverseDirection);
+}
+
 std::unique_ptr<actlib::Numbers::Steps::Protocol>
 Numbers::createNoRepetition(int rangeStart, int rangeEnd)
 {
@@ -67,6 +92,28 @@ Numbers::createPeriodic(int rangeStart,
         std::make_unique<actlib::Numbers::DiscreteGenerator>(),
         std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
         chanceOfRepetition,
+        initialSelection);
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol> Numbers::createPrecision(
+    int rangeStart, int rangeEnd, std::vector<double> distribution)
+{
+    return std::make_unique<actlib::Numbers::Steps::Precision>(
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        distribution);
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol>
+Numbers::createPrecision(int rangeStart,
+                         int rangeEnd,
+                         std::vector<double> distribution,
+                         int initialSelection)
+{
+    return std::make_unique<actlib::Numbers::Steps::Precision>(
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        distribution,
         initialSelection);
 }
 

@@ -29,6 +29,19 @@ class Numbers {
     createBasic(int rangeStart, int rangeEnd);
 
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
+    createCycle(int rangeStart,
+                int rangeEnd,
+                bool bidirectional = false,
+                bool reverseDirection = false);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol>
+    createCycle(int rangeStart,
+                int rangeEnd,
+                int initialSelection,
+                bool bidirectional = false,
+                bool reverseDirection = false);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol>
     createNoRepetition(int rangeStart, int rangeEnd);
 
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
@@ -39,6 +52,15 @@ class Numbers {
                    int rangeEnd,
                    double chanceOfRepetition,
                    int initialSelection);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol> createPrecision(
+        int rangeStart, int rangeEnd, std::vector<double> distribution);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol>
+    createPrecision(int rangeStart,
+                    int rangeEnd,
+                    std::vector<double> distribution,
+                    int initialSelection);
 
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
     createSerial(int rangeStart, int rangeEnd);

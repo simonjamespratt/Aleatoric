@@ -217,6 +217,8 @@ SCENARIO("Numbers::Precision")
             {
                 int generatedNumber = 1;
 
+                instance.getNumber(); // first call
+
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
 

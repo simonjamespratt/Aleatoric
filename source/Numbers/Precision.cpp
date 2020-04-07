@@ -12,6 +12,19 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
 {
     double sumDistValues =
         std::accumulate(distribution.begin(), distribution.end(), 0.0);
+
+    // TODO: The following check is flawed. Due to issues with precision,
+    // certain numbers will not sum exactly to 1.0. See
+    // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
+    // for info. An example here would be a vector of size 10 where each entry
+    // is 0.1. This does not sum to 1.0. It will require tolerance checks etc.
+    // as described in the SO article linked to. I suspect this is also the root
+    // of the problem with a similar issue in Periodic.cpp
+
+    // The unit tests for this should be altered to test the end fix for this.
+    // Also the Numbers factory method tests and the Integrations tests for
+    // Precision should be reinstated to use a range of 0,9 as is used for all
+    // other protocols under test.
     if(sumDistValues != 1.0) {
         throw std::invalid_argument(
             "The sum of the values provided as the vector for the "
@@ -25,6 +38,7 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
 
     m_generator->setDistributionVector(distribution);
     m_haveInitialSelection = false;
+    m_haveRequestedFirstNumber = false;
 }
 
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,

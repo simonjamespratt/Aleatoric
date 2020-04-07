@@ -1,5 +1,6 @@
 #include "AdjacentSteps.hpp"
 #include "Basic.hpp"
+#include "Cycle.hpp"
 #include "DiscreteGenerator.hpp"
 #include "GranularWalk.hpp"
 #include "NoRepetition.hpp"
@@ -32,7 +33,7 @@ SCENARIO("Numbers: Integration using Basic")
             auto sample = instance.getCollection(1000);
 
             THEN("All the numbers of the sample should fall within the "
-                 "spacified range")
+                 "specified range")
             {
                 for(auto &&i : sample) {
                     REQUIRE(i >= referenceRange.start);
@@ -48,6 +49,116 @@ SCENARIO("Numbers: Integration using Basic")
                         std::find(sample.begin(), sample.end(), i);
                     REQUIRE(findResult != sample.end());
                 }
+            }
+        }
+    }
+}
+
+SCENARIO("Numbers: Integration using Cycle")
+{
+    actlib::Numbers::Range referenceRange(0, 2);
+
+    GIVEN("The Producer has been instantiated with no initial selection")
+    {
+        // NB: Not testing reset as it would just be a repeat of the unit tests.
+        // Just testing the basics of the protocol functionality here
+
+        WHEN("It is configured in the default state")
+        {
+            actlib::Numbers::Steps::Producer instance(
+                factory.createCycle(referenceRange.start, referenceRange.end));
+
+            AND_WHEN("A pair of cycles is requested")
+            {
+                std::vector<int> expectedResult {0, 1, 2, 0, 1, 2};
+                auto sample = instance.getCollection(expectedResult.size());
+
+                THEN("The cycles should be as expected")
+                {
+                    REQUIRE(sample == expectedResult);
+                }
+            }
+        }
+
+        WHEN("It is configured in the reverse, unidirectional mode")
+        {
+            actlib::Numbers::Steps::Producer instance(
+                factory.createCycle(referenceRange.start,
+                                    referenceRange.end,
+                                    false,
+                                    true));
+
+            AND_WHEN("A pair of cycles is requested")
+            {
+                std::vector<int> expectedResult {2, 1, 0, 2, 1, 0};
+                auto sample = instance.getCollection(expectedResult.size());
+
+                THEN("The cycles should be as expected")
+                {
+                    REQUIRE(sample == expectedResult);
+                }
+            }
+        }
+
+        WHEN("It is configured in the bidirectional mode")
+        {
+            actlib::Numbers::Steps::Producer instance(
+                factory.createCycle(referenceRange.start,
+                                    referenceRange.end,
+                                    true,
+                                    false));
+
+            AND_WHEN("A pair of cycles is requested")
+            {
+                std::vector<int> expectedResult {0, 1, 2, 1, 0, 1, 2, 1, 0};
+                auto sample = instance.getCollection(expectedResult.size());
+
+                THEN("The cycles should be as expected")
+                {
+                    REQUIRE(sample == expectedResult);
+                }
+            }
+        }
+
+        WHEN("It is configured in the bidirectionla, reverse mode")
+        {
+            actlib::Numbers::Steps::Producer instance(
+                factory.createCycle(referenceRange.start,
+                                    referenceRange.end,
+                                    true,
+                                    true));
+
+            AND_WHEN("A pair of cycles is requested")
+            {
+                std::vector<int> expectedResult {2, 1, 0, 1, 2, 1, 0, 1, 2};
+                auto sample = instance.getCollection(expectedResult.size());
+
+                THEN("The cycles should be as expected")
+                {
+                    REQUIRE(sample == expectedResult);
+                }
+            }
+        }
+    }
+
+    GIVEN("The Producer has been instantiated with an initial selection")
+    {
+        // NB: Not bothering with tests for all the mode variations as would
+        // just be repeating the unit tests
+
+        WHEN("A number is first requested")
+        {
+            THEN("The number should be the initial selection")
+            {
+                int initialSelection = 2;
+                actlib::Numbers::Steps::Producer instance(
+                    factory.createCycle(referenceRange.start,
+                                        referenceRange.end,
+                                        initialSelection));
+
+                auto returnedNumber = instance.getNumber();
+
+                REQUIRE(returnedNumber == initialSelection);
             }
         }
     }
@@ -135,6 +246,149 @@ SCENARIO("Numbers: Integration using Serial")
                         REQUIRE(numberAppears);
                     }
                 }
+            }
+        }
+    }
+}
+
+SCENARIO("Numbers: Integration using Precision")
+{
+    // TODO: Have to use a different range for this set of tests due to an issue
+    // with the argument checking in Precision for summing the values in the
+    // distribution. It should be set back to a range of (0, 9) when this is
+    // fixed.
+    actlib::Numbers::Range referenceRange(0, 3);
+
+    GIVEN("The Producer has been instantiated with no initial selection")
+    {
+        WHEN("The distribution is uniform")
+        {
+            std::vector<double> distribution(referenceRange.size);
+
+            // Make a uniform distribution
+            for(auto &&i : distribution) {
+                i = 1.0 / referenceRange.size;
+            }
+
+            actlib::Numbers::Steps::Producer instance(
+                factory.createPrecision(referenceRange.start,
+                                        referenceRange.end,
+                                        distribution));
+
+            AND_WHEN("A sample is requested")
+            {
+                auto sample = instance.getCollection(1000);
+
+                THEN("All values in the sample should fall within the range")
+                {
+                    for(auto &&i : sample) {
+                        REQUIRE(i >= referenceRange.start);
+                        REQUIRE(i <= referenceRange.end);
+                    }
+                }
+            }
+        }
+
+        WHEN("The distribution favours one number in the range")
+        {
+            // Biased distribution in favour of a certain number (0)
+            std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
+
+            actlib::Numbers::Steps::Producer instance(
+                factory.createPrecision(referenceRange.start,
+                                        referenceRange.end,
+                                        distribution));
+
+            AND_WHEN("A sample is requested")
+            {
+                auto sample = instance.getCollection(1000);
+
+                THEN("The sample should only contain the favoured number")
+                {
+                    for(auto &&i : sample) {
+                        REQUIRE(i == 0);
+                    }
+                }
+            }
+        }
+    }
+
+    GIVEN("The Producer has been instantiated with an initial selection")
+    {
+        int initialSelection = 2;
+
+        WHEN("The distribution is uniform")
+        {
+            std::vector<double> distribution(referenceRange.size);
+
+            // Make a uniform distribution
+            for(auto &&i : distribution) {
+                i = 1.0 / referenceRange.size;
+            }
+
+            AND_WHEN("A sample is requested")
+            {
+                THEN("The first number in the set should be the initial "
+                     "selection value")
+                {
+                    actlib::Numbers::Steps::Producer instance(
+                        factory.createPrecision(referenceRange.start,
+                                                referenceRange.end,
+                                                distribution,
+                                                initialSelection));
+
+                    auto sample = instance.getCollection(1000);
+
+                    REQUIRE(sample[0] == initialSelection);
+                }
+            }
+        }
+
+        WHEN("The distribution favours one number in the range")
+        {
+            AND_WHEN("A sample is requested")
+            {
+                THEN("The first number in the set should be the initial "
+                     "selection value")
+                {
+                    // Biased distribution in favour of a certain number (0)
+                    std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
+
+                    actlib::Numbers::Steps::Producer instance(
+                        factory.createPrecision(referenceRange.start,
+                                                referenceRange.end,
+                                                distribution,
+                                                initialSelection));
+
+                    auto sample = instance.getCollection(1000);
+
+                    REQUIRE(sample[0] == initialSelection);
+                    REQUIRE(sample[1] == 0);
+                }
+            }
+        }
+
+        WHEN("A reset is requested")
+        {
+            std::vector<double> distribution(referenceRange.size);
+
+            // Make a uniform distribution
+            for(auto &&i : distribution) {
+                i = 1.0 / referenceRange.size;
+            }
+
+            THEN("The first number requested after the reset should be the "
+                 "initial selection")
+            {
+                actlib::Numbers::Steps::Producer instance(
+                    factory.createPrecision(referenceRange.start,
+                                            referenceRange.end,
+                                            distribution,
+                                            initialSelection));
+
+                instance.getNumber(); // first call
+                instance.reset();
+                REQUIRE(instance.getNumber() == initialSelection);
             }
         }
     }
