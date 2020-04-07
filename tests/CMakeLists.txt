@@ -33,6 +33,7 @@ add_executable(Tests
     NumbersTest.cpp
     NumbersIntegrationTests.cpp
     CycleTest.cpp
+    PrecisionTest.cpp
 )
 
 target_link_libraries(Tests
