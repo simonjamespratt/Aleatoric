@@ -17,10 +17,9 @@
 #include <catch2/catch.hpp>
 #include <memory>
 
-actlib::Numbers::Numbers factory;
-
 SCENARIO("Numbers: Integration using Basic")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated")
@@ -56,6 +55,7 @@ SCENARIO("Numbers: Integration using Basic")
 
 SCENARIO("Numbers: Integration using Cycle")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 2);
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -166,6 +166,7 @@ SCENARIO("Numbers: Integration using Cycle")
 
 SCENARIO("Numbers: Integration using Serial")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated")
@@ -257,6 +258,7 @@ SCENARIO("Numbers: Integration using Precision")
     // with the argument checking in Precision for summing the values in the
     // distribution. It should be set back to a range of (0, 9) when this is
     // fixed.
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 3);
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -399,7 +401,7 @@ SCENARIO("Numbers: Integration using NoRepetition")
     // NB: No tests for reset() as this is hard to test. What would you test
     // for, seeing as all the numbers (except the last selected) have equal
     // proability of selection?
-
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 9);
 
     actlib::Numbers::Steps::Producer instance(
@@ -436,6 +438,7 @@ SCENARIO("Numbers: Integration using NoRepetition")
 
 SCENARIO("Numbers: Integration using Periodic")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -570,6 +573,7 @@ SCENARIO("Numbers: Integration using Periodic")
 
 SCENARIO("Numbers: Integration using AdjacentSteps")
 {
+    actlib::Numbers::Numbers factory;
     int rangeStart = 0;
     int rangeEnd = 9;
 
@@ -674,6 +678,7 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
 
 SCENARIO("Numbers: Integration using Walk")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -779,6 +784,7 @@ SCENARIO("Numbers: Integration using Walk")
 
 SCENARIO("Numbers: Integration using GranularWalk")
 {
+    actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 10);
     actlib::Numbers::UniformGenerator generator;
 
