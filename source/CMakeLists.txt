@@ -29,6 +29,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Numbers.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Cycle.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Precision.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/ProducerCollections.hpp
     Utilities/Utilities.hpp
 )
 
