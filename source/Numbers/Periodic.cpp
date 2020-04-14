@@ -1,10 +1,10 @@
 #include "Periodic.hpp"
 
+#include "ErrorChecker.hpp"
+
 #include <assert.h>
-#include <math.h>    // round
-#include <numeric>   // std::accumulate
-#include <stdexcept> // std::invalid_argument
-#include <string>
+#include <math.h>  // round
+#include <numeric> // std::accumulate
 
 namespace actlib { namespace Numbers { namespace Steps {
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
@@ -36,13 +36,8 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
                    int initialSelection)
 : Periodic(std::move(generator), std::move(range), chanceOfRepetition)
 {
-    if(initialSelection < m_range->start || initialSelection > m_range->end) {
-        throw std::invalid_argument(
-            "The value passed as argument for initialSelection must be "
-            "within the range of " +
-            std::to_string(m_range->start) + " to " +
-            std::to_string(m_range->end));
-    }
+    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                                       *m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -89,9 +84,10 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
                                              distributionVector.end(),
                                              0.0);
 
-    // TODO: Have needed to use round here because the resulting value of
-    // vectorValuesTotal from std::accumulate SPORADICALLY (!??) evaluates to
-    // not exactly 1.0. At time of writing I don't know why that is!
+    // TODO: DOUBLE-SUMMING-PRECISION: Have needed to use round here because the
+    // resulting value of vectorValuesTotal from std::accumulate SPORADICALLY
+    // (!??) evaluates to not exactly 1.0. At time of writing I don't know why
+    // that is!
     assert(round(vectorValuesTotal) == 1.0);
 
     m_generator->setDistributionVector(distributionVector);

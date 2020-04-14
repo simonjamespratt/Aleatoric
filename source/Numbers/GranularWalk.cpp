@@ -1,10 +1,9 @@
 #include "GranularWalk.hpp"
 
+#include "ErrorChecker.hpp"
 #include "Utilities.hpp"
 
 #include <math.h>
-#include <stdexcept> // std::invalid_argument
-#include <string>
 
 namespace actlib { namespace Numbers { namespace Granular {
 GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
@@ -36,14 +35,8 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
                            int initialSelection)
 : GranularWalk(std::move(generator), std::move(range), deviationFactor)
 {
-    if(initialSelection < m_externalRange->start ||
-       initialSelection > m_externalRange->end) {
-        throw std::invalid_argument(
-            "The value passed as argument for initialSelection must be "
-            "within the range of " +
-            std::to_string(m_externalRange->start) + " to " +
-            std::to_string(m_externalRange->end));
-    }
+    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                                       *m_externalRange);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;

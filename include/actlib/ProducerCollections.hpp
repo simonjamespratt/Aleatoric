@@ -30,17 +30,17 @@ Producer<T>::Producer(
     std::unique_ptr<actlib::Numbers::Steps::Protocol> protocol)
 : m_source(source), m_protocol(std::move(protocol))
 {
-    // TODO: There is no check to ensure that the protocol range matches the
-    // source collection size because at present, they have no knowledge of each
-    // other. So currently, it is the responsibility of the client (caller) to
-    // ensure that they have configured the protocol passed into this class with
-    // a range that matches the source collection size. The methods in this
-    // class, getItem() and getCollection(), utilise the std::vector method at()
-    // which will throw an out_of_range exception if the index passed to it -
-    // which in this case is a number from the range of the procotol - is
-    // outside the collection range, so in that sense there is a check at the
-    // point of request. But that doesn't help the calling client ensure they
-    // have their ranges in line.
+    // TODO: DYNAMIC-PARAMS: There is no check to ensure that the protocol range
+    // matches the source collection size because at present, they have no
+    // knowledge of each other. So currently, it is the responsibility of the
+    // client (caller) to ensure that they have configured the protocol passed
+    // into this class with a range that matches the source collection size. The
+    // methods in this class, getItem() and getCollection(), utilise the
+    // std::vector method at() which will throw an out_of_range exception if the
+    // index passed to it - which in this case is a number from the range of the
+    // procotol - is outside the collection range, so in that sense there is a
+    // check at the point of request. But that doesn't help the calling client
+    // ensure they have their ranges in line.
 
     // There is some proposed work around making protocol parameters adjustable
     // at runtime (see Basecamp) and the above issue feeds into that work in the

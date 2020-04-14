@@ -1,8 +1,8 @@
 #include "Precision.hpp"
 
-#include <numeric>   // std::accumulate
-#include <stdexcept> // std::invalid_argument
-#include <string>
+#include "ErrorChecker.hpp"
+
+#include <numeric> // std::accumulate
 
 namespace actlib { namespace Numbers { namespace Steps {
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
@@ -13,8 +13,8 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
     double sumDistValues =
         std::accumulate(distribution.begin(), distribution.end(), 0.0);
 
-    // TODO: The following check is flawed. Due to issues with precision,
-    // certain numbers will not sum exactly to 1.0. See
+    // TODO: DOUBLE-SUMMING-PRECISION: The following check is flawed. Due to
+    // issues with precision, certain numbers will not sum exactly to 1.0. See
     // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
     // for info. An example here would be a vector of size 10 where each entry
     // is 0.1. This does not sum to 1.0. It will require tolerance checks etc.
@@ -47,13 +47,9 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
                      int initialSelection)
 : Precision(std::move(generator), std::move(range), distribution)
 {
-    if(initialSelection < m_range->start || initialSelection > m_range->end) {
-        throw std::invalid_argument(
-            "The value passed as argument for initialSelection must be "
-            "within the range of " +
-            std::to_string(m_range->start) + " to " +
-            std::to_string(m_range->end));
-    }
+    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                                       *m_range);
+
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
 }

@@ -38,7 +38,6 @@ SCENARIO("Numbers::Serial")
 
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        // TODO: can these be set to ANY?
         ALLOW_CALL(*generatorPointer, getNumber()).RETURN(generatedNumber);
         ALLOW_CALL(*generatorPointer,
                    updateDistributionVector(generatedNumber, 0.0));

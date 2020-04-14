@@ -1,7 +1,6 @@
 #include "Cycle.hpp"
 
-#include <stdexcept> // std::invalid_argument
-#include <string>
+#include "ErrorChecker.hpp"
 
 namespace actlib { namespace Numbers { namespace Steps {
 Cycle::Cycle(std::unique_ptr<Range> range,
@@ -26,13 +25,8 @@ Cycle::Cycle(std::unique_ptr<Range> range,
   m_reverse(reverseDirection),
   m_initialStateReverse(reverseDirection)
 {
-    if(initialSelection < m_range->start || initialSelection > m_range->end) {
-        throw std::invalid_argument(
-            "The value passed as argument for initialSelection must be "
-            "within the range of " +
-            std::to_string(m_range->start) + " to " +
-            std::to_string(m_range->end));
-    }
+    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                                       *m_range);
 
     m_position = m_initialSelection;
     m_hasInitialSelection = true;

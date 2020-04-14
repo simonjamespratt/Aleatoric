@@ -1,4 +1,4 @@
-# TODO: Further improvements can be made to this build.
+# TODO: BUILDS-CMAKE: Further improvements can be made to this build.
 # See: https://gitlab.com/CLIUtils/modern-cmake/tree/master/examples/extended-project for a full project
 # which is based the principles here: https://cliutils.gitlab.io/modern-cmake/
 
@@ -33,7 +33,7 @@ add_subdirectory(source)
 add_subdirectory(tests)
 
 # Misc
-# TODO: what is the purpose of this?
+# TODO: BUILDS-CMAKE: what is the purpose of this?
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

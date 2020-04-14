@@ -18,8 +18,7 @@ int Basic::getNumber()
 
 void Basic::reset()
 {
-    // TODO: Basic's implementation of the Protocol interface doesn't require
-    // reset to do anything. So for now, this is an empty method definition.
-    // Consider whether this is the correct solution.
+    // NB: Basic's implementation of the Protocol interface doesn't require
+    // reset to do anything.
 }
 }}} // namespace actlib::Numbers::Steps

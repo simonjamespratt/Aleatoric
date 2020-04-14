@@ -192,10 +192,10 @@ SCENARIO("Numbers::Numbers")
 
     GIVEN("An instance of the Precision protocol is requested")
     {
-        // TODO: Have to use a different range for this set of tests due to an
-        // issue with the argument checking in Precision for summing the values
-        // in the distribution. It should be set back to a range of (0, 9) when
-        // this is fixed.
+        // TODO: DOUBLE-SUMMING-PRECISION: Have to use a different range for
+        // this set of tests due to an issue with the argument checking in
+        // Precision for summing the values in the distribution. It should be
+        // set back to a range of (0, 9) when this is fixed.
         actlib::Numbers::Range referenceRange(1, 4);
         // NB: Precision requires that the distribution match the range size and
         // that the sum of the values for each number in the range equal 1.0.

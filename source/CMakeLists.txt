@@ -1,4 +1,4 @@
-# TODO: could add the target sources from within the subdirectories if desired
+# TODO: BUILDS-CMAKE: could add the target sources from within the subdirectories if desired
 
 FetchContent_Declare(
     pcg_cpp
@@ -31,10 +31,12 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Precision.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/ProducerCollections.hpp
     Utilities/Utilities.hpp
+    Errors/ErrorChecker.hpp
 )
 
 add_library(
     AleatoricCompositionTools
+    Errors/ErrorChecker.cpp
     Utilities/Utilities.cpp
     Numbers/ProducerSteps.cpp
     Numbers/ProducerGranular.cpp
@@ -57,7 +59,8 @@ add_library(
 target_include_directories(AleatoricCompositionTools
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include/actlib
-        ${pcg_cpp_SOURCE_DIR}/include # TODO: had to make this public in order for thr tests to build. Need to find out why
+        ${pcg_cpp_SOURCE_DIR}/include # TODO: BUILDS-CMAKE: had to make this public in order for thr tests to build. Need to find out why
     PRIVATE
         Utilities
+        Errors
 )
