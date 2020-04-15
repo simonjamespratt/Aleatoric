@@ -60,8 +60,8 @@ SCENARIO("Numbers::Granular::Producer")
             }
         }
 
-        // TODO: Reinstate this test - it is failing for unknown reasons
-        // WHEN("A reset is made")
+        // TODO: RESET-TEST-FAIL: Reinstate this test - it is failing for
+        // unknown reasons WHEN("A reset is made")
         // {
         //     THEN("It should call the given protocol reset method")
         //     {

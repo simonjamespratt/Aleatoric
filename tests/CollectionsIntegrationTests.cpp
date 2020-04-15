@@ -119,10 +119,10 @@ SCENARIO("Collections: Integration using Serial")
 
 SCENARIO("Collections: Integration using Precision")
 {
-    // TODO: Have to use a different collection size for this set of tests due
-    // to an issue with the argument checking in Precision for summing the
-    // values in the distribution. It should be set back to a size of 3
-    // when this is fixed.
+    // TODO: DOUBLE-SUMMING-PRECISION: Have to use a different collection size
+    // for this set of tests due to an issue with the argument checking in
+    // Precision for summing the values in the distribution. It should be set
+    // back to a size of 3 when this is fixed.
     actlib::Numbers::Numbers factory;
     std::vector<char> source {'a', 'b', 'c', 'd'};
 

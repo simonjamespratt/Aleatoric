@@ -1,5 +1,5 @@
 // Interface
-// TODO: This is lazy naming. Consider how this interface and its
+// TODO: RE-NAME: This is lazy naming. Consider how this interface and its
 // abstraction/implementation naming could be better
 
 #ifndef IUniformGenerator_hpp

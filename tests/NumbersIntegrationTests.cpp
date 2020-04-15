@@ -254,10 +254,10 @@ SCENARIO("Numbers: Integration using Serial")
 
 SCENARIO("Numbers: Integration using Precision")
 {
-    // TODO: Have to use a different range for this set of tests due to an issue
-    // with the argument checking in Precision for summing the values in the
-    // distribution. It should be set back to a range of (0, 9) when this is
-    // fixed.
+    // TODO: DOUBLE-SUMMING-PRECISION: Have to use a different range for this
+    // set of tests due to an issue with the argument checking in Precision for
+    // summing the values in the distribution. It should be set back to a range
+    // of (0, 9) when this is fixed.
     actlib::Numbers::Numbers factory;
     actlib::Numbers::Range referenceRange(0, 3);
 

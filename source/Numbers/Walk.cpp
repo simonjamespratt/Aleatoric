@@ -1,5 +1,6 @@
 #include "Walk.hpp"
 
+#include "ErrorChecker.hpp"
 #include "Utilities.hpp"
 
 #include <stdexcept> // std::invalid_argument
@@ -31,16 +32,8 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
            int initialSelection)
 : Walk(std::move(generator), std::move(range), maxStep)
 {
-    // TODO: this initialSelection check turns up a lot now. Should really
-    // derive a custom exception from invalid_argument specifically for this
-    // and use it wherever this check is made.
-    if(initialSelection < m_range->start || initialSelection > m_range->end) {
-        throw std::invalid_argument(
-            "The value passed as argument for initialSelection must be "
-            "within the range of " +
-            std::to_string(m_range->start) + " to " +
-            std::to_string(m_range->end));
-    }
+    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                                       *m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;

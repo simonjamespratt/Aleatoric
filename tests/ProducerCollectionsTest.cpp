@@ -57,9 +57,9 @@ SCENARIO("Collections::Producer")
             }
         }
 
-        // TODO: Reinstate this test - it is failing for unknown reasons - same
-        // as for ProducerGranularTest
-        // WHEN("A reset is requested")
+        // TODO: RESET-TEST-FAIL: Reinstate this test - it is failing for
+        // unknown reasons - same as for ProducerGranularTest WHEN("A reset is
+        // requested")
         // {
         //     THEN("It should call the given protocol reset method")
         //     {

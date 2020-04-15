@@ -9,11 +9,12 @@
 namespace actlib { namespace Numbers {
 class Numbers {
   public:
-    // TODO: Ideally would like to condense the following into one method with
-    // an argument that specifies the protocol to create. However, at the moment
-    // there is no way to standardise the params that would need to be passed to
-    // one method. There is a pitch doc about updating protocol parameters (at
-    // runtime) which, when implemented, would potentially allow this to happen.
+    // TODO: DYNAMIC-PARAMS: Ideally would like to condense the following into
+    // one method with an argument that specifies the protocol to create.
+    // However, at the moment there is no way to standardise the params that
+    // would need to be passed to one method. There is a pitch doc about
+    // updating protocol parameters (at runtime) which, when implemented, would
+    // potentially allow this to happen.
 
     Numbers();
 
