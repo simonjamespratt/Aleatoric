@@ -4,6 +4,7 @@
 #include "Utilities.hpp"
 
 #include <math.h>
+// #include <string>
 
 namespace actlib { namespace Numbers { namespace Granular {
 GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
@@ -14,11 +15,8 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
-    if(deviationFactor < 0.0 || deviationFactor > 1.0) {
-        throw std::invalid_argument(
-            "The value passed as argument for deviationFactor must be within "
-            "the range of 0.0 to 1.0");
-    }
+    actlib::ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
+                                                       "deviationFactor");
 
     m_internalRange = {0, 65000, 0};
     double maxStep = scaleToRange(deviationFactor,
