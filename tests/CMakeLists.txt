@@ -36,6 +36,9 @@ add_executable(Tests
     CycleTest.cpp
     PrecisionTest.cpp
     CollectionsIntegrationTests.cpp
+    PrescribedTest.cpp
+    MultiplesTest.cpp
+    GeometricTest.cpp
 )
 
 target_link_libraries(Tests

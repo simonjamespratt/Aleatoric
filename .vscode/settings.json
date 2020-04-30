@@ -75,8 +75,9 @@
     "utility": "cpp",
     "vector": "cpp",
     "*.tcc": "cpp",
-    "hashtable": "cpp"
-  },
+    "hashtable": "cpp",
+    "cinttypes": "cpp"
+},
   "cmake.configureOnOpen": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true

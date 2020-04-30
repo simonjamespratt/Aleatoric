@@ -30,6 +30,10 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Cycle.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Precision.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/ProducerCollections.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/DurationProtocol.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Prescribed.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Multiples.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Geometric.hpp
     Utilities/Utilities.hpp
     Errors/ErrorChecker.hpp
 )
@@ -53,6 +57,9 @@ add_library(
     Numbers/Numbers.cpp
     Numbers/Cycle.cpp
     Numbers/Precision.cpp
+    TimeDomain/Prescribed.cpp
+    TimeDomain/Multiples.cpp
+    TimeDomain/Geometric.cpp
     ${HEADER_LIST}
 )
 
