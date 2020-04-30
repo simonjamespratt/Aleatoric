@@ -31,6 +31,7 @@ add_executable(Tests
     ProducerStepsTest.cpp
     ProducerGranularTest.cpp
     ProducerCollectionsTest.cpp
+    ProducerTimeDomainTest.cpp
     NumbersTest.cpp
     NumbersIntegrationTests.cpp
     CycleTest.cpp
@@ -39,6 +40,7 @@ add_executable(Tests
     PrescribedTest.cpp
     MultiplesTest.cpp
     GeometricTest.cpp
+    TimeDomainIntegrationTests.cpp
 )
 
 target_link_libraries(Tests

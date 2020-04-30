@@ -1,15 +1,9 @@
 #include "ProducerCollections.hpp"
 
-#include "ProtocolSteps.hpp"
+#include "NumbersStepsProtocolMock.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
-
-class ConcreteProtocolMock : public actlib::Numbers::Steps::Protocol {
-  public:
-    MAKE_MOCK0(getNumber, int());
-    MAKE_MOCK0(reset, void());
-};
 
 SCENARIO("Collections::Producer")
 {
@@ -17,7 +11,7 @@ SCENARIO("Collections::Producer")
     {
         std::vector<char> sourceCollection {'a', 'b', 'c'};
 
-        auto protocol = std::make_unique<ConcreteProtocolMock>();
+        auto protocol = std::make_unique<NumbersStepsProtocolMock>();
         auto protocolPointer = protocol.get();
 
         actlib::Collections::Producer<char> instance(sourceCollection,

@@ -24,7 +24,9 @@ int Prescribed::getCollectionSize()
 
 int Prescribed::getDuration(int index)
 {
-    return m_durations[index];
+    // NB: using vector.at() because it will throw out of bounds if index isn't
+    // accessible
+    return m_durations.at(index);
 }
 
 }} // namespace actlib::TimeDomain
