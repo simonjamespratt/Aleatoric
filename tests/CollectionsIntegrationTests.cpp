@@ -4,17 +4,8 @@
 // will simply check that the Collections Producers can work with the Protocols
 // correctly.
 
-#include "AdjacentSteps.hpp"
-#include "Basic.hpp"
-#include "Cycle.hpp"
-#include "DiscreteGenerator.hpp"
-#include "NoRepetition.hpp"
 #include "Numbers.hpp"
-#include "Periodic.hpp"
 #include "ProducerCollections.hpp"
-#include "Serial.hpp"
-#include "UniformGenerator.hpp"
-#include "Walk.hpp"
 
 #include <catch2/catch.hpp>
 

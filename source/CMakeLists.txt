@@ -34,6 +34,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Prescribed.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Multiples.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Geometric.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/ProducerTimeDomain.hpp
     Utilities/Utilities.hpp
     Errors/ErrorChecker.hpp
 )
@@ -60,6 +61,7 @@ add_library(
     TimeDomain/Prescribed.cpp
     TimeDomain/Multiples.cpp
     TimeDomain/Geometric.cpp
+    TimeDomain/ProducerTimeDomain.cpp
     ${HEADER_LIST}
 )
 

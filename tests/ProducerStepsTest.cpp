@@ -1,22 +1,16 @@
 #include "ProducerSteps.hpp"
 
-#include "ProtocolSteps.hpp"
+#include "NumbersStepsProtocolMock.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 #include <memory>
 
-class ConcreteProtocolMock : public actlib::Numbers::Steps::Protocol {
-  public:
-    MAKE_MOCK0(getNumber, int());
-    MAKE_MOCK0(reset, void());
-};
-
 SCENARIO("Numbers::Steps::Producer")
 {
     GIVEN("The class is instantiated correctly")
     {
-        auto protocol = std::make_unique<ConcreteProtocolMock>();
+        auto protocol = std::make_unique<NumbersStepsProtocolMock>();
         auto protocolPointer = protocol.get();
         actlib::Numbers::Steps::Producer instance(std::move(protocol));
 

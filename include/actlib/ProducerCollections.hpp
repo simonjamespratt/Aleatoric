@@ -54,7 +54,7 @@ Producer<T>::Producer(
     // protocol parameter alteration. I will update the Basecamp pitch to
     // include looking at this issue.
 
-    // However, it might be difficult to see exactly that to do about this until
+    // However, it might be difficult to see exactly what to do about this until
     // Aleatoric has been in use (by me!) for some time to see what
     // functionality is useful and what is not.
 }

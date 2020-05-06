@@ -87,6 +87,9 @@ int Multiples::getCollectionSize()
 
 int Multiples::getDuration(int index)
 {
+    // NB: using vector.at() because it will throw out of bounds if index isn't
+    // accessible
+
     if(m_hasDeviationFactor) {
         // NB: The deviationFactor is the FULL value EITHER SIDE of the selected
         // duration, NOT HALF either side! This is in line the way that
@@ -95,11 +98,11 @@ int Multiples::getDuration(int index)
         // calculate the min-max devFactor around the selected duration
         // e.g. duration = 100, devFactor 0.5 = min: 50, max: 150
         int potentialDeviation =
-            static_cast<int>(round(m_deviationFactor * m_durations[index]));
+            static_cast<int>(round(m_deviationFactor * m_durations.at(index)));
 
         // round the min-max values and cast to ints
-        int deviationMin = m_durations[index] - potentialDeviation;
-        int deviationMax = m_durations[index] + potentialDeviation;
+        int deviationMin = m_durations.at(index) - potentialDeviation;
+        int deviationMax = m_durations.at(index) + potentialDeviation;
 
         // set the generator to the right range
         m_generator->setDistribution(deviationMin, deviationMax);
@@ -108,7 +111,7 @@ int Multiples::getDuration(int index)
         return m_generator->getNumber();
     }
 
-    return m_durations[index];
+    return m_durations.at(index);
 }
 
 }} // namespace actlib::TimeDomain
