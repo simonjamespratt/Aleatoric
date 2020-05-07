@@ -3,6 +3,7 @@
 #include "Cycle.hpp"
 #include "DiscreteGenerator.hpp"
 #include "GranularWalk.hpp"
+#include "GroupedRepetition.hpp"
 #include "NoRepetition.hpp"
 #include "Numbers.hpp"
 #include "Periodic.hpp"
@@ -15,6 +16,7 @@
 #include <algorithm> // std::adjacent_find, std::find
 #include <array>
 #include <catch2/catch.hpp>
+#include <iostream>
 #include <memory>
 
 SCENARIO("Numbers: Integration using Basic")
@@ -224,6 +226,244 @@ SCENARIO("Numbers: Integration using Serial")
                 instance.reset();
 
                 auto fullSample = instance.getCollection(10);
+
+                THEN("The full post-reset sample should include every number "
+                     "from the range and only once")
+                {
+                    for(int i = 0; i < referenceRange.size; i++) {
+                        int count =
+                            std::count(fullSample.begin(), fullSample.end(), i);
+                        REQUIRE(count == 1);
+                    }
+                }
+
+                THEN("The numbers from the partial pre-reset sample set should "
+                     "appear in the full post-reset sample set")
+                {
+                    for(auto &&psItem : partialSample) {
+                        auto numberAppears = std::any_of(
+                            fullSample.begin(),
+                            fullSample.end(),
+                            [psItem](int fsItem) { return psItem == fsItem; });
+
+                        REQUIRE(numberAppears);
+                    }
+                }
+            }
+        }
+    }
+}
+
+SCENARIO("Numbers: Integration using Subset")
+{
+    actlib::Numbers::Numbers factory;
+    actlib::Numbers::Range referenceRange(1, 10);
+    int subsetMin = 3;
+    int subsetMax = 7;
+
+    GIVEN("The Producer has been instantiated")
+    {
+        actlib::Numbers::Steps::Producer instance(
+            factory.createSubset(referenceRange.start,
+                                 referenceRange.end,
+                                 subsetMin,
+                                 subsetMax));
+
+        WHEN("A sample has been collected")
+        {
+            auto sample = instance.getCollection(1000);
+
+            std::vector<int> countResults;
+
+            for(int i = 0; i < referenceRange.size; i++) {
+                auto count = std::count(sample.begin(),
+                                        sample.end(),
+                                        i + referenceRange.offset);
+
+                countResults.push_back(count);
+            }
+
+            THEN("The count for each number from the range existing within the "
+                 "sample should be between the subset min and max inclusive")
+            {
+                int countOfExistingNumbers = 0;
+
+                for(auto &&i : countResults) {
+                    if(i > 0) {
+                        countOfExistingNumbers++;
+                    }
+                }
+
+                REQUIRE(countOfExistingNumbers >= subsetMin);
+                REQUIRE(countOfExistingNumbers <= subsetMax);
+            }
+
+            THEN("Sum of all found count results should be the same as the "
+                 "sample range, hence all numbers in the sample are from the "
+                 "range")
+            {
+                int tally = std::accumulate(countResults.begin(),
+                                            countResults.end(),
+                                            0);
+                REQUIRE(tally == sample.size());
+            }
+        }
+    }
+}
+
+SCENARIO("Numbers: Integration using GroupedRepetition")
+{
+    // NB: This is pretty hard to test entirely accurately, but I think the way
+    // these tests are set up, it would result in sporadic failing tests, were
+    // the serial nature of the selection of either range numbers or groupings
+    // broken.
+
+    // Testing reset() is not possible without going through a number of test
+    // set ups where possible selections are constrained. Not going to bother
+    // with that now, but could be done if desired. It would look similar to
+    // Series tests above, but taking into consideration both range selection
+    // and grouping selection.
+
+    actlib::Numbers::Numbers factory;
+    actlib::Numbers::Range referenceRange(1, 2);
+    std::vector<int> groupings {1, 2};
+    int groupingsSum = 3; // sum of the above values
+
+    GIVEN("The Producer has been instantiated")
+    {
+        actlib::Numbers::Steps::Producer instance(
+            factory.createGroupedRepetition(referenceRange.start,
+                                            referenceRange.end,
+                                            groupings));
+
+        WHEN("Two samples each consisting of a full series set has been "
+             "gathered")
+        {
+            // NB: because the sizes of the range and the groupings are the
+            // same, their serial sets will match
+
+            auto sampleOne = instance.getCollection(groupingsSum);
+            auto sampleTwo = instance.getCollection(groupingsSum);
+
+            std::vector<std::vector<int>> possibleResults {{1, 2, 2},
+                                                           {1, 1, 2},
+                                                           {2, 1, 1},
+                                                           {2, 2, 1}};
+
+            THEN("Each number from the range should be present in the form of "
+                 "one of the possible groupings")
+            {
+                REQUIRE_THAT(sampleOne,
+                             Catch::Equals(possibleResults[0]) ||
+                                 Catch::Equals(possibleResults[1]) ||
+                                 Catch::Equals(possibleResults[2]) ||
+                                 Catch::Equals(possibleResults[3]));
+
+                REQUIRE_THAT(sampleTwo,
+                             Catch::Equals(possibleResults[0]) ||
+                                 Catch::Equals(possibleResults[1]) ||
+                                 Catch::Equals(possibleResults[2]) ||
+                                 Catch::Equals(possibleResults[3]));
+            }
+        }
+    }
+}
+
+SCENARIO("Numbers: Integration using Ratio")
+{
+    actlib::Numbers::Numbers factory;
+    actlib::Numbers::Range referenceRange(0, 4);
+
+    GIVEN("The Producer has been instantiated with a Ratio Protocol with mixed "
+          "ratio values")
+    {
+        std::vector<int> ratios {3, 1, 0, 2, 4};
+        int ratiosSum = 10;
+
+        actlib::Numbers::Steps::Producer instance(
+            factory.createRatio(referenceRange.start,
+                                referenceRange.end,
+                                ratios));
+
+        WHEN("A full series sample set has been gathered")
+        {
+            auto sample = instance.getCollection(ratiosSum);
+
+            THEN("All numbers of the sample should fall within the specified "
+                 "range")
+            {
+                for(auto &&i : sample) {
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
+                }
+            }
+
+            THEN("The sample should contain the right amount of each number "
+                 "within the given range")
+            {
+                for(int i = 0; i < referenceRange.size; i++) {
+                    auto count = std::count(sample.begin(),
+                                            sample.end(),
+                                            i + referenceRange.offset);
+                    REQUIRE(count == ratios[i]);
+                }
+            }
+        }
+    }
+
+    GIVEN("The Producer has been instantiated with a Ratio Protocol with "
+          "uniform ratio values of 1")
+    {
+        // NB: This allows the Serial nature of the Protocol to be tested
+
+        std::vector<int> ratios {1, 1, 1, 1, 1};
+
+        actlib::Numbers::Steps::Producer instance(
+            factory.createRatio(referenceRange.start,
+                                referenceRange.end,
+                                ratios));
+
+        WHEN("A full series sample set has been gathered")
+        {
+            auto sample = instance.getCollection(referenceRange.size);
+
+            THEN("The sample should include every number from the range and "
+                 "only once")
+            {
+                for(int i = 0; i < referenceRange.size; i++) {
+                    int count = std::count(sample.begin(), sample.end(), i);
+                    REQUIRE(count == 1);
+                }
+            }
+
+            AND_WHEN("The next number is requested")
+            {
+                auto firstNumberOfNextSet = instance.getNumber();
+
+                THEN("That number should appear in the previous set")
+                {
+                    auto numberAppears =
+                        std::any_of(sample.begin(),
+                                    sample.end(),
+                                    [firstNumberOfNextSet](int i) {
+                                        return i == firstNumberOfNextSet;
+                                    });
+
+                    REQUIRE(numberAppears);
+                }
+            }
+        }
+
+        WHEN("A partial series sample set is gathered")
+        {
+            auto partialSample = instance.getCollection(3);
+
+            AND_WHEN("A reset is made followed by the gathering of a full "
+                     "series sample set")
+            {
+                instance.reset();
+
+                auto fullSample = instance.getCollection(referenceRange.size);
 
                 THEN("The full post-reset sample should include every number "
                      "from the range and only once")

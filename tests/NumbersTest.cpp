@@ -4,11 +4,14 @@
 #include "Basic.hpp"
 #include "Cycle.hpp"
 #include "GranularWalk.hpp"
+#include "GroupedRepetition.hpp"
 #include "NoRepetition.hpp"
 #include "Periodic.hpp"
 #include "Precision.hpp"
 #include "Range.hpp"
+#include "Ratio.hpp"
 #include "Serial.hpp"
+#include "Subset.hpp"
 #include "Walk.hpp"
 
 #include <catch2/catch.hpp>
@@ -139,6 +142,26 @@ SCENARIO("Numbers::Numbers")
         }
     }
 
+    GIVEN("An instance of the GroupedRepetition protocol is requested")
+    {
+        WHEN("Requested")
+        {
+            auto createdInstance =
+                factory.createGroupedRepetition(rangeStart,
+                                                rangeEnd,
+                                                std::vector<int> {1, 2, 3});
+
+            THEN("It returns an instance of the GroupedRepetition class")
+            {
+                auto castInstance =
+                    dynamic_cast<actlib::Numbers::Steps::GroupedRepetition *>(
+                        createdInstance.get());
+
+                REQUIRE(castInstance != nullptr);
+            }
+        }
+    }
+
     GIVEN("An instance of the NoRepetition protocol is requested")
     {
         WHEN("Requested")
@@ -241,6 +264,24 @@ SCENARIO("Numbers::Numbers")
         }
     }
 
+    GIVEN("An instance of the Ratio protocol is requested")
+    {
+        WHEN("Requested")
+        {
+            auto createdInstance =
+                factory.createRatio(1, 3, std::vector<int> {1, 2, 3});
+
+            THEN("It returns an instance of the Ratio class")
+            {
+                auto castInstance =
+                    dynamic_cast<actlib::Numbers::Steps::Ratio *>(
+                        createdInstance.get());
+
+                REQUIRE(castInstance != nullptr);
+            }
+        }
+    }
+
     GIVEN("An instance of the Serial protocol is requested")
     {
         WHEN("Requested")
@@ -251,6 +292,24 @@ SCENARIO("Numbers::Numbers")
             {
                 auto castInstance =
                     dynamic_cast<actlib::Numbers::Steps::Serial *>(
+                        createdInstance.get());
+
+                REQUIRE(castInstance != nullptr);
+            }
+        }
+    }
+
+    GIVEN("An instance of the Subset protocol is requested")
+    {
+        WHEN("Requested")
+        {
+            auto createdInstance =
+                factory.createSubset(rangeStart, rangeEnd, 1, 2);
+
+            THEN("It returns an instance of the Subset class")
+            {
+                auto castInstance =
+                    dynamic_cast<actlib::Numbers::Steps::Subset *>(
                         createdInstance.get());
 
                 REQUIRE(castInstance != nullptr);

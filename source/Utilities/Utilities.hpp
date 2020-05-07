@@ -1,6 +1,8 @@
 #ifndef Utilities_hpp
 #define Utilities_hpp
 
+#include "IDiscreteGenerator.hpp"
+
 #include <tuple>
 
 namespace actlib { namespace Utilities {
@@ -14,6 +16,21 @@ std::tuple<int, int> getMaxStepSubRange(int lastSelectedNumber,
 
 // Range is inclusive
 bool numberIsOutOfRange(int number, int rangeStart, int rangeEnd);
+
+class SeriesPrinciple {
+  public:
+    SeriesPrinciple();
+    ~SeriesPrinciple();
+
+    int
+    getNumber(std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+
+    bool seriesIsComplete(
+        std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+
+    void resetSeries(
+        std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+};
 
 }} // namespace actlib::Utilities
 
