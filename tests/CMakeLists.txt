@@ -41,6 +41,9 @@ add_executable(Tests
     MultiplesTest.cpp
     GeometricTest.cpp
     TimeDomainIntegrationTests.cpp
+    RatioTest.cpp
+    GroupedRepetitionTest.cpp
+    SubsetTest.cpp
 )
 
 target_link_libraries(Tests

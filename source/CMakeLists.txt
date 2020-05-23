@@ -19,6 +19,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Serial.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Basic.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/NoRepetition.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/GroupedRepetition.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/AdjacentSteps.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Periodic.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Walk.hpp
@@ -28,6 +29,8 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/actlib/Range.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Numbers.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Cycle.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Ratio.hpp
+    ${CMAKE_SOURCE_DIR}/include/actlib/Subset.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/Precision.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/ProducerCollections.hpp
     ${CMAKE_SOURCE_DIR}/include/actlib/DurationProtocol.hpp
@@ -48,6 +51,7 @@ add_library(
     Numbers/Serial.cpp
     Numbers/Basic.cpp
     Numbers/NoRepetition.cpp
+    Numbers/GroupedRepetition.cpp
     Numbers/AdjacentSteps.cpp
     Numbers/Periodic.cpp
     Numbers/Walk.cpp
@@ -58,6 +62,8 @@ add_library(
     Numbers/Numbers.cpp
     Numbers/Cycle.cpp
     Numbers/Precision.cpp
+    Numbers/Ratio.cpp
+    Numbers/Subset.cpp
     TimeDomain/Prescribed.cpp
     TimeDomain/Multiples.cpp
     TimeDomain/Geometric.cpp
@@ -69,7 +75,7 @@ target_include_directories(AleatoricCompositionTools
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include/actlib
         ${pcg_cpp_SOURCE_DIR}/include # TODO: BUILDS-CMAKE: had to make this public in order for thr tests to build. Need to find out why
+        Utilities # TODO: BUILDS-CMAKE: again, had to make this public to allow Utilities.hpp to be included in Serial.hpp et al files
     PRIVATE
-        Utilities
         Errors
 )

@@ -4,6 +4,7 @@
 #include "IDiscreteGenerator.hpp"
 #include "ProtocolSteps.hpp"
 #include "Range.hpp"
+#include "Utilities.hpp"
 
 namespace actlib { namespace Numbers { namespace Steps {
 
@@ -57,7 +58,7 @@ class Serial : public Protocol {
   private:
     std::unique_ptr<Range> m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
-    bool seriesIsComplete();
+    actlib::Utilities::SeriesPrinciple m_seriesPrinciple;
 };
 }}} // namespace actlib::Numbers::Steps
 

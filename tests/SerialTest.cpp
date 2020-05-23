@@ -116,7 +116,7 @@ SCENARIO("Numbers::Serial")
             }
         }
 
-        WHEN("A reset is enforced")
+        WHEN("A reset is requested")
         {
             THEN("It resets the generator distribution")
             {

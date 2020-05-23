@@ -42,6 +42,9 @@ class Numbers {
                 bool bidirectional = false,
                 bool reverseDirection = false);
 
+    std::unique_ptr<actlib::Numbers::Steps::Protocol> createGroupedRepetition(
+        int rangeStart, int rangeEnd, std::vector<int> groupings);
+
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
     createNoRepetition(int rangeStart, int rangeEnd);
 
@@ -64,7 +67,13 @@ class Numbers {
                     int initialSelection);
 
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
+    createRatio(int rangeStart, int rangeEnd, std::vector<int> ratios);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol>
     createSerial(int rangeStart, int rangeEnd);
+
+    std::unique_ptr<actlib::Numbers::Steps::Protocol>
+    createSubset(int rangeStart, int rangeEnd, int subsetMin, int subsetMax);
 
     std::unique_ptr<actlib::Numbers::Steps::Protocol>
     createWalk(int rangeStart, int rangeEnd, int maxStep);

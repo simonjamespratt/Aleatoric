@@ -5,11 +5,14 @@
 #include "Cycle.hpp"
 #include "DiscreteGenerator.hpp"
 #include "GranularWalk.hpp"
+#include "GroupedRepetition.hpp"
 #include "NoRepetition.hpp"
 #include "Periodic.hpp"
 #include "Precision.hpp"
 #include "Range.hpp"
+#include "Ratio.hpp"
 #include "Serial.hpp"
+#include "Subset.hpp"
 #include "UniformGenerator.hpp"
 #include "Walk.hpp"
 
@@ -66,6 +69,18 @@ Numbers::createCycle(int rangeStart,
 }
 
 std::unique_ptr<actlib::Numbers::Steps::Protocol>
+Numbers::createGroupedRepetition(int rangeStart,
+                                 int rangeEnd,
+                                 std::vector<int> groupings)
+{
+    return std::make_unique<actlib::Numbers::Steps::GroupedRepetition>(
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        groupings);
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol>
 Numbers::createNoRepetition(int rangeStart, int rangeEnd)
 {
     return std::make_unique<actlib::Numbers::Steps::NoRepetition>(
@@ -118,11 +133,31 @@ Numbers::createPrecision(int rangeStart,
 }
 
 std::unique_ptr<actlib::Numbers::Steps::Protocol>
+Numbers::createRatio(int rangeStart, int rangeEnd, std::vector<int> ratios)
+{
+    return std::make_unique<actlib::Numbers::Steps::Ratio>(
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        ratios);
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol>
 Numbers::createSerial(int rangeStart, int rangeEnd)
 {
     return std::make_unique<actlib::Numbers::Steps::Serial>(
         std::make_unique<actlib::Numbers::DiscreteGenerator>(),
         std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd));
+}
+
+std::unique_ptr<actlib::Numbers::Steps::Protocol> Numbers::createSubset(
+    int rangeStart, int rangeEnd, int subsetMin, int subsetMax)
+{
+    return std::make_unique<actlib::Numbers::Steps::Subset>(
+        std::make_unique<actlib::Numbers::UniformGenerator>(),
+        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
+        std::make_unique<actlib::Numbers::Range>(rangeStart, rangeEnd),
+        subsetMin,
+        subsetMax);
 }
 
 std::unique_ptr<actlib::Numbers::Steps::Protocol>
