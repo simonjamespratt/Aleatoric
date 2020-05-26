@@ -20,17 +20,15 @@ SCENARIO("Numbers::Ratio")
                 std::vector<int> ratios {1, 2};
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Ratio(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 12),
-                        ratios),
+                    aleatoric::Ratio(std::make_unique<aleatoric::DiscreteGenerator>(),
+                                  std::make_unique<aleatoric::Range>(10, 12),
+                                  ratios),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Ratio(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 12),
-                        ratios),
+                    aleatoric::Ratio(std::make_unique<aleatoric::DiscreteGenerator>(),
+                                  std::make_unique<aleatoric::Range>(10, 12),
+                                  ratios),
                     "The size of ratios collection must match the size of the "
                     "range");
             }
@@ -42,7 +40,7 @@ SCENARIO("Numbers::Ratio")
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(10, 12);
+        auto range = std::make_unique<aleatoric::Range>(10, 12);
 
         // 3 numbers because the range is inclusive
         std::vector<int> ratios {1, 2, 3};
@@ -55,9 +53,7 @@ SCENARIO("Numbers::Ratio")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(ratiosSum, 1.0));
-                actlib::Numbers::Steps::Ratio(std::move(generator),
-                                              std::move(range),
-                                              ratios);
+                aleatoric::Ratio(std::move(generator), std::move(range), ratios);
             }
         }
     }
@@ -75,21 +71,19 @@ SCENARIO("Numbers::Ratio")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        auto range = std::make_unique<actlib::Numbers::Range>(10, 12);
+        auto range = std::make_unique<aleatoric::Range>(10, 12);
 
         // 3 numbers because the range is inclusive
         std::vector<int> ratios {1, 3, 5};
 
-        actlib::Numbers::Steps::Ratio instance(std::move(generator),
-                                               std::move(range),
-                                               ratios);
+        aleatoric::Ratio instance(std::move(generator), std::move(range), ratios);
 
         WHEN("A number is requested")
         {
             THEN("It calls the generator to get a number")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(1);
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("It updates the generator to disallow the selected number "
@@ -103,7 +97,7 @@ SCENARIO("Numbers::Ratio")
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(generatedNumber, 0.0));
 
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("It returns the number held within the selectables collection "
@@ -117,7 +111,7 @@ SCENARIO("Numbers::Ratio")
                 for(int i = 0; i < expectedSelectables.size(); i++) {
                     REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(i);
 
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getIntegerNumber();
 
                     REQUIRE(returnedNumber == expectedSelectables[i]);
                 }
@@ -129,7 +123,7 @@ SCENARIO("Numbers::Ratio")
                 // NB: the return value for this test can be anything
                 REQUIRE_CALL(*generatorPointer, getDistributionVector())
                     .RETURN(std::vector<double> {1.0});
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             AND_WHEN("The series is complete")
@@ -142,7 +136,7 @@ SCENARIO("Numbers::Ratio")
                     REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(1.0));
 
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -156,7 +150,7 @@ SCENARIO("Numbers::Ratio")
                     FORBID_CALL(*generatorPointer,
                                 updateDistributionVector(1.0));
 
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
         }

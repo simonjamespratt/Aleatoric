@@ -1,6 +1,6 @@
 #include "UniformGenerator.hpp"
 
-namespace actlib { namespace Numbers {
+namespace aleatoric {
 UniformGenerator::UniformGenerator()
 : m_distribution(0, 1), m_engine(m_seedSource)
 {}
@@ -21,4 +21,4 @@ void UniformGenerator::setDistribution(int startRange, int endRange)
 {
     m_distribution = std::uniform_int_distribution<int>(startRange, endRange);
 }
-}} // namespace actlib::Numbers
+} // namespace aleatoric

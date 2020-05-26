@@ -21,16 +21,16 @@ SCENARIO("Numbers::GranularWalk")
                 double invalidDeviation = -0.01;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                    aleatoric::GranularWalk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::Range>(10, 20),
                         invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                    aleatoric::GranularWalk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::Range>(10, 20),
                         invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
@@ -43,16 +43,16 @@ SCENARIO("Numbers::GranularWalk")
             {
                 double invalidDeviation = 1.01;
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Granular::GranularWalk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                    aleatoric::GranularWalk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::Range>(10, 20),
                         invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Granular::GranularWalk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(10, 20),
+                    aleatoric::GranularWalk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::Range>(10, 20),
                         invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
@@ -67,7 +67,7 @@ SCENARIO("Numbers::GranularWalk")
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto range = std::make_unique<aleatoric::Range>(10, 20);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -78,9 +78,9 @@ SCENARIO("Numbers::GranularWalk")
                     *generatorPointer,
                     setDistribution(internalRangeMin, internalRangeMax));
 
-                actlib::Numbers::Granular::GranularWalk(std::move(generator),
-                                                        std::move(range),
-                                                        deviationFactor);
+                aleatoric::GranularWalk(std::move(generator),
+                                     std::move(range),
+                                     deviationFactor);
             }
         }
     }
@@ -92,16 +92,16 @@ SCENARIO("Numbers::GranularWalk")
 
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto range = std::make_unique<aleatoric::Range>(10, 20);
         auto rangePointer = range.get();
 
         double deviationFactor = 0.25;
         auto expectedMaxStep = deviationFactor * internalRangeMax;
         int internalRangeMidValue = 32500;
 
-        actlib::Numbers::Granular::GranularWalk instance(std::move(generator),
-                                                         std::move(range),
-                                                         deviationFactor);
+        aleatoric::GranularWalk instance(std::move(generator),
+                                      std::move(range),
+                                      deviationFactor);
 
         WHEN("A number is requested")
         {
@@ -109,7 +109,7 @@ SCENARIO("Numbers::GranularWalk")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(internalRangeMidValue);
-                instance.getNumber();
+                instance.getDecimalNumber();
             }
 
             THEN("That generated number is normalised and returned, scaled to "
@@ -117,7 +117,7 @@ SCENARIO("Numbers::GranularWalk")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(internalRangeMidValue);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getDecimalNumber();
                 REQUIRE(returnedNumber == 15.0); // ((20 - 10) / 2) + 10
             }
 
@@ -150,7 +150,7 @@ SCENARIO("Numbers::GranularWalk")
                             (internalRangeMidValue - expectedMaxStep),
                             (internalRangeMidValue + expectedMaxStep)));
 
-                    instance.getNumber();
+                    instance.getDecimalNumber();
                 }
             }
 
@@ -171,7 +171,7 @@ SCENARIO("Numbers::GranularWalk")
                                      internalRangeMin,
                                      (startOfRangeNumber + expectedMaxStep)));
 
-                    instance.getNumber();
+                    instance.getDecimalNumber();
                 }
             }
 
@@ -192,7 +192,7 @@ SCENARIO("Numbers::GranularWalk")
                         setDistribution((endOfRangeNumber - expectedMaxStep),
                                         internalRangeMax));
 
-                    instance.getNumber();
+                    instance.getDecimalNumber();
                 }
             }
 
@@ -212,14 +212,13 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     auto roundingRange =
-                        std::make_unique<actlib::Numbers::Range>(10, 20);
+                        std::make_unique<aleatoric::Range>(10, 20);
                     auto roundingRangePointer = roundingRange.get();
 
-                    actlib::Numbers::Granular::GranularWalk
-                        instanceNeedingStepRounding(
-                            std::move(roundingGenerator),
-                            std::move(roundingRange),
-                            devFactorThatCausesRounding);
+                    aleatoric::GranularWalk instanceNeedingStepRounding(
+                        std::move(roundingGenerator),
+                        std::move(roundingRange),
+                        devFactorThatCausesRounding);
 
                     // With this set up, the scaling of the deviationFactor will
                     // result in a maxStep number with a fractional part:
@@ -239,7 +238,7 @@ SCENARIO("Numbers::GranularWalk")
                             (internalRangeMidValue - expectedMaxStepRounded),
                             (internalRangeMidValue + expectedMaxStepRounded)));
 
-                    instanceNeedingStepRounding.getNumber();
+                    instanceNeedingStepRounding.getDecimalNumber();
                 }
             }
         }
@@ -272,9 +271,9 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     REQUIRE_THROWS_AS(
-                        actlib::Numbers::Granular::GranularWalk(
+                        aleatoric::GranularWalk(
                             std::move(generator),
-                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            std::make_unique<aleatoric::Range>(10, 20),
                             0.25,
                             initialSelection),
                         std::invalid_argument);
@@ -287,9 +286,9 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     REQUIRE_THROWS_WITH(
-                        actlib::Numbers::Granular::GranularWalk(
+                        aleatoric::GranularWalk(
                             std::move(generator),
-                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            std::make_unique<aleatoric::Range>(10, 20),
                             0.25,
                             initialSelection),
                         "The value passed as argument for "
@@ -313,9 +312,9 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     REQUIRE_THROWS_AS(
-                        actlib::Numbers::Granular::GranularWalk(
+                        aleatoric::GranularWalk(
                             std::move(generator),
-                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            std::make_unique<aleatoric::Range>(10, 20),
                             0.25,
                             initialSelection),
                         std::invalid_argument);
@@ -328,9 +327,9 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     REQUIRE_THROWS_WITH(
-                        actlib::Numbers::Granular::GranularWalk(
+                        aleatoric::GranularWalk(
                             std::move(generator),
-                            std::make_unique<actlib::Numbers::Range>(10, 20),
+                            std::make_unique<aleatoric::Range>(10, 20),
                             0.25,
                             initialSelection),
                         "The value passed as argument for "
@@ -347,7 +346,7 @@ SCENARIO("Numbers::GranularWalk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(10, 20);
+        auto range = std::make_unique<aleatoric::Range>(10, 20);
         auto rangePointer = range.get();
 
         double deviationFactor = 0.25;
@@ -355,10 +354,10 @@ SCENARIO("Numbers::GranularWalk")
         auto expectedMaxStep = deviationFactor * internalRangeMax;
         int internalRangeHalfwayValue = 32500;
 
-        actlib::Numbers::Granular::GranularWalk instance(std::move(generator),
-                                                         std::move(range),
-                                                         deviationFactor,
-                                                         initialSelection);
+        aleatoric::GranularWalk instance(std::move(generator),
+                                      std::move(range),
+                                      deviationFactor,
+                                      initialSelection);
 
         WHEN("The first number is requested")
         {
@@ -366,7 +365,7 @@ SCENARIO("Numbers::GranularWalk")
                  "the initial selection")
             {
                 FORBID_CALL(*generatorPointer, getNumber());
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getDecimalNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
 
@@ -395,7 +394,7 @@ SCENARIO("Numbers::GranularWalk")
                         setDistribution(
                             (internalRangeHalfwayValue - expectedMaxStep),
                             (internalRangeHalfwayValue + expectedMaxStep)));
-                    instance.getNumber();
+                    instance.getDecimalNumber();
                 }
             }
 
@@ -414,18 +413,17 @@ SCENARIO("Numbers::GranularWalk")
                                setDistribution(ANY(int), ANY(int)));
 
                     auto rangeRoundingRequired =
-                        std::make_unique<actlib::Numbers::Range>(0, 9);
+                        std::make_unique<aleatoric::Range>(0, 9);
                     auto rangeRoundingRequiredPointer =
                         rangeRoundingRequired.get();
 
                     int initSelection = 3;
 
-                    actlib::Numbers::Granular::GranularWalk
-                        instanceWithRoundingRequired(
-                            std::move(roundingGenerator),
-                            std::move(rangeRoundingRequired),
-                            deviationFactor,
-                            initSelection);
+                    aleatoric::GranularWalk instanceWithRoundingRequired(
+                        std::move(roundingGenerator),
+                        std::move(rangeRoundingRequired),
+                        deviationFactor,
+                        initSelection);
 
                     // NB: Rounding here will be required:
 
@@ -448,19 +446,19 @@ SCENARIO("Numbers::GranularWalk")
                             (expectedScaledInitialSelection +
                              expectedMaxStep)));
 
-                    instanceWithRoundingRequired.getNumber();
+                    instanceWithRoundingRequired.getDecimalNumber();
                 }
             }
         }
 
         WHEN("A subsequent number is requested")
         {
-            instance.getNumber(); // first call
+            instance.getDecimalNumber(); // first call
 
             THEN("It does call the generator for a number")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
-                instance.getNumber();
+                instance.getDecimalNumber();
             }
 
             AND_THEN("It normalises the generated number and returns it scaled "
@@ -469,7 +467,7 @@ SCENARIO("Numbers::GranularWalk")
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .TIMES(1)
                     .RETURN(internalRangeHalfwayValue);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getDecimalNumber();
                 REQUIRE(returnedNumber == 15.0);
             }
 
@@ -479,13 +477,13 @@ SCENARIO("Numbers::GranularWalk")
                 REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
                 REQUIRE_CALL(*generatorPointer,
                              setDistribution(ANY(int), ANY(int)));
-                instance.getNumber();
+                instance.getDecimalNumber();
             }
         }
 
         WHEN("A reset is performed following a previous call to get a number")
         {
-            instance.getNumber(); // unsets the initial state
+            instance.getDecimalNumber(); // unsets the initial state
 
             AND_WHEN("The next number is requested")
             {
@@ -494,7 +492,7 @@ SCENARIO("Numbers::GranularWalk")
                 {
                     instance.reset();
                     FORBID_CALL(*generatorPointer, getNumber());
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getDecimalNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }
             }

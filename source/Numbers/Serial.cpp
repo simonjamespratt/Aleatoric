@@ -1,6 +1,6 @@
 #include "Serial.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Serial::Serial(std::unique_ptr<IDiscreteGenerator> generator,
                std::unique_ptr<Range> range)
 : m_range(std::move(range)),
@@ -13,7 +13,7 @@ Serial::Serial(std::unique_ptr<IDiscreteGenerator> generator,
 Serial::~Serial()
 {}
 
-int Serial::getNumber()
+int Serial::getIntegerNumber()
 {
     if(m_seriesPrinciple.seriesIsComplete(m_generator)) {
         m_seriesPrinciple.resetSeries(m_generator);
@@ -23,9 +23,14 @@ int Serial::getNumber()
     return selectedNumber + m_range->offset;
 }
 
+double Serial::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void Serial::reset()
 {
     m_seriesPrinciple.resetSeries(m_generator);
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

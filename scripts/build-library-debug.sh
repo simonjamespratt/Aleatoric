@@ -28,7 +28,7 @@ clang++ \
     -c \
     -Wall \
     -o NumberGenerators.o \
-    -I ../../include/actlib \
+    -I ../../include/aleatoric \
     ../../source/NumberGenerators.cpp \
     --debug && \
 

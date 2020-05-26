@@ -13,7 +13,7 @@ SCENARIO("Numbers::NoRepetition")
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -22,8 +22,7 @@ SCENARIO("Numbers::NoRepetition")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::NoRepetition(std::move(generator),
-                                                     std::move(range));
+                aleatoric::NoRepetition(std::move(generator), std::move(range));
             }
         }
     }
@@ -40,11 +39,10 @@ SCENARIO("Numbers::NoRepetition")
                    updateDistributionVector(generatedNumber, 0.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::NoRepetition instance(std::move(generator),
-                                                      std::move(range));
+        aleatoric::NoRepetition instance(std::move(generator), std::move(range));
 
         WHEN("A number is requested")
         {
@@ -52,7 +50,7 @@ SCENARIO("Numbers::NoRepetition")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("It should return the generated number with the range offset "
@@ -60,7 +58,7 @@ SCENARIO("Numbers::NoRepetition")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber ==
                         generatedNumber + rangePointer->offset);
             }
@@ -75,7 +73,7 @@ SCENARIO("Numbers::NoRepetition")
                 REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(generatedNumber, 0.0));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 

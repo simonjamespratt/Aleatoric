@@ -16,16 +16,16 @@ SCENARIO("Numbers::Precision")
             THEN("A standard invalid_argument exception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         std::vector<double> {0.99}),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         std::vector<double> {0.99}),
                     "The sum of the values provided as the vector for the "
                     "distribution must equal 1.0");
@@ -37,16 +37,16 @@ SCENARIO("Numbers::Precision")
             THEN("A standard invalid_argument exception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         std::vector<double> {1.01}),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         std::vector<double> {1.01}),
                     "The sum of the values provided as the vector for the "
                     "distribution must equal 1.0");
@@ -58,17 +58,15 @@ SCENARIO("Numbers::Precision")
              "range")
         {
             REQUIRE_THROWS_AS(
-                actlib::Numbers::Steps::Precision(
-                    std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                    std::make_unique<actlib::Numbers::Range>(1, 4),
-                    std::vector<double> {1.0}),
+                aleatoric::Precision(std::make_unique<aleatoric::DiscreteGenerator>(),
+                                  std::make_unique<aleatoric::Range>(1, 4),
+                                  std::vector<double> {1.0}),
                 std::invalid_argument);
 
             REQUIRE_THROWS_WITH(
-                actlib::Numbers::Steps::Precision(
-                    std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                    std::make_unique<actlib::Numbers::Range>(1, 4),
-                    std::vector<double> {1.0}),
+                aleatoric::Precision(std::make_unique<aleatoric::DiscreteGenerator>(),
+                                  std::make_unique<aleatoric::Range>(1, 4),
+                                  std::vector<double> {1.0}),
                 "The vector size for the distribution must match the size of "
                 "the provided range");
         }
@@ -81,7 +79,7 @@ SCENARIO("Numbers::Precision")
             auto generator = std::make_unique<DiscreteGeneratorMock>();
             auto generatorPointer = generator.get();
 
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 4);
+            auto range = std::make_unique<aleatoric::Range>(1, 4);
             auto rangePointer = range.get();
 
             std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
@@ -92,9 +90,9 @@ SCENARIO("Numbers::Precision")
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(distribution));
 
-                actlib::Numbers::Steps::Precision(std::move(generator),
-                                                  std::move(range),
-                                                  distribution);
+                aleatoric::Precision(std::move(generator),
+                                  std::move(range),
+                                  distribution);
             }
         }
 
@@ -106,12 +104,12 @@ SCENARIO("Numbers::Precision")
             auto generatorPointer = generator.get();
             ALLOW_CALL(*generatorPointer, setDistributionVector(distribution));
 
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 4);
+            auto range = std::make_unique<aleatoric::Range>(1, 4);
             auto rangePointer = range.get();
 
-            actlib::Numbers::Steps::Precision instance(std::move(generator),
-                                                       std::move(range),
-                                                       distribution);
+            aleatoric::Precision instance(std::move(generator),
+                                       std::move(range),
+                                       distribution);
 
             THEN("It returns a generated number with the range offset added")
             {
@@ -119,7 +117,7 @@ SCENARIO("Numbers::Precision")
 
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber ==
                         generatedNumber + rangePointer->offset);
             }
@@ -137,17 +135,17 @@ SCENARIO("Numbers::Precision")
                 int initialSelectionOutOfRange = 5;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         distribution,
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         distribution,
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
@@ -162,17 +160,17 @@ SCENARIO("Numbers::Precision")
                 int initialSelectionOutOfRange = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         distribution,
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Precision(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 4),
+                    aleatoric::Precision(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 4),
                         distribution,
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
@@ -191,13 +189,13 @@ SCENARIO("Numbers::Precision")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistributionVector(distribution));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 4);
+        auto range = std::make_unique<aleatoric::Range>(1, 4);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::Precision instance(std::move(generator),
-                                                   std::move(range),
-                                                   distribution,
-                                                   initialSelection);
+        aleatoric::Precision instance(std::move(generator),
+                                   std::move(range),
+                                   distribution,
+                                   initialSelection);
 
         WHEN("The first number is requested")
         {
@@ -205,7 +203,7 @@ SCENARIO("Numbers::Precision")
             {
                 FORBID_CALL(*generatorPointer, getNumber());
 
-                int returnedNumber = instance.getNumber();
+                int returnedNumber = instance.getIntegerNumber();
 
                 REQUIRE(returnedNumber == initialSelection);
             }
@@ -217,12 +215,12 @@ SCENARIO("Numbers::Precision")
             {
                 int generatedNumber = 1;
 
-                instance.getNumber(); // first call
+                instance.getIntegerNumber(); // first call
 
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
 
-                auto returnedNumner = instance.getNumber();
+                auto returnedNumner = instance.getIntegerNumber();
 
                 REQUIRE(returnedNumner ==
                         generatedNumber + rangePointer->offset);
@@ -240,7 +238,7 @@ SCENARIO("Numbers::Precision")
 
                     FORBID_CALL(*generatorPointer, getNumber());
 
-                    int returnedNumber = instance.getNumber();
+                    int returnedNumber = instance.getIntegerNumber();
 
                     REQUIRE(returnedNumber == initialSelection);
                 }
@@ -252,13 +250,14 @@ SCENARIO("Numbers::Precision")
                     "It returns a generated number with the range offset added")
                 {
                     instance.reset();
-                    instance.getNumber(); // first call
+                    instance.getIntegerNumber(); // first call
                     int generatedNumber = 1;
 
                     REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(generatedNumber);
 
-                    auto returnedNumner = instance.getNumber(); // second call
+                    auto returnedNumner =
+                        instance.getIntegerNumber(); // second call
 
                     REQUIRE(returnedNumner ==
                             generatedNumber + rangePointer->offset);

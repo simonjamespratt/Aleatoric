@@ -5,7 +5,7 @@
 
 #include <tuple>
 
-namespace actlib { namespace Utilities {
+namespace aleatoric { namespace Utilities {
 
 // Used by protocol implementations that have a max step sub range limiter for
 // number selection. For example, is used by Walk and GranularWalk
@@ -22,16 +22,13 @@ class SeriesPrinciple {
     SeriesPrinciple();
     ~SeriesPrinciple();
 
-    int
-    getNumber(std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+    int getNumber(std::unique_ptr<IDiscreteGenerator> &generator);
 
-    bool seriesIsComplete(
-        std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+    bool seriesIsComplete(std::unique_ptr<IDiscreteGenerator> &generator);
 
-    void resetSeries(
-        std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator);
+    void resetSeries(std::unique_ptr<IDiscreteGenerator> &generator);
 };
 
-}} // namespace actlib::Utilities
+}} // namespace aleatoric::Utilities
 
 #endif /* Utilities_hpp */

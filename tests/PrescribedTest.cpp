@@ -13,12 +13,11 @@ SCENARIO("TimeDomain::Prescribed")
         {
             THEN("A standard invalid_argument exception is thrown")
             {
-                REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Prescribed(sourceWithInvalidDuration),
-                    std::invalid_argument);
+                REQUIRE_THROWS_AS(aleatoric::Prescribed(sourceWithInvalidDuration),
+                                  std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Prescribed(sourceWithInvalidDuration),
+                    aleatoric::Prescribed(sourceWithInvalidDuration),
                     "All durations supplied must be equal to, or greater than, "
                     "1");
             }
@@ -27,7 +26,7 @@ SCENARIO("TimeDomain::Prescribed")
     GIVEN("The class is instantiated")
     {
         std::vector<int> source {100, 200, 300};
-        actlib::TimeDomain::Prescribed instance(source);
+        aleatoric::Prescribed instance(source);
 
         WHEN("The size of the duration collection is requested")
         {

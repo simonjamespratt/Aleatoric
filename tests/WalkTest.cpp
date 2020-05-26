@@ -18,17 +18,15 @@ SCENARIO("Numbers::Walk")
                 int invalidMaxStep = 11;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        invalidMaxStep),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 invalidMaxStep),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        invalidMaxStep),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 invalidMaxStep),
                     "The value passed as argument for maxStep must be less "
                     "than or equal to 10");
             }
@@ -42,7 +40,7 @@ SCENARIO("Numbers::Walk")
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto range = std::make_unique<aleatoric::Range>(1, 10);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -52,9 +50,7 @@ SCENARIO("Numbers::Walk")
                 REQUIRE_CALL(
                     *generatorPointer,
                     setDistribution(rangePointer->start, rangePointer->end));
-                actlib::Numbers::Steps::Walk(std::move(generator),
-                                             std::move(range),
-                                             maxStep);
+                aleatoric::Walk(std::move(generator), std::move(range), maxStep);
             }
         }
     }
@@ -67,12 +63,10 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto range = std::make_unique<aleatoric::Range>(1, 10);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::Walk instance(std::move(generator),
-                                              std::move(range),
-                                              maxStep);
+        aleatoric::Walk instance(std::move(generator), std::move(range), maxStep);
 
         WHEN("A number is requested")
         {
@@ -81,7 +75,7 @@ SCENARIO("Numbers::Walk")
                 // no need for adding of offset as UniformDistribution takes the
                 // range.start and range.end as its range
                 REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(1);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber == 1);
             }
 
@@ -101,7 +95,7 @@ SCENARIO("Numbers::Walk")
 
                     REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(4);
                     REQUIRE_CALL(*generatorPointer, setDistribution(2, 6));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -117,7 +111,7 @@ SCENARIO("Numbers::Walk")
                     REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(2);
                     REQUIRE_CALL(*generatorPointer,
                                  setDistribution(1, 4)); // instead of (0, 4)
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -133,7 +127,7 @@ SCENARIO("Numbers::Walk")
                     REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(9);
                     REQUIRE_CALL(*generatorPointer,
                                  setDistribution(7, 10)); // instead of (7, 11)
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
         }
@@ -161,19 +155,17 @@ SCENARIO("Numbers::Walk")
                 auto initialSelection = 11;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        maxStep,
-                        initialSelection),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 maxStep,
+                                 initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        maxStep,
-                        initialSelection),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 maxStep,
+                                 initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -186,19 +178,17 @@ SCENARIO("Numbers::Walk")
                 auto initialSelection = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        maxStep,
-                        initialSelection),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 maxStep,
+                                 initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Walk(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 10),
-                        maxStep,
-                        initialSelection),
+                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
+                                 std::make_unique<aleatoric::Range>(1, 10),
+                                 maxStep,
+                                 initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -214,7 +204,7 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto range = std::make_unique<aleatoric::Range>(1, 10);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -225,10 +215,10 @@ SCENARIO("Numbers::Walk")
                     *generatorPointer,
                     setDistribution(rangePointer->start, rangePointer->end));
 
-                actlib::Numbers::Steps::Walk(std::move(generator),
-                                             std::move(range),
-                                             maxStep,
-                                             initialSelection);
+                aleatoric::Walk(std::move(generator),
+                             std::move(range),
+                             maxStep,
+                             initialSelection);
             }
         }
     }
@@ -242,13 +232,13 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+        auto range = std::make_unique<aleatoric::Range>(1, 10);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::Walk instance(std::move(generator),
-                                              std::move(range),
-                                              maxStep,
-                                              initialSelection);
+        aleatoric::Walk instance(std::move(generator),
+                              std::move(range),
+                              maxStep,
+                              initialSelection);
 
         WHEN("The first number is requested")
         {
@@ -256,7 +246,7 @@ SCENARIO("Numbers::Walk")
                  "initial selection")
             {
                 FORBID_CALL(*generatorPointer, getNumber());
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
 
@@ -265,18 +255,18 @@ SCENARIO("Numbers::Walk")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistribution(ANY(int), ANY(int)));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
         WHEN("A subsequent number is requested")
         {
-            instance.getNumber(); // first call
+            instance.getIntegerNumber(); // first call
 
             THEN("It does call the generator for a number and return it")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber == 1);
             }
 
@@ -286,13 +276,13 @@ SCENARIO("Numbers::Walk")
                 REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
                 REQUIRE_CALL(*generatorPointer,
                              setDistribution(ANY(int), ANY(int)));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
         WHEN("A reset is performed following a previous call to get a number")
         {
-            instance.getNumber(); // unsets the initial state
+            instance.getIntegerNumber(); // unsets the initial state
 
             AND_WHEN("The next number is requested")
             {
@@ -301,7 +291,7 @@ SCENARIO("Numbers::Walk")
                 {
                     instance.reset();
                     FORBID_CALL(*generatorPointer, getNumber());
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getIntegerNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }
             }

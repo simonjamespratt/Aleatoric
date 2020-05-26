@@ -2,7 +2,7 @@
 
 #include "ErrorChecker.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Cycle::Cycle(std::unique_ptr<Range> range,
              bool bidirectional,
              bool reverseDirection)
@@ -25,8 +25,7 @@ Cycle::Cycle(std::unique_ptr<Range> range,
   m_reverse(reverseDirection),
   m_initialStateReverse(reverseDirection)
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
 
     m_position = m_initialSelection;
     m_hasInitialSelection = true;
@@ -35,7 +34,7 @@ Cycle::Cycle(std::unique_ptr<Range> range,
 Cycle::~Cycle()
 {}
 
-int Cycle::getNumber()
+int Cycle::getIntegerNumber()
 {
     if(!m_bidirectional) {
         if(!m_reverse) {
@@ -80,6 +79,11 @@ int Cycle::getNumber()
     }
 }
 
+double Cycle::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void Cycle::reset()
 {
     if(m_bidirectional) {
@@ -98,4 +102,4 @@ void Cycle::reset()
         }
     }
 }
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

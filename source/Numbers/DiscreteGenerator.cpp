@@ -1,6 +1,6 @@
 #include "DiscreteGenerator.hpp"
 
-namespace actlib { namespace Numbers {
+namespace aleatoric {
 DiscreteGenerator::DiscreteGenerator() : m_engine(m_seedSource)
 {
     setDistributionVector(std::vector<double> {1.0, 1.0});
@@ -68,4 +68,4 @@ void DiscreteGenerator::setDistribution()
         std::discrete_distribution<int>(m_distributionVector.begin(),
                                         m_distributionVector.end());
 }
-}} // namespace actlib::Numbers
+} // namespace aleatoric

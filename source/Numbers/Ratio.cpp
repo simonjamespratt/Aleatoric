@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator,
              std::unique_ptr<Range> range,
              std::vector<int> ratios)
@@ -27,7 +27,7 @@ Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator,
 Ratio::~Ratio()
 {}
 
-int Ratio::getNumber()
+int Ratio::getIntegerNumber()
 {
     if(m_seriesPrinciple.seriesIsComplete(m_generator)) {
         m_seriesPrinciple.resetSeries(m_generator);
@@ -37,9 +37,14 @@ int Ratio::getNumber()
     return m_selectables[index];
 }
 
+double Ratio::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void Ratio::reset()
 {
     m_seriesPrinciple.resetSeries(m_generator);
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

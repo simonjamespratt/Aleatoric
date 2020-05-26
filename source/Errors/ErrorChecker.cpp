@@ -2,14 +2,14 @@
 
 #include <stdexcept> // std::invalid_argument
 
-namespace actlib {
+namespace aleatoric {
 ErrorChecker::ErrorChecker()
 {}
 ErrorChecker::~ErrorChecker()
 {}
 
-void ErrorChecker::checkInitialSelectionInRange(
-    int initialSelection, actlib::Numbers::Range const &range)
+void ErrorChecker::checkInitialSelectionInRange(int initialSelection,
+                                                Range const &range)
 {
     if(initialSelection < range.start || initialSelection > range.end) {
         throw std::invalid_argument(
@@ -28,4 +28,4 @@ void ErrorChecker::checkValueWithinUnitInterval(double value,
                                     " must be within the range of 0.0 to 1.0");
     }
 }
-} // namespace actlib
+} // namespace aleatoric

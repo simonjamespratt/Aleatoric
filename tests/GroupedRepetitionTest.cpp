@@ -19,7 +19,7 @@ SCENARIO("Numbers::GroupedRepetition")
         ALLOW_CALL(*groupingGeneratorPointer,
                    setDistributionVector(ANY(int), ANY(double)));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(11, 13);
+        auto range = std::make_unique<aleatoric::Range>(11, 13);
         auto rangePointer = range.get();
 
         std::vector<int> groupings {1, 2, 3};
@@ -31,11 +31,10 @@ SCENARIO("Numbers::GroupedRepetition")
             {
                 REQUIRE_CALL(*numberGeneratorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::GroupedRepetition(
-                    std::move(numberGenerator),
-                    std::move(groupingGenerator),
-                    std::move(range),
-                    groupings);
+                aleatoric::GroupedRepetition(std::move(numberGenerator),
+                                          std::move(groupingGenerator),
+                                          std::move(range),
+                                          groupings);
             }
 
             THEN("The grouping generator should be set to the size of the "
@@ -44,11 +43,10 @@ SCENARIO("Numbers::GroupedRepetition")
                 REQUIRE_CALL(*groupingGeneratorPointer,
                              setDistributionVector(groupings.size(), 1.0));
 
-                actlib::Numbers::Steps::GroupedRepetition(
-                    std::move(numberGenerator),
-                    std::move(groupingGenerator),
-                    std::move(range),
-                    groupings);
+                aleatoric::GroupedRepetition(std::move(numberGenerator),
+                                          std::move(groupingGenerator),
+                                          std::move(range),
+                                          groupings);
             }
         }
     }
@@ -79,16 +77,15 @@ SCENARIO("Numbers::GroupedRepetition")
         ALLOW_CALL(*groupingGeneratorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        auto range = std::make_unique<actlib::Numbers::Range>(11, 13);
+        auto range = std::make_unique<aleatoric::Range>(11, 13);
         auto rangePointer = range.get();
 
         std::vector<int> groupings {2};
 
-        actlib::Numbers::Steps::GroupedRepetition instance(
-            std::move(numberGenerator),
-            std::move(groupingGenerator),
-            std::move(range),
-            groupings);
+        aleatoric::GroupedRepetition instance(std::move(numberGenerator),
+                                           std::move(groupingGenerator),
+                                           std::move(range),
+                                           groupings);
 
         WHEN("A number is requested")
         {
@@ -98,7 +95,7 @@ SCENARIO("Numbers::GroupedRepetition")
                 int generatedNumber = 1;
                 REQUIRE_CALL(*numberGeneratorPointer, getNumber())
                     .RETURN(generatedNumber);
-                REQUIRE(instance.getNumber() ==
+                REQUIRE(instance.getIntegerNumber() ==
                         generatedNumber + rangePointer->offset);
             }
 
@@ -113,7 +110,7 @@ SCENARIO("Numbers::GroupedRepetition")
                     // groupings collection, by index
                     REQUIRE_CALL(*groupingGeneratorPointer, getNumber())
                         .RETURN(0);
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
 
                 THEN("It updates the grouping generator to disallow the "
@@ -128,14 +125,14 @@ SCENARIO("Numbers::GroupedRepetition")
                         *groupingGeneratorPointer,
                         updateDistributionVector(generatedNumber, 0.0));
 
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
 
                 THEN("It should call the number generator to get a number")
                 {
                     REQUIRE_CALL(*numberGeneratorPointer, getNumber())
                         .RETURN(1);
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
 
                 THEN("It updates the number generator to disallow the "
@@ -150,7 +147,7 @@ SCENARIO("Numbers::GroupedRepetition")
                         *numberGeneratorPointer,
                         updateDistributionVector(generatedNumber, 0.0));
 
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -159,13 +156,13 @@ SCENARIO("Numbers::GroupedRepetition")
                 // This should select the first grouping which has the value 2
                 REQUIRE_CALL(*groupingGeneratorPointer, getNumber()).RETURN(0);
 
-                instance.getNumber(); // first call, calls the generators
+                instance.getIntegerNumber(); // first call, calls the generators
 
                 THEN("The generators should not be called to get new numbers")
                 {
                     FORBID_CALL(*groupingGeneratorPointer, getNumber());
                     FORBID_CALL(*numberGeneratorPointer, getNumber());
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -175,10 +172,10 @@ SCENARIO("Numbers::GroupedRepetition")
                 // This should select the first grouping which has the value 2
                 REQUIRE_CALL(*groupingGeneratorPointer, getNumber()).RETURN(0);
 
-                instance.getNumber(); // first call, calls the generators
+                instance.getIntegerNumber(); // first call, calls the generators
 
-                instance.getNumber(); // second call, should exhaust the
-                                      // grouping and set the count to 0
+                instance.getIntegerNumber(); // second call, should exhaust the
+                                             // grouping and set the count to 0
 
                 THEN("It should call the generators for a new grouping "
                      "and a new number selection")
@@ -197,7 +194,7 @@ SCENARIO("Numbers::GroupedRepetition")
                         *numberGeneratorPointer,
                         updateDistributionVector(generatedNumber, 0.0));
 
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -208,7 +205,7 @@ SCENARIO("Numbers::GroupedRepetition")
                     .RETURN(std::vector<double> {1.0});
                 REQUIRE_CALL(*numberGeneratorPointer, getDistributionVector())
                     .RETURN(std::vector<double> {1.0});
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             AND_WHEN("The series are complete")
@@ -225,7 +222,7 @@ SCENARIO("Numbers::GroupedRepetition")
                         .RETURN(std::vector<double> {0.0});
                     REQUIRE_CALL(*numberGeneratorPointer,
                                  updateDistributionVector(1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -243,7 +240,7 @@ SCENARIO("Numbers::GroupedRepetition")
                         .RETURN(std::vector<double> {1.0});
                     FORBID_CALL(*numberGeneratorPointer,
                                 updateDistributionVector(1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
         }

@@ -5,8 +5,8 @@
 #include <math.h>
 #include <stdexcept>
 
-namespace actlib { namespace TimeDomain {
-Multiples::Multiples(int baseIncrement, const actlib::Numbers::Range &range)
+namespace aleatoric {
+Multiples::Multiples(int baseIncrement, const Range &range)
 {
     if(baseIncrement < 1) {
         throw std::invalid_argument(
@@ -26,15 +26,14 @@ Multiples::Multiples(int baseIncrement, const actlib::Numbers::Range &range)
     m_hasDeviationFactor = false;
 }
 
-Multiples::Multiples(
-    int baseIncrement,
-    const actlib::Numbers::Range &range,
-    double deviationFactor,
-    std::unique_ptr<actlib::Numbers::IUniformGenerator> generator)
+Multiples::Multiples(int baseIncrement,
+                     const Range &range,
+                     double deviationFactor,
+                     std::unique_ptr<IUniformGenerator> generator)
 : Multiples(baseIncrement, range)
 {
-    actlib::ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
-                                                       "deviationFactor");
+    ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
+                                               "deviationFactor");
 
     m_deviationFactor = deviationFactor;
     m_hasDeviationFactor = true;
@@ -62,15 +61,14 @@ Multiples::Multiples(int baseIncrement, const std::vector<int> &multipliers)
     m_hasDeviationFactor = false;
 }
 
-Multiples::Multiples(
-    int baseIncrement,
-    const std::vector<int> &multipliers,
-    double deviationFactor,
-    std::unique_ptr<actlib::Numbers::IUniformGenerator> generator)
+Multiples::Multiples(int baseIncrement,
+                     const std::vector<int> &multipliers,
+                     double deviationFactor,
+                     std::unique_ptr<IUniformGenerator> generator)
 : Multiples(baseIncrement, multipliers)
 {
-    actlib::ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
-                                                       "deviationFactor");
+    ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
+                                               "deviationFactor");
 
     m_deviationFactor = deviationFactor;
     m_hasDeviationFactor = true;
@@ -114,4 +112,4 @@ int Multiples::getDuration(int index)
     return m_durations.at(index);
 }
 
-}} // namespace actlib::TimeDomain
+} // namespace aleatoric

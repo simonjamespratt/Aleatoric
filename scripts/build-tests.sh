@@ -27,7 +27,7 @@ clang++ \
     -stdlib=libc++ \
     -Wall \
     -o test \
-    -I ../../include/actlib \
+    -I ../../include/aleatoric \
     -I ../../tests/FakeIt/single_header/catch \
     -I ../../tests \
     ../../tests/main.cpp \

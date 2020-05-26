@@ -6,7 +6,7 @@
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
-class DiscreteGeneratorMock : public actlib::Numbers::IDiscreteGenerator {
+class DiscreteGeneratorMock : public aleatoric::IDiscreteGenerator {
   public:
     MAKE_MOCK0(getNumber, int(), override);
     MAKE_MOCK1(setDistributionVector, void(std::vector<double>), override);

@@ -6,7 +6,7 @@
 #include <math.h>  // round
 #include <numeric> // std::accumulate
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
                    std::unique_ptr<Range> range,
                    double chanceOfRepetition)
@@ -36,8 +36,7 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
                    int initialSelection)
 : Periodic(std::move(generator), std::move(range), chanceOfRepetition)
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -46,7 +45,7 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
 Periodic::~Periodic()
 {}
 
-int Periodic::getNumber()
+int Periodic::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         setPeriodicDistribution(m_initialSelection - m_range->offset);
@@ -57,6 +56,11 @@ int Periodic::getNumber()
     auto generatedNumber = m_generator->getNumber();
     setPeriodicDistribution(generatedNumber);
     return generatedNumber + m_range->offset;
+}
+
+double Periodic::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
 }
 
 void Periodic::reset()
@@ -92,4 +96,4 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
 
     m_generator->setDistributionVector(distributionVector);
 }
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

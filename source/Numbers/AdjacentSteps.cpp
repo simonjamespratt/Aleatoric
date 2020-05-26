@@ -9,7 +9,7 @@
 // generator's vector and the numbers the generator returns. Not sure what the
 // right answer is though!
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
                              std::unique_ptr<Range> range)
 : m_generator(std::move(generator)), m_range(std::move(range))
@@ -24,8 +24,7 @@ AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
                              int initialSelection)
 : AdjacentSteps(std::move(generator), std::move(range))
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
 }
@@ -33,7 +32,7 @@ AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
 AdjacentSteps::~AdjacentSteps()
 {}
 
-int AdjacentSteps::getNumber()
+int AdjacentSteps::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         // step configuring in preparation for next call
@@ -54,6 +53,11 @@ int AdjacentSteps::getNumber()
     prepareStepBasedDistribution(numberPlacedWithinRange, generatedNumber);
 
     return numberPlacedWithinRange;
+}
+
+double AdjacentSteps::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
 }
 
 void AdjacentSteps::reset()
@@ -77,4 +81,4 @@ void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
         m_generator->updateDistributionVector(vectorIndex - 1, 1.0);
     }
 }
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

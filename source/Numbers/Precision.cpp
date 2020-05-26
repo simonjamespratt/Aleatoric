@@ -4,7 +4,7 @@
 
 #include <numeric> // std::accumulate
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
                      std::unique_ptr<Range> range,
                      std::vector<double> distribution)
@@ -47,8 +47,7 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
                      int initialSelection)
 : Precision(std::move(generator), std::move(range), distribution)
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -57,7 +56,7 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
 Precision::~Precision()
 {}
 
-int Precision::getNumber()
+int Precision::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         m_haveRequestedFirstNumber = true;
@@ -67,10 +66,15 @@ int Precision::getNumber()
     return m_generator->getNumber() + m_range->offset;
 }
 
+double Precision::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void Precision::reset()
 {
     if(m_haveInitialSelection) {
         m_haveRequestedFirstNumber = false;
     }
 }
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric
