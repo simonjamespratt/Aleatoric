@@ -19,19 +19,19 @@ SCENARIO("Numbers::Subset")
                 int invalidSubsetMin = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         10),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         10),
                     "The value passed as argument for subsetMin must be "
@@ -46,19 +46,19 @@ SCENARIO("Numbers::Subset")
                 int invalidSubsetMin = 11;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         10),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         10),
                     "The value passed as argument for subsetMin must be "
@@ -73,19 +73,19 @@ SCENARIO("Numbers::Subset")
                 int invalidSubsetMax = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         1,
                         invalidSubsetMax),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         1,
                         invalidSubsetMax),
                     "The value passed as argument for subsetMax must be "
@@ -100,19 +100,19 @@ SCENARIO("Numbers::Subset")
                 int invalidSubsetMax = 11;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         1,
                         invalidSubsetMax),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         1,
                         invalidSubsetMax),
                     "The value passed as argument for subsetMax must be "
@@ -128,19 +128,19 @@ SCENARIO("Numbers::Subset")
                 int invalidSubsetMax = 1;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         invalidSubsetMax),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Subset(
-                        std::make_unique<actlib::Numbers::UniformGenerator>(),
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(0, 9),
+                    aleatoric::Subset(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(0, 9),
                         invalidSubsetMin,
                         invalidSubsetMax),
                     "The value passed for subsetMin may not be greater than "
@@ -165,7 +165,7 @@ SCENARIO("Numbers::Subset")
                 ALLOW_CALL(*uniformGeneratorPointer,
                            setDistribution(ANY(int), ANY(int)));
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+                auto range = std::make_unique<aleatoric::Range>(1, 10);
                 auto rangePointer = range.get();
 
                 REQUIRE_CALL(*uniformGeneratorPointer,
@@ -173,12 +173,11 @@ SCENARIO("Numbers::Subset")
 
                 REQUIRE_CALL(*uniformGeneratorPointer, getNumber()).RETURN(1);
 
-                actlib::Numbers::Steps::Subset(
-                    std::move(uniformGenerator),
-                    std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                    std::move(range),
-                    subSetMin,
-                    subSetMax);
+                aleatoric::Subset(std::move(uniformGenerator),
+                               std::make_unique<aleatoric::DiscreteGenerator>(),
+                               std::move(range),
+                               subSetMin,
+                               subSetMax);
             }
 
             THEN("The subset collection should be filled with non-repeated "
@@ -191,7 +190,7 @@ SCENARIO("Numbers::Subset")
                 const int selectedSubsetSize = 5;
                 int numberSelectedByDiscreteGenerator = 1;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+                auto range = std::make_unique<aleatoric::Range>(1, 10);
                 auto rangePointer = range.get();
 
                 auto uniformGenerator =
@@ -221,11 +220,11 @@ SCENARIO("Numbers::Subset")
                                              0.0))
                     .TIMES(selectedSubsetSize);
 
-                actlib::Numbers::Steps::Subset(std::move(uniformGenerator),
-                                               std::move(discreteGenerator),
-                                               std::move(range),
-                                               subSetMin,
-                                               subSetMax);
+                aleatoric::Subset(std::move(uniformGenerator),
+                               std::move(discreteGenerator),
+                               std::move(range),
+                               subSetMin,
+                               subSetMax);
             }
 
             THEN("The uniform generator should be set for selecting indices "
@@ -237,7 +236,7 @@ SCENARIO("Numbers::Subset")
                     std::make_unique<UniformGeneratorMock>();
                 auto uniformGeneratorPointer = uniformGenerator.get();
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+                auto range = std::make_unique<aleatoric::Range>(1, 10);
                 auto rangePointer = range.get();
 
                 ALLOW_CALL(*uniformGeneratorPointer,
@@ -249,12 +248,11 @@ SCENARIO("Numbers::Subset")
                 REQUIRE_CALL(*uniformGeneratorPointer,
                              setDistribution(0, selectedSubsetSize - 1));
 
-                actlib::Numbers::Steps::Subset(
-                    std::move(uniformGenerator),
-                    std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                    std::move(range),
-                    subSetMin,
-                    subSetMax);
+                aleatoric::Subset(std::move(uniformGenerator),
+                               std::make_unique<aleatoric::DiscreteGenerator>(),
+                               std::move(range),
+                               subSetMin,
+                               subSetMax);
             }
         }
     }
@@ -268,7 +266,7 @@ SCENARIO("Numbers::Subset")
             const int selectedSubsetSize = 5;
             int numberSelectedByDiscreteGenerator = 1;
 
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+            auto range = std::make_unique<aleatoric::Range>(1, 10);
             auto rangePointer = range.get();
 
             auto uniformGenerator = std::make_unique<UniformGeneratorMock>();
@@ -294,19 +292,18 @@ SCENARIO("Numbers::Subset")
                 updateDistributionVector(numberSelectedByDiscreteGenerator,
                                          0.0));
 
-            actlib::Numbers::Steps::Subset instance(
-                std::move(uniformGenerator),
-                std::move(discreteGenerator),
-                std::move(range),
-                subSetMin,
-                subSetMax);
+            aleatoric::Subset instance(std::move(uniformGenerator),
+                                    std::move(discreteGenerator),
+                                    std::move(range),
+                                    subSetMin,
+                                    subSetMax);
 
             THEN("It should select an item from the subset collection "
                  "using a generated number as the index to select")
             {
                 REQUIRE_CALL(*uniformGeneratorPointer, getNumber()).RETURN(1);
 
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("The number returned should be the result of the number "
@@ -318,7 +315,7 @@ SCENARIO("Numbers::Subset")
 
                 REQUIRE_CALL(*uniformGeneratorPointer, getNumber()).RETURN(1);
 
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
 
                 REQUIRE(returnedNumber == numberSelectedByDiscreteGenerator +
                                               rangePointer->offset);
@@ -330,7 +327,7 @@ SCENARIO("Numbers::Subset")
             int subSetMin = 4;
             int subSetMax = 7;
 
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 10);
+            auto range = std::make_unique<aleatoric::Range>(1, 10);
             auto rangePointer = range.get();
 
             auto uniformGenerator = std::make_unique<UniformGeneratorMock>();
@@ -351,12 +348,11 @@ SCENARIO("Numbers::Subset")
             ALLOW_CALL(*discreteGeneratorPointer,
                        updateDistributionVector(ANY(int), ANY(double)));
 
-            actlib::Numbers::Steps::Subset instance(
-                std::move(uniformGenerator),
-                std::move(discreteGenerator),
-                std::move(range),
-                subSetMin,
-                subSetMax);
+            aleatoric::Subset instance(std::move(uniformGenerator),
+                                    std::move(discreteGenerator),
+                                    std::move(range),
+                                    subSetMin,
+                                    subSetMax);
 
             THEN("A subset size should have been chosen that is within the "
                  "subset min and max values received (inclusive)")

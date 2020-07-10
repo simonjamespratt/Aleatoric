@@ -14,7 +14,7 @@ SCENARIO("Numbers::Serial")
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -23,8 +23,7 @@ SCENARIO("Numbers::Serial")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::Serial(std::move(generator),
-                                               std::move(range));
+                aleatoric::Serial(std::move(generator), std::move(range));
             }
         }
     }
@@ -49,11 +48,10 @@ SCENARIO("Numbers::Serial")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::Serial instance(std::move(generator),
-                                                std::move(range));
+        aleatoric::Serial instance(std::move(generator), std::move(range));
 
         WHEN("A number is requested")
         {
@@ -61,7 +59,7 @@ SCENARIO("Numbers::Serial")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("It updates the generator to disallow the selected number "
@@ -71,14 +69,14 @@ SCENARIO("Numbers::Serial")
                     .RETURN(generatedNumber);
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(generatedNumber, 0.0));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             THEN("It returns the selected number, offset by the range.offset")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto number = instance.getNumber();
+                auto number = instance.getIntegerNumber();
                 REQUIRE(number == generatedNumber + rangePointer->offset);
             }
 
@@ -88,7 +86,7 @@ SCENARIO("Numbers::Serial")
                 // NB: the return value for this test can be anything
                 REQUIRE_CALL(*generatorPointer, getDistributionVector())
                     .RETURN(std::vector<double> {1.0});
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             AND_WHEN("The series is complete")
@@ -99,7 +97,7 @@ SCENARIO("Numbers::Serial")
                         .RETURN(std::vector<double> {0.0});
                     REQUIRE_CALL(*generatorPointer,
                                  updateDistributionVector(1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -111,7 +109,7 @@ SCENARIO("Numbers::Serial")
                         .RETURN(std::vector<double> {1.0});
                     FORBID_CALL(*generatorPointer,
                                 updateDistributionVector(1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
         }

@@ -1,6 +1,6 @@
 #include "Utilities.hpp"
 
-namespace actlib { namespace Utilities {
+namespace aleatoric { namespace Utilities {
 
 std::tuple<int, int> getMaxStepSubRange(int lastSelectedNumber,
                                         int maxStep,
@@ -32,8 +32,7 @@ SeriesPrinciple::SeriesPrinciple()
 SeriesPrinciple::~SeriesPrinciple()
 {}
 
-int SeriesPrinciple::getNumber(
-    std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator)
+int SeriesPrinciple::getNumber(std::unique_ptr<IDiscreteGenerator> &generator)
 {
     int selectedNumber = generator->getNumber();
     generator->updateDistributionVector(selectedNumber, 0.0);
@@ -41,7 +40,7 @@ int SeriesPrinciple::getNumber(
 }
 
 bool SeriesPrinciple::seriesIsComplete(
-    std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator)
+    std::unique_ptr<IDiscreteGenerator> &generator)
 {
     auto distributionVector = generator->getDistributionVector();
     for(auto &&item : distributionVector) {
@@ -53,9 +52,9 @@ bool SeriesPrinciple::seriesIsComplete(
 }
 
 void SeriesPrinciple::resetSeries(
-    std::unique_ptr<actlib::Numbers::IDiscreteGenerator> &generator)
+    std::unique_ptr<IDiscreteGenerator> &generator)
 {
     generator->updateDistributionVector(1.0);
 }
 
-}} // namespace actlib::Utilities
+}} // namespace aleatoric::Utilities

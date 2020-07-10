@@ -5,7 +5,7 @@
 # Basic settings
 cmake_minimum_required(VERSION 3.14)
 project(
-    actlib
+    aleatoric
     VERSION 0.1.0
     DESCRIPTION "Static C++ library providing aleatoric composition tools"
     LANGUAGES CXX)

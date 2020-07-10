@@ -1,6 +1,7 @@
 #include "Range.hpp"
 
-namespace actlib { namespace Numbers {
+namespace aleatoric {
+
 Range::Range(int rangeStart, int rangeEnd)
 {
     start = rangeStart;
@@ -8,4 +9,4 @@ Range::Range(int rangeStart, int rangeEnd)
     offset = rangeStart;
     size = rangeEnd - rangeStart + 1;
 }
-}} // namespace actlib::Numbers
+} // namespace aleatoric

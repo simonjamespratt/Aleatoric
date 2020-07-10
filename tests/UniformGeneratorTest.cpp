@@ -6,7 +6,7 @@ SCENARIO("UniformGenerator")
 {
     GIVEN("The class is instantiated with a default constructor")
     {
-        actlib::Numbers::UniformGenerator instance;
+        aleatoric::UniformGenerator instance;
 
         WHEN("A number is requested")
         {
@@ -29,7 +29,7 @@ SCENARIO("UniformGenerator")
 
     GIVEN("The class is instantiated with a defined range")
     {
-        actlib::Numbers::UniformGenerator instance(1, 2);
+        aleatoric::UniformGenerator instance(1, 2);
 
         WHEN("A number is requested")
         {

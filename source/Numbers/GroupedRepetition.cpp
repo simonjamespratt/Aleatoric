@@ -1,6 +1,6 @@
 #include "GroupedRepetition.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 GroupedRepetition::GroupedRepetition(
     std::unique_ptr<IDiscreteGenerator> numberGenerator,
     std::unique_ptr<IDiscreteGenerator> groupingGenerator,
@@ -20,7 +20,7 @@ GroupedRepetition::GroupedRepetition(
 GroupedRepetition::~GroupedRepetition()
 {}
 
-int GroupedRepetition::getNumber()
+int GroupedRepetition::getIntegerNumber()
 {
     if(m_seriesPrinciple.seriesIsComplete(m_groupingGenerator)) {
         m_seriesPrinciple.resetSeries(m_groupingGenerator);
@@ -43,6 +43,11 @@ int GroupedRepetition::getNumber()
     return m_currentReturnableNumber;
 }
 
+double GroupedRepetition::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void GroupedRepetition::reset()
 {
     m_groupingCount = 0;
@@ -50,4 +55,4 @@ void GroupedRepetition::reset()
     m_seriesPrinciple.resetSeries(m_groupingGenerator);
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

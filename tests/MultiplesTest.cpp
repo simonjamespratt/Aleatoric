@@ -18,14 +18,13 @@ SCENARIO("TimeDomain::Multiples")
             {
                 int invalidBaseIncrement = 0;
 
-                REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(invalidBaseIncrement,
-                                                  actlib::Numbers::Range(2, 4)),
-                    std::invalid_argument);
+                REQUIRE_THROWS_AS(aleatoric::Multiples(invalidBaseIncrement,
+                                                    aleatoric::Range(2, 4)),
+                                  std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(invalidBaseIncrement,
-                                                  actlib::Numbers::Range(2, 4)),
+                    aleatoric::Multiples(invalidBaseIncrement,
+                                      aleatoric::Range(2, 4)),
                     "The base increment supplied must be equal to, or greater "
                     "than, 1");
             }
@@ -41,13 +40,11 @@ SCENARIO("TimeDomain::Multiples")
             THEN("A standard invalid_argument exception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(baseIncrement,
-                                                  actlib::Numbers::Range(0, 4)),
+                    aleatoric::Multiples(baseIncrement, aleatoric::Range(0, 4)),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(baseIncrement,
-                                                  actlib::Numbers::Range(0, 4)),
+                    aleatoric::Multiples(baseIncrement, aleatoric::Range(0, 4)),
                     "The range object supplied must have a start value equal "
                     "to, or "
                     "greater than, 1");
@@ -58,8 +55,8 @@ SCENARIO("TimeDomain::Multiples")
     GIVEN("The class is instantiated with a range")
     {
         int baseIncrement = 100;
-        actlib::Numbers::Range range(2, 4);
-        actlib::TimeDomain::Multiples instance(baseIncrement, range);
+        aleatoric::Range range(2, 4);
+        aleatoric::Multiples instance(baseIncrement, range);
 
         WHEN("The size of the duration collection is requested")
         {
@@ -93,22 +90,22 @@ SCENARIO("TimeDomain::Multiples")
             {
                 int baseIncrement = 100;
                 double invalidDeviation = -0.01;
-                actlib::Numbers::Range range(2, 4);
+                aleatoric::Range range(2, 4);
 
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         range,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         range,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -120,22 +117,22 @@ SCENARIO("TimeDomain::Multiples")
             {
                 int baseIncrement = 100;
                 double invalidDeviation = 1.01;
-                actlib::Numbers::Range range(2, 4);
+                aleatoric::Range range(2, 4);
 
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         range,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         range,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -151,12 +148,12 @@ SCENARIO("TimeDomain::Multiples")
 
         int baseIncrement = 100;
         double deviationFactor = 0.5;
-        actlib::Numbers::Range range(2, 4);
+        aleatoric::Range range(2, 4);
 
-        actlib::TimeDomain::Multiples instance(baseIncrement,
-                                               range,
-                                               deviationFactor,
-                                               std::move(generator));
+        aleatoric::Multiples instance(baseIncrement,
+                                   range,
+                                   deviationFactor,
+                                   std::move(generator));
 
         WHEN("The size of the duration collection is requested")
         {
@@ -207,13 +204,12 @@ SCENARIO("TimeDomain::Multiples")
                 auto roundingGenPointer = roundingGen.get();
                 ALLOW_CALL(*roundingGenPointer, getNumber()).RETURN(1);
 
-                actlib::Numbers::Range roundingRange(1, 3);
+                aleatoric::Range roundingRange(1, 3);
 
-                actlib::TimeDomain::Multiples roundingInstance(
-                    roundingBase,
-                    roundingRange,
-                    roundingDevF,
-                    std::move(roundingGen));
+                aleatoric::Multiples roundingInstance(roundingBase,
+                                                   roundingRange,
+                                                   roundingDevF,
+                                                   std::move(roundingGen));
 
                 THEN("The generator should be set with a range around the "
                      "duration where the numbers have been correctly rounded")
@@ -246,15 +242,14 @@ SCENARIO("TimeDomain::Multiples")
             {
                 int invalidBaseIncrement = 0;
 
-                REQUIRE_THROWS_AS(actlib::TimeDomain::Multiples(
-                                      invalidBaseIncrement,
+                REQUIRE_THROWS_AS(
+                    aleatoric::Multiples(invalidBaseIncrement,
                                       std::vector<int> {3, 5, 7, 9}),
-                                  std::invalid_argument);
+                    std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(
-                        invalidBaseIncrement,
-                        std::vector<int> {3, 5, 7, 9}),
+                    aleatoric::Multiples(invalidBaseIncrement,
+                                      std::vector<int> {3, 5, 7, 9}),
                     "The base increment supplied must be equal to, or greater "
                     "than, 1");
             }
@@ -271,12 +266,11 @@ SCENARIO("TimeDomain::Multiples")
                 int baseIncrement = 100;
                 std::vector<int> multipliers {0, 3, 5, 7};
 
-                REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(baseIncrement, multipliers),
-                    std::invalid_argument);
+                REQUIRE_THROWS_AS(aleatoric::Multiples(baseIncrement, multipliers),
+                                  std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(baseIncrement, multipliers),
+                    aleatoric::Multiples(baseIncrement, multipliers),
                     "The collection passed for the argument multipliers "
                     "contains an invalid value. Values must be equal to, or "
                     "greater than, 1");
@@ -288,7 +282,7 @@ SCENARIO("TimeDomain::Multiples")
     {
         int baseIncrement = 100;
         std::vector<int> multipliers {3, 5, 7, 9};
-        actlib::TimeDomain::Multiples instance(baseIncrement, multipliers);
+        aleatoric::Multiples instance(baseIncrement, multipliers);
 
         WHEN("The size of the duration collection is requested")
         {
@@ -326,19 +320,19 @@ SCENARIO("TimeDomain::Multiples")
                 std::vector<int> multipliers {3, 5, 7, 9};
 
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         multipliers,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         multipliers,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -353,19 +347,19 @@ SCENARIO("TimeDomain::Multiples")
                 std::vector<int> multipliers {3, 5, 7, 9};
 
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         multipliers,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Multiples(
+                    aleatoric::Multiples(
                         baseIncrement,
                         multipliers,
                         invalidDeviation,
-                        std::make_unique<actlib::Numbers::UniformGenerator>()),
+                        std::make_unique<aleatoric::UniformGenerator>()),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -384,10 +378,10 @@ SCENARIO("TimeDomain::Multiples")
         double deviationFactor = 0.5;
         std::vector<int> multipliers {3, 5, 7, 9};
 
-        actlib::TimeDomain::Multiples instance(baseIncrement,
-                                               multipliers,
-                                               deviationFactor,
-                                               std::move(generator));
+        aleatoric::Multiples instance(baseIncrement,
+                                   multipliers,
+                                   deviationFactor,
+                                   std::move(generator));
 
         WHEN("The size of the duration collection is requested")
         {

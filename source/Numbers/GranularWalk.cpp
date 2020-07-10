@@ -4,9 +4,8 @@
 #include "Utilities.hpp"
 
 #include <math.h>
-// #include <string>
 
-namespace actlib { namespace Numbers { namespace Granular {
+namespace aleatoric {
 GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
                            std::unique_ptr<Range> range,
                            double deviationFactor)
@@ -15,8 +14,8 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
-    actlib::ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
-                                                       "deviationFactor");
+    ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
+                                               "deviationFactor");
 
     m_internalRange = {0, 65000, 0};
     double maxStep = scaleToRange(deviationFactor,
@@ -33,8 +32,8 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
                            int initialSelection)
 : GranularWalk(std::move(generator), std::move(range), deviationFactor)
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_externalRange);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection,
+                                               *m_externalRange);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -43,7 +42,14 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
 GranularWalk::~GranularWalk()
 {}
 
-double GranularWalk::getNumber()
+int GranularWalk::getIntegerNumber()
+{
+    auto decimalNumber = getDecimalNumber();
+    auto roundedNumber = round(decimalNumber);
+    return static_cast<int>(roundedNumber);
+}
+
+double GranularWalk::getDecimalNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         m_haveRequestedFirstNumber = true;
@@ -90,14 +96,13 @@ double GranularWalk::normalize(int value, int rangeMin, int rangeMax)
 
 void GranularWalk::setForNextStep(int lastSelectedNumber)
 {
-    auto newSubRange =
-        actlib::Utilities::getMaxStepSubRange(lastSelectedNumber,
-                                              m_internalRange.maxStep,
-                                              m_internalRange.start,
-                                              m_internalRange.end);
+    auto newSubRange = Utilities::getMaxStepSubRange(lastSelectedNumber,
+                                                     m_internalRange.maxStep,
+                                                     m_internalRange.start,
+                                                     m_internalRange.end);
 
     m_generator->setDistribution(std::get<0>(newSubRange),
                                  std::get<1>(newSubRange));
 }
 
-}}} // namespace actlib::Numbers::Granular
+} // namespace aleatoric

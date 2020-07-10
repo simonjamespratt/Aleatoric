@@ -28,10 +28,9 @@ add_executable(Tests
     PeriodicTest.cpp
     WalkTest.cpp
     GranularWalkTest.cpp
-    ProducerStepsTest.cpp
-    ProducerGranularTest.cpp
-    ProducerCollectionsTest.cpp
-    ProducerTimeDomainTest.cpp
+    NumbersProducerTest.cpp
+    CollectionsProducerTest.cpp
+    DurationsProducerTest.cpp
     NumbersTest.cpp
     NumbersIntegrationTests.cpp
     CycleTest.cpp
@@ -40,7 +39,7 @@ add_executable(Tests
     PrescribedTest.cpp
     MultiplesTest.cpp
     GeometricTest.cpp
-    TimeDomainIntegrationTests.cpp
+    DurationsIntegrationTests.cpp
     RatioTest.cpp
     GroupedRepetitionTest.cpp
     SubsetTest.cpp

@@ -1,6 +1,6 @@
 #include "NoRepetition.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 NoRepetition::NoRepetition(std::unique_ptr<IDiscreteGenerator> generator,
                            std::unique_ptr<Range> range)
 : m_generator(std::move(generator)), m_range(std::move(range))
@@ -11,7 +11,7 @@ NoRepetition::NoRepetition(std::unique_ptr<IDiscreteGenerator> generator,
 NoRepetition::~NoRepetition()
 {}
 
-int NoRepetition::getNumber()
+int NoRepetition::getIntegerNumber()
 {
     auto generatedNumber = m_generator->getNumber();
     // reset equal probability
@@ -21,9 +21,14 @@ int NoRepetition::getNumber()
     return generatedNumber + m_range->offset;
 }
 
+double NoRepetition::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void NoRepetition::reset()
 {
     m_generator->updateDistributionVector(1.0);
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

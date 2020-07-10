@@ -6,7 +6,7 @@
 #include <stdexcept> // std::invalid_argument
 #include <string>
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 
 Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
            std::unique_ptr<Range> range,
@@ -32,8 +32,7 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
            int initialSelection)
 : Walk(std::move(generator), std::move(range), maxStep)
 {
-    actlib::ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                                       *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -42,7 +41,7 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
 Walk::~Walk()
 {}
 
-int Walk::getNumber()
+int Walk::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         setForNextStep(m_initialSelection);
@@ -55,6 +54,11 @@ int Walk::getNumber()
     return generatedNumber;
 }
 
+double Walk::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
 void Walk::reset()
 {
     m_generator->setDistribution(m_range->start, m_range->end);
@@ -63,13 +67,13 @@ void Walk::reset()
 
 void Walk::setForNextStep(int lastSelectedNumber)
 {
-    auto newSubRange = actlib::Utilities::getMaxStepSubRange(lastSelectedNumber,
-                                                             m_maxStep,
-                                                             m_range->start,
-                                                             m_range->end);
+    auto newSubRange = Utilities::getMaxStepSubRange(lastSelectedNumber,
+                                                     m_maxStep,
+                                                     m_range->start,
+                                                     m_range->end);
 
     m_generator->setDistribution(std::get<0>(newSubRange),
                                  std::get<1>(newSubRange));
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

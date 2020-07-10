@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 // NB: The original RTC version of this - choice-rhythm - does not restrict the
 // size of what I am calling "subset" and it doesn't check for repetition in
 // choosing the elements from the range to add to the subset. I have decided to
@@ -17,7 +17,7 @@ namespace actlib { namespace Numbers { namespace Steps {
 // future.
 Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
                std::unique_ptr<IDiscreteGenerator> discreteGenerator,
-               std::unique_ptr<actlib::Numbers::Range> range,
+               std::unique_ptr<Range> range,
                int subsetMin,
                int subsetMax)
 : m_uniformGenerator(std::move(uniformGenerator)),
@@ -52,10 +52,15 @@ Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
 Subset::~Subset()
 {}
 
-int Subset::getNumber()
+int Subset::getIntegerNumber()
 {
     int index = m_uniformGenerator->getNumber();
     return m_subset[index];
+}
+
+double Subset::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
 }
 
 void Subset::reset()
@@ -78,4 +83,4 @@ void Subset::setSubset()
     m_uniformGenerator->setDistribution(0, m_subset.size() - 1);
 }
 
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

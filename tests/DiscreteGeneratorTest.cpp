@@ -6,7 +6,7 @@ SCENARIO("DiscreteGenerator")
 {
     GIVEN("The class is constructed with the default constructor")
     {
-        actlib::Numbers::DiscreteGenerator instance;
+        aleatoric::DiscreteGenerator instance;
 
         WHEN("The distribution is requested")
         {
@@ -38,7 +38,7 @@ SCENARIO("DiscreteGenerator")
     GIVEN("The class is constructed with a vector")
     {
         std::vector<double> distributionVector = {0.0, 1.0};
-        actlib::Numbers::DiscreteGenerator instance(distributionVector);
+        aleatoric::DiscreteGenerator instance(distributionVector);
 
         WHEN("The distribution vector is requested")
         {
@@ -67,7 +67,7 @@ SCENARIO("DiscreteGenerator")
 
     GIVEN("The class is constructed with a vectorSize and uniformValue")
     {
-        actlib::Numbers::DiscreteGenerator instance(3, 1.0);
+        aleatoric::DiscreteGenerator instance(3, 1.0);
 
         WHEN("The distribution vector is requested")
         {
@@ -102,7 +102,7 @@ SCENARIO("DiscreteGenerator")
         // calling getNumber() after vector manipulation They could be added if
         // it is really desired / needed
 
-        actlib::Numbers::DiscreteGenerator instance(std::vector<double> {});
+        aleatoric::DiscreteGenerator instance(std::vector<double> {});
 
         WHEN("The distribution vector is (re)set by providing a new vector")
         {
@@ -143,8 +143,7 @@ SCENARIO("DiscreteGenerator")
         WHEN("The distribution vector is updated by changing a specific item "
              "in the vector")
         {
-            actlib::Numbers::DiscreteGenerator instance(
-                std::vector<double> {1.0, 1.0});
+            aleatoric::DiscreteGenerator instance(std::vector<double> {1.0, 1.0});
             instance.updateDistributionVector(1, 0.0);
 
             AND_WHEN("The distribution vector is requested")
@@ -160,8 +159,7 @@ SCENARIO("DiscreteGenerator")
         WHEN("The distribution vector is updated by setting all vector items "
              "uniformly")
         {
-            actlib::Numbers::DiscreteGenerator instance(
-                std::vector<double> {1.0, 1.0});
+            aleatoric::DiscreteGenerator instance(std::vector<double> {1.0, 1.0});
             instance.updateDistributionVector(0.0);
 
             AND_WHEN("The distribution vector is requested")

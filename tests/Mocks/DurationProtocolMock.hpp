@@ -6,7 +6,7 @@
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
-class DurationProtocolMock : public actlib::TimeDomain::DurationProtocol {
+class DurationProtocolMock : public aleatoric::DurationProtocol {
   public:
     MAKE_MOCK0(getCollectionSize, int());
     MAKE_MOCK1(getDuration, int(int));

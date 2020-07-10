@@ -18,16 +18,16 @@ SCENARIO("Numbers::Periodic")
                 double invalidChanceValue = 1.1;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
@@ -41,16 +41,16 @@ SCENARIO("Numbers::Periodic")
                 double invalidChanceValue = -0.1;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
@@ -67,7 +67,7 @@ SCENARIO("Numbers::Periodic")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(initialGeneratorDistributionState);
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -76,9 +76,7 @@ SCENARIO("Numbers::Periodic")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::Periodic(std::move(generator),
-                                                 std::move(range),
-                                                 0.5);
+                aleatoric::Periodic(std::move(generator), std::move(range), 0.5);
             }
         }
     }
@@ -96,14 +94,14 @@ SCENARIO("Numbers::Periodic")
                    setDistributionVector(ANY(std::vector<double>)));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         double chanceOfRepetition = 0.5;
 
-        actlib::Numbers::Steps::Periodic instance(std::move(generator),
-                                                  std::move(range),
-                                                  chanceOfRepetition);
+        aleatoric::Periodic instance(std::move(generator),
+                                  std::move(range),
+                                  chanceOfRepetition);
 
         int generatedNumber = 1; // mid range selection
 
@@ -113,7 +111,7 @@ SCENARIO("Numbers::Periodic")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber ==
                         generatedNumber + rangePointer->offset);
             }
@@ -138,7 +136,7 @@ SCENARIO("Numbers::Periodic")
                     *generatorPointer,
                     setDistributionVector(
                         std::vector<double> {0.25, chanceOfRepetition, 0.25}));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
@@ -163,17 +161,17 @@ SCENARIO("Numbers::Periodic")
                 int invalidInitialSelection = 4;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         0.5,
                         invalidInitialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         0.5,
                         invalidInitialSelection),
                     "The value passed as argument for initialSelection must be "
@@ -188,17 +186,17 @@ SCENARIO("Numbers::Periodic")
                 int invalidInitialSelection = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         0.5,
                         invalidInitialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Periodic(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::Periodic(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         0.5,
                         invalidInitialSelection),
                     "The value passed as argument for initialSelection must be "
@@ -216,7 +214,7 @@ SCENARIO("Numbers::Periodic")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(initialGeneratorDistributionState);
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -225,10 +223,10 @@ SCENARIO("Numbers::Periodic")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::Periodic(std::move(generator),
-                                                 std::move(range),
-                                                 0.5,
-                                                 2);
+                aleatoric::Periodic(std::move(generator),
+                                 std::move(range),
+                                 0.5,
+                                 2);
             }
         }
     }
@@ -249,26 +247,26 @@ SCENARIO("Numbers::Periodic")
                    setDistributionVector(ANY(std::vector<double>)));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
-        actlib::Numbers::Steps::Periodic instance(std::move(generator),
-                                                  std::move(range),
-                                                  chanceOfRepetition,
-                                                  initialSelection);
+        aleatoric::Periodic instance(std::move(generator),
+                                  std::move(range),
+                                  chanceOfRepetition,
+                                  initialSelection);
 
         WHEN("The first number is requested")
         {
             THEN("The initial number selection is returned")
             {
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
 
             THEN("The generator should not have been called to get a number")
             {
                 FORBID_CALL(*generatorPointer, getNumber());
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
 
             AND_THEN("The generator distribution should be set with a bias in "
@@ -284,20 +282,20 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(
                                  std::vector<double> {0.5, 0.25, 0.25}));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
         WHEN("A subsequent number is requested")
         {
-            instance.getNumber();    // initial call to get number
-            int generatedNumber = 2; // end of range selection
+            instance.getIntegerNumber(); // initial call to get number
+            int generatedNumber = 2;     // end of range selection
             THEN("The generated number is returned with the range offset "
                  "added")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber ==
                         generatedNumber + rangePointer->offset);
             }
@@ -313,7 +311,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(
                                  std::vector<double> {0.25, 0.25, 0.5}));
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
@@ -321,7 +319,7 @@ SCENARIO("Numbers::Periodic")
         {
             ALLOW_CALL(*generatorPointer, updateDistributionVector(1.0));
 
-            instance.getNumber(); // unsets the initial state
+            instance.getIntegerNumber(); // unsets the initial state
 
             AND_WHEN("The next number is requested")
             {
@@ -329,7 +327,7 @@ SCENARIO("Numbers::Periodic")
                      "state having been reinstated during the reset")
                 {
                     instance.reset();
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getIntegerNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }
             }

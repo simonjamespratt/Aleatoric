@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace actlib { namespace TimeDomain {
+namespace aleatoric {
 Prescribed::Prescribed(const std::vector<int> &durations)
 : m_durations(durations)
 {
@@ -29,4 +29,4 @@ int Prescribed::getDuration(int index)
     return m_durations.at(index);
 }
 
-}} // namespace actlib::TimeDomain
+} // namespace aleatoric

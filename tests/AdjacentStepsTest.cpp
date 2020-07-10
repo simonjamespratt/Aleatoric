@@ -15,7 +15,7 @@ SCENARIO("Numbers::AdjacentSteps")
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -24,8 +24,8 @@ SCENARIO("Numbers::AdjacentSteps")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::AdjacentSteps(std::move(generator),
-                                                      std::move(range));
+                aleatoric::AdjacentSteps(std::move(generator),
+                                         std::move(range));
             }
         }
     }
@@ -38,12 +38,12 @@ SCENARIO("Numbers::AdjacentSteps")
         ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         int generatedNumber = 1;
-        actlib::Numbers::Steps::AdjacentSteps instance(std::move(generator),
-                                                       std::move(range));
+        aleatoric::AdjacentSteps instance(std::move(generator),
+                                          std::move(range));
 
         WHEN("A number is requested")
         {
@@ -51,7 +51,7 @@ SCENARIO("Numbers::AdjacentSteps")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber ==
                         generatedNumber + rangePointer->offset);
             }
@@ -76,7 +76,7 @@ SCENARIO("Numbers::AdjacentSteps")
                     FORBID_CALL(
                         *generatorPointer,
                         updateDistributionVector(midRangeGeneratedNumber, 1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -102,7 +102,7 @@ SCENARIO("Numbers::AdjacentSteps")
                         *generatorPointer,
                         updateDistributionVector(startOfRangeGeneratedNumber,
                                                  1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
 
@@ -128,7 +128,7 @@ SCENARIO("Numbers::AdjacentSteps")
                         *generatorPointer,
                         updateDistributionVector(endOfRangeGeneratedNumber,
                                                  1.0));
-                    instance.getNumber();
+                    instance.getIntegerNumber();
                 }
             }
         }
@@ -150,7 +150,7 @@ SCENARIO("Numbers::AdjacentSteps")
                     REQUIRE_CALL(*generatorPointer, getNumber())
                         .RETURN(generatedNumber);
                     instance.reset();
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getIntegerNumber();
                     REQUIRE(returnedNumber ==
                             generatedNumber + rangePointer->offset);
                 }
@@ -167,16 +167,16 @@ SCENARIO("Numbers::AdjacentSteps")
                 int initialSelectionOutOfRange = 4;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::AdjacentSteps(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::AdjacentSteps(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::AdjacentSteps(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::AdjacentSteps(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
@@ -190,16 +190,16 @@ SCENARIO("Numbers::AdjacentSteps")
                 int initialSelectionOutOfRange = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::AdjacentSteps(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::AdjacentSteps(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::AdjacentSteps(
-                        std::make_unique<actlib::Numbers::DiscreteGenerator>(),
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
+                    aleatoric::AdjacentSteps(
+                        std::make_unique<aleatoric::DiscreteGenerator>(),
+                        std::make_unique<aleatoric::Range>(1, 3),
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
@@ -212,7 +212,7 @@ SCENARIO("Numbers::AdjacentSteps")
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         WHEN("The object is constructed")
@@ -221,8 +221,8 @@ SCENARIO("Numbers::AdjacentSteps")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(rangePointer->size, 1.0));
-                actlib::Numbers::Steps::AdjacentSteps(std::move(generator),
-                                                      std::move(range));
+                aleatoric::AdjacentSteps(std::move(generator),
+                                         std::move(range));
             }
         }
     }
@@ -237,13 +237,13 @@ SCENARIO("Numbers::AdjacentSteps")
         ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+        auto range = std::make_unique<aleatoric::Range>(1, 3);
         auto rangePointer = range.get();
 
         int generatedNumber = 1;
-        actlib::Numbers::Steps::AdjacentSteps instance(std::move(generator),
-                                                       std::move(range),
-                                                       initialSelection);
+        aleatoric::AdjacentSteps instance(std::move(generator),
+                                          std::move(range),
+                                          initialSelection);
 
         WHEN("A number is first requested")
         {
@@ -251,7 +251,7 @@ SCENARIO("Numbers::AdjacentSteps")
                  "generated")
             {
                 FORBID_CALL(*generatorPointer, getNumber());
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(returnedNumber == initialSelection);
             }
 
@@ -272,14 +272,14 @@ SCENARIO("Numbers::AdjacentSteps")
                                 (initialSelection - rangePointer->offset),
                                 1.0));
 
-                instance.getNumber();
+                instance.getIntegerNumber();
             }
         }
 
         WHEN("A subsequent number is requested")
         {
             int generatedNumber = 1;
-            instance.getNumber(); // first call
+            instance.getIntegerNumber(); // first call
 
             THEN("It returns a generated number with the range offset added")
             {
@@ -287,7 +287,8 @@ SCENARIO("Numbers::AdjacentSteps")
                     .TIMES(1)
                     .RETURN(generatedNumber);
 
-                auto secondCallResult = instance.getNumber(); // subsequent call
+                auto secondCallResult =
+                    instance.getIntegerNumber(); // subsequent call
 
                 REQUIRE(secondCallResult ==
                         generatedNumber + rangePointer->offset);
@@ -303,7 +304,7 @@ SCENARIO("Numbers::AdjacentSteps")
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(ANY(int), 1.0))
                     .TIMES(1);
-                instance.getNumber(); // subsequent call
+                instance.getIntegerNumber(); // subsequent call
             }
         }
 
@@ -322,13 +323,14 @@ SCENARIO("Numbers::AdjacentSteps")
                      "and does not call the generator")
                 {
                     FORBID_CALL(*generatorPointer, getNumber());
-                    instance.getNumber(); // this call makes sure to switch the
-                                          // state of m_haveRequestedFirstNumber
-                                          // to true
+                    instance.getIntegerNumber(); // this call makes sure to
+                                                 // switch the state of
+                                                 // m_haveRequestedFirstNumber
+                                                 // to true
 
                     instance.reset(); // this resets _haveRequestedFirstNumber
                                       // to false
-                    auto returnedNumber = instance.getNumber();
+                    auto returnedNumber = instance.getIntegerNumber();
                     REQUIRE(returnedNumber == initialSelection);
                 }
             }

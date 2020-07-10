@@ -5,16 +5,15 @@
 
 #include <string>
 
-namespace actlib {
+namespace aleatoric {
 
 class ErrorChecker {
   public:
     ErrorChecker();
     ~ErrorChecker();
 
-    static void
-    checkInitialSelectionInRange(int initialSelection,
-                                 actlib::Numbers::Range const &range);
+    static void checkInitialSelectionInRange(int initialSelection,
+                                             Range const &range);
 
     // In mathematics, the unit interval is the closed interval [0,1], that is,
     // the set of all real numbers that are greater than or equal to 0 and less
@@ -23,6 +22,6 @@ class ErrorChecker {
                                              std::string argumentName);
 };
 
-} // namespace actlib
+} // namespace aleatoric
 
 #endif /* ErrorChecker_hpp */

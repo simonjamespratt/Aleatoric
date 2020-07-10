@@ -15,15 +15,15 @@ SCENARIO("Numbers::Cycle")
         {
             WHEN("A set of numbers matching the size of the range is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range));
+                aleatoric::Cycle instance(std::move(range));
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN(
@@ -39,15 +39,15 @@ SCENARIO("Numbers::Cycle")
             WHEN("A set of numbers matching twice the size of the range is "
                  "requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range));
+                aleatoric::Cycle instance(std::move(range));
 
                 std::vector<int> set(rangePointer->size * 2);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the range twice, with no "
@@ -61,20 +61,20 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("A reset is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range));
+                aleatoric::Cycle instance(std::move(range));
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -93,16 +93,15 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection);
+                aleatoric::Cycle instance(std::move(range), initialSelection);
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN(
@@ -120,21 +119,20 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection);
+                aleatoric::Cycle instance(std::move(range), initialSelection);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -155,17 +153,15 @@ SCENARIO("Numbers::Cycle")
         {
             WHEN("A set of numbers matching the size of the range is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       false,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), false, true);
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN(
@@ -181,17 +177,15 @@ SCENARIO("Numbers::Cycle")
             WHEN("A set of numbers matching twice the size of the range is "
                  "requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       false,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), false, true);
 
                 std::vector<int> set(rangePointer->size * 2);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the range twice, with no "
@@ -205,22 +199,20 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("A reset is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       false,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), false, true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -239,18 +231,18 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       false,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       false,
+                                       true);
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the full range in reverse "
@@ -267,23 +259,23 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       false,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       false,
+                                       true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
                 std::vector<int> set(rangePointer->size);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -305,17 +297,17 @@ SCENARIO("Numbers::Cycle")
             WHEN("A set of numbers representing a full forward then reverse "
                  "traversal of the range has been requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range), true);
+                aleatoric::Cycle instance(std::move(range), true);
 
                 // minus one because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the described traversal should "
@@ -329,17 +321,17 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("Two cycles of the range in bidirectional form is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range), true);
+                aleatoric::Cycle instance(std::move(range), true);
 
                 // minus three because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 4 - 3);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the described traversal should "
@@ -353,13 +345,13 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("A reset is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range), true);
+                aleatoric::Cycle instance(std::move(range), true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
@@ -368,7 +360,7 @@ SCENARIO("Numbers::Cycle")
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -388,19 +380,19 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       true);
 
                 // minus one because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the full range should have "
@@ -417,15 +409,15 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
@@ -434,7 +426,7 @@ SCENARIO("Numbers::Cycle")
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -456,19 +448,17 @@ SCENARIO("Numbers::Cycle")
             WHEN("A set of numbers representing a full forward then reverse "
                  "traversal of the range has been requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       true,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), true, true);
 
                 // minus one because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the described traversal should "
@@ -482,19 +472,17 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("Two cycles of the range in bidirectional form is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       true,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), true, true);
 
                 // minus three because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 4 - 3);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the described traversal should "
@@ -508,15 +496,13 @@ SCENARIO("Numbers::Cycle")
 
             WHEN("A reset is requested")
             {
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       true,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range), true, true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
@@ -525,7 +511,7 @@ SCENARIO("Numbers::Cycle")
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -545,20 +531,20 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       true,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       true,
+                                       true);
 
                 // minus one because there should be no repetition of the
                 // numbers at the range ends
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("A collection representing the full range should have "
@@ -575,16 +561,16 @@ SCENARIO("Numbers::Cycle")
             {
                 int initialSelection = 2;
 
-                auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+                auto range = std::make_unique<aleatoric::Range>(1, 3);
                 auto rangePointer = range.get();
 
-                actlib::Numbers::Steps::Cycle instance(std::move(range),
-                                                       initialSelection,
-                                                       true,
-                                                       true);
+                aleatoric::Cycle instance(std::move(range),
+                                       initialSelection,
+                                       true,
+                                       true);
 
                 // get the first number
-                instance.getNumber();
+                instance.getIntegerNumber();
 
                 instance.reset();
 
@@ -593,7 +579,7 @@ SCENARIO("Numbers::Cycle")
                 std::vector<int> set(rangePointer->size * 2 - 1);
 
                 for(auto &&i : set) {
-                    i = instance.getNumber();
+                    i = instance.getIntegerNumber();
                 }
 
                 THEN("It should behave as it would upon instantiation")
@@ -617,15 +603,13 @@ SCENARIO("Numbers::Cycle")
                 int initialSelectionOutOfRange = 4;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Cycle(
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
-                        initialSelectionOutOfRange),
+                    aleatoric::Cycle(std::make_unique<aleatoric::Range>(1, 3),
+                                  initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Cycle(
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
-                        initialSelectionOutOfRange),
+                    aleatoric::Cycle(std::make_unique<aleatoric::Range>(1, 3),
+                                  initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }
@@ -638,15 +622,13 @@ SCENARIO("Numbers::Cycle")
                 int initialSelectionOutOfRange = 0;
 
                 REQUIRE_THROWS_AS(
-                    actlib::Numbers::Steps::Cycle(
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
-                        initialSelectionOutOfRange),
+                    aleatoric::Cycle(std::make_unique<aleatoric::Range>(1, 3),
+                                  initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::Numbers::Steps::Cycle(
-                        std::make_unique<actlib::Numbers::Range>(1, 3),
-                        initialSelectionOutOfRange),
+                    aleatoric::Cycle(std::make_unique<aleatoric::Range>(1, 3),
+                                  initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
             }

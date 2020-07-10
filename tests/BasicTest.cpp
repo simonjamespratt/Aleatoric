@@ -13,7 +13,7 @@ SCENARIO("Numbers::Basic")
     {
         WHEN("The object is constructed")
         {
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+            auto range = std::make_unique<aleatoric::Range>(1, 3);
             auto rangePointer = range.get();
 
             auto generator = std::make_unique<UniformGeneratorMock>();
@@ -24,8 +24,7 @@ SCENARIO("Numbers::Basic")
                 REQUIRE_CALL(
                     *generatorPointer,
                     setDistribution(rangePointer->start, rangePointer->end));
-                actlib::Numbers::Steps::Basic(std::move(generator),
-                                              std::move(range));
+                aleatoric::Basic(std::move(generator), std::move(range));
             }
         }
 
@@ -33,21 +32,20 @@ SCENARIO("Numbers::Basic")
         {
             int generatedNumber = 2;
 
-            auto range = std::make_unique<actlib::Numbers::Range>(1, 3);
+            auto range = std::make_unique<aleatoric::Range>(1, 3);
             auto rangePointer = range.get();
 
             auto generator = std::make_unique<UniformGeneratorMock>();
             auto generatorPointer = generator.get();
 
             ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
-            actlib::Numbers::Steps::Basic instance(std::move(generator),
-                                                   std::move(range));
+            aleatoric::Basic instance(std::move(generator), std::move(range));
 
             THEN("It calls the generator to get a number and returns it")
             {
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
-                auto returnedNumber = instance.getNumber();
+                auto returnedNumber = instance.getIntegerNumber();
                 REQUIRE(generatedNumber == returnedNumber);
             }
         }

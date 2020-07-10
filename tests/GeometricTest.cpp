@@ -15,13 +15,11 @@ SCENARIO("TimeDomain::Geometric")
                 int collectionSize = 5;
 
                 REQUIRE_THROWS_AS(
-                    actlib::TimeDomain::Geometric(actlib::Numbers::Range(0, 2),
-                                                  collectionSize),
+                    aleatoric::Geometric(aleatoric::Range(0, 2), collectionSize),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    actlib::TimeDomain::Geometric(actlib::Numbers::Range(0, 2),
-                                                  collectionSize),
+                    aleatoric::Geometric(aleatoric::Range(0, 2), collectionSize),
                     "The range object supplied must have a start value equal "
                     "to, or greater than, 1");
             }
@@ -30,9 +28,9 @@ SCENARIO("TimeDomain::Geometric")
     GIVEN("The class is instantiated such that whole number durations are "
           "produced")
     {
-        actlib::Numbers::Range range(256, 4096);
+        aleatoric::Range range(256, 4096);
         int collectionSize = 5;
-        actlib::TimeDomain::Geometric instance(range, collectionSize);
+        aleatoric::Geometric instance(range, collectionSize);
 
         WHEN("The size of the duration collection is requested")
         {
@@ -76,9 +74,9 @@ SCENARIO("TimeDomain::Geometric")
 
     GIVEN("The class is instantiated such that durations require rounding")
     {
-        actlib::Numbers::Range range(100, 1000);
+        aleatoric::Range range(100, 1000);
         int collectionSize = 5;
-        actlib::TimeDomain::Geometric instance(range, collectionSize);
+        aleatoric::Geometric instance(range, collectionSize);
 
         WHEN("Each duration is requested")
         {

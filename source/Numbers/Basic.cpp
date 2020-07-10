@@ -1,6 +1,6 @@
 #include "Basic.hpp"
 
-namespace actlib { namespace Numbers { namespace Steps {
+namespace aleatoric {
 Basic::Basic(std::unique_ptr<IUniformGenerator> generator,
              std::unique_ptr<Range> range)
 : m_range(std::move(range)), m_generator(std::move(generator))
@@ -11,9 +11,14 @@ Basic::Basic(std::unique_ptr<IUniformGenerator> generator,
 Basic::~Basic()
 {}
 
-int Basic::getNumber()
+int Basic::getIntegerNumber()
 {
     return m_generator->getNumber();
+}
+
+double Basic::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
 }
 
 void Basic::reset()
@@ -21,4 +26,4 @@ void Basic::reset()
     // NB: Basic's implementation of the Protocol interface doesn't require
     // reset to do anything.
 }
-}}} // namespace actlib::Numbers::Steps
+} // namespace aleatoric

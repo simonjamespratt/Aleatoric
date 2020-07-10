@@ -4,19 +4,19 @@
 // will simply check that the Collections Producers can work with the Protocols
 // correctly.
 
-#include "Numbers.hpp"
-#include "ProducerCollections.hpp"
+#include "CollectionsProducer.hpp"
+#include "NumberProtocolFactory.hpp"
 
 #include <catch2/catch.hpp>
 
 SCENARIO("Collections: Integration using Basic")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated")
     {
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createBasic(0, source.size() - 1));
 
@@ -39,14 +39,14 @@ SCENARIO("Collections: Integration using Basic")
 
 SCENARIO("Collections: Integration using Cycle")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
         WHEN("It is configured in the default state")
         {
-            actlib::Collections::Producer<char> instance(
+            aleatoric::CollectionsProducer<char> instance(
                 source,
                 factory.createCycle(0, source.size() - 1));
 
@@ -66,12 +66,12 @@ SCENARIO("Collections: Integration using Cycle")
 
 SCENARIO("Collections: Integration using Serial")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated")
     {
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createSerial(0, source.size() - 1));
 
@@ -110,14 +110,14 @@ SCENARIO("Collections: Integration using Serial")
 
 SCENARIO("Collections: Integration using Subset")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c', 'd', 'e'};
     int subsetMin = 2;
     int subsetMax = 4;
 
     GIVEN("The Producer is instantiated")
     {
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createSubset(0, source.size() - 1, subsetMin, subsetMax));
 
@@ -166,7 +166,7 @@ SCENARIO("Collections: Integration using GroupedRepetition")
     // NB: See the scenario in Numbers Integration Tests for GroupedRepetition
     // re. limitations of these tests.
 
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b'};
     std::vector<int> groupings {1, 2};
     int groupingsSum = 3; // sum of the above values
@@ -176,7 +176,7 @@ SCENARIO("Collections: Integration using GroupedRepetition")
         // NB: because the sizes of the source and the groupings are the
         // same, the serial sets in GroupedRepetition will match
 
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createGroupedRepetition(0, source.size() - 1, groupings));
 
@@ -212,7 +212,7 @@ SCENARIO("Collections: Integration using GroupedRepetition")
 
 SCENARIO("Collections: Integration using Ratio")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated with a Ratio Protocol with mixed "
@@ -224,7 +224,7 @@ SCENARIO("Collections: Integration using Ratio")
         std::vector<int> ratios {3, 1, 2};
         int ratioSum = 6;
 
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createRatio(0, source.size() - 1, ratios));
 
@@ -251,7 +251,7 @@ SCENARIO("Collections: Integration using Precision")
     // for this set of tests due to an issue with the argument checking in
     // Precision for summing the values in the distribution. It should be set
     // back to a size of 3 when this is fixed.
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c', 'd'};
 
     GIVEN("The Producer has been instantiated with no initial selection")
@@ -265,7 +265,7 @@ SCENARIO("Collections: Integration using Precision")
                 i = 1.0 / source.size();
             }
 
-            actlib::Collections::Producer<char> instance(
+            aleatoric::CollectionsProducer<char> instance(
                 source,
                 factory.createPrecision(0, source.size() - 1, distribution));
 
@@ -287,12 +287,12 @@ SCENARIO("Collections: Integration using Precision")
 
 SCENARIO("Collections: Integration with NoRepetition")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The producer has been instantiated")
     {
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createNoRepetition(0, source.size() - 1));
 
@@ -323,14 +323,14 @@ SCENARIO("Collections: Integration with NoRepetition")
 
 SCENARIO("Collections: Integration using Periodic")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
         AND_GIVEN("The chance of repetition is mid range")
         {
-            actlib::Collections::Producer<char> instance(
+            aleatoric::CollectionsProducer<char> instance(
                 source,
                 factory.createPeriodic(0, source.size() - 1, 0.5));
 
@@ -360,12 +360,12 @@ SCENARIO("Collections: Integration using Periodic")
 
 SCENARIO("Collections: Integration using AdjacentSteps")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c'};
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createAdjacentSteps(0, source.size() - 1));
 
@@ -385,13 +385,13 @@ SCENARIO("Collections: Integration using AdjacentSteps")
 
 SCENARIO("Collections: Integration using Walk")
 {
-    actlib::Numbers::Numbers factory;
+    aleatoric::NumberProtocolFactory factory;
     std::vector<char> source {'a', 'b', 'c', 'd', 'e'};
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
         int maxStep = 2;
-        actlib::Collections::Producer<char> instance(
+        aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createWalk(0, source.size() - 1, maxStep));
 

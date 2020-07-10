@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdexcept>
 
-namespace actlib { namespace TimeDomain {
-Geometric::Geometric(const actlib::Numbers::Range &range, int collectionSize)
+namespace aleatoric {
+Geometric::Geometric(const Range &range, int collectionSize)
 : m_durations(collectionSize), m_range(range)
 {
     if(m_range.start < 1) {
@@ -48,4 +48,4 @@ int Geometric::getDuration(int index)
 
     return m_durations.at(index);
 }
-}} // namespace actlib::TimeDomain
+} // namespace aleatoric
