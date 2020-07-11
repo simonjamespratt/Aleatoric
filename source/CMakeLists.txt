@@ -42,29 +42,37 @@ set(HEADER_LIST
 
 add_library(
     AleatoricCompositionTools
+
+    DurationProtocols/Geometric.cpp
+    DurationProtocols/Multiples.cpp
+    DurationProtocols/Prescribed.cpp
+
     Errors/ErrorChecker.cpp
+
+    Generators/DiscreteGenerator.cpp
+    Generators/UniformGenerator.cpp
+
+    NumberProtocols/AdjacentSteps.cpp
+    NumberProtocols/Basic.cpp
+    NumberProtocols/Cycle.cpp
+    NumberProtocols/GranularWalk.cpp
+    NumberProtocols/GroupedRepetition.cpp
+    NumberProtocols/NoRepetition.cpp
+    NumberProtocols/NumberProtocolFactory.cpp
+    NumberProtocols/Periodic.cpp
+    NumberProtocols/Precision.cpp
+    NumberProtocols/Ratio.cpp
+    NumberProtocols/Serial.cpp
+    NumberProtocols/Subset.cpp
+    NumberProtocols/Walk.cpp
+
+    Producers/DurationsProducer.cpp
+    Producers/NumbersProducer.cpp
+
     Utilities/Utilities.cpp
-    Numbers/NumbersProducer.cpp
-    Numbers/Serial.cpp
-    Numbers/Basic.cpp
-    Numbers/NoRepetition.cpp
-    Numbers/GroupedRepetition.cpp
-    Numbers/AdjacentSteps.cpp
-    Numbers/Periodic.cpp
-    Numbers/Walk.cpp
-    Numbers/GranularWalk.cpp
-    Numbers/Range.cpp
-    Numbers/UniformGenerator.cpp
-    Numbers/DiscreteGenerator.cpp
-    Numbers/NumberProtocolFactory.cpp
-    Numbers/Cycle.cpp
-    Numbers/Precision.cpp
-    Numbers/Ratio.cpp
-    Numbers/Subset.cpp
-    TimeDomain/Prescribed.cpp
-    TimeDomain/Multiples.cpp
-    TimeDomain/Geometric.cpp
-    TimeDomain/DurationsProducer.cpp
+
+    Range.cpp
+
     ${HEADER_LIST}
 )
 
