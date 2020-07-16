@@ -11,6 +11,8 @@ class NumberProtocolMock : public aleatoric::NumberProtocol {
     MAKE_MOCK0(getIntegerNumber, int());
     MAKE_MOCK0(getDecimalNumber, double());
     MAKE_MOCK0(reset, void());
+    MAKE_MOCK1(setRange, void(aleatoric::Range newRange));
+    MAKE_MOCK0(getRange, aleatoric::Range());
 };
 
 #endif /* NumberProtocolMock_hpp */

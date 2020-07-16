@@ -1,6 +1,6 @@
 #include "CollectionsProducer.hpp"
 
-#include "NumberProtocolMock.hpp"
+#include "NumberProtocolFactory.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
@@ -9,44 +9,45 @@ SCENARIO("Collections::Producer")
 {
     GIVEN("The class is instantiated correctly")
     {
+        aleatoric::NumberProtocolFactory factory;
+
         std::vector<char> sourceCollection {'a', 'b', 'c'};
 
-        auto protocol = std::make_unique<NumberProtocolMock>();
-        auto protocolPointer = protocol.get();
-
-        aleatoric::CollectionsProducer<char> instance(sourceCollection,
-                                                   std::move(protocol));
+        aleatoric::CollectionsProducer<char> instance(
+            sourceCollection,
+            factory.createBasic(0, 1));
 
         WHEN("An item is requested")
         {
-            THEN("It should return the item from the collection provided that "
-                 "matches the number obtained from the protocol")
+            THEN("It should be an item from the source collection")
             {
-                int acquiredNumber = 1;
-                REQUIRE_CALL(*protocolPointer, getIntegerNumber())
-                    .RETURN(acquiredNumber);
-
                 auto returnedItem = instance.getItem();
-                REQUIRE(returnedItem == sourceCollection[1]);
+                REQUIRE_THAT(sourceCollection,
+                             Catch::VectorContains(returnedItem));
             }
         }
 
         WHEN("A collection of selections is requested")
         {
-            THEN("It should return a collection of the specified size "
-                 "contaning items whose indices match the results of calling "
-                 "the protocol to get numbers")
+            auto set = instance.getCollection(1000);
+
+            THEN("The size of the set should match that requested")
             {
-                int acquiredNumber = 1;
-                REQUIRE_CALL(*protocolPointer, getIntegerNumber())
-                    .TIMES(100)
-                    .RETURN(acquiredNumber);
+                REQUIRE(set.size() == 1000);
+            }
 
-                auto returnedCollection = instance.getCollection(100);
-                REQUIRE(returnedCollection.size() == 100);
+            THEN("Each item in the set should be in the source collection")
+            {
+                for(auto &&i : set) {
+                    REQUIRE_THAT(sourceCollection, Catch::VectorContains(i));
+                }
+            }
 
-                for(auto &&it : returnedCollection) {
-                    REQUIRE(it == sourceCollection[acquiredNumber]);
+            THEN("Each item in the source collection should be present in the "
+                 "set")
+            {
+                for(auto &&i : sourceCollection) {
+                    REQUIRE_THAT(set, Catch::VectorContains(i));
                 }
             }
         }

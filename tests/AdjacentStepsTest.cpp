@@ -10,27 +10,25 @@
 
 SCENARIO("Numbers::AdjacentSteps")
 {
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("Construction: no initial number selection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
                 REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
-                aleatoric::AdjacentSteps(std::move(generator),
-                                         std::move(range));
+                             setDistributionVector(range.size, 1.0));
+                aleatoric::AdjacentSteps(std::move(generator), range);
             }
         }
     }
 
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("The object is constructed: no initialSelection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
@@ -38,12 +36,10 @@ SCENARIO("Numbers::AdjacentSteps")
         ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         int generatedNumber = 1;
-        aleatoric::AdjacentSteps instance(std::move(generator),
-                                          std::move(range));
+        aleatoric::AdjacentSteps instance(std::move(generator), range);
 
         WHEN("A number is requested")
         {
@@ -52,13 +48,12 @@ SCENARIO("Numbers::AdjacentSteps")
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
                 auto returnedNumber = instance.getIntegerNumber();
-                REQUIRE(returnedNumber ==
-                        generatedNumber + rangePointer->offset);
+                REQUIRE(returnedNumber == generatedNumber + range.offset);
             }
 
             AND_WHEN("The returned number is mid range")
             {
-                auto midRangeGeneratedNumber = 2 - rangePointer->offset;
+                auto midRangeGeneratedNumber = 2 - range.offset;
                 auto stepUp = midRangeGeneratedNumber + 1;
                 auto stepDown = midRangeGeneratedNumber - 1;
 
@@ -82,8 +77,7 @@ SCENARIO("Numbers::AdjacentSteps")
 
             AND_WHEN("The returned number is the bottom (start) of the range")
             {
-                auto startOfRangeGeneratedNumber =
-                    rangePointer->start - rangePointer->offset;
+                auto startOfRangeGeneratedNumber = range.start - range.offset;
                 auto stepUp = startOfRangeGeneratedNumber + 1;
                 auto stepDown = startOfRangeGeneratedNumber - 1;
 
@@ -108,8 +102,7 @@ SCENARIO("Numbers::AdjacentSteps")
 
             AND_WHEN("The returned number is the top (end) of the range")
             {
-                auto endOfRangeGeneratedNumber =
-                    rangePointer->end - rangePointer->offset;
+                auto endOfRangeGeneratedNumber = range.end - range.offset;
                 auto stepUp = endOfRangeGeneratedNumber + 1;
                 auto stepDown = endOfRangeGeneratedNumber - 1;
 
@@ -151,14 +144,136 @@ SCENARIO("Numbers::AdjacentSteps")
                         .RETURN(generatedNumber);
                     instance.reset();
                     auto returnedNumber = instance.getIntegerNumber();
-                    REQUIRE(returnedNumber ==
-                            generatedNumber + rangePointer->offset);
+                    REQUIRE(returnedNumber == generatedNumber + range.offset);
+                }
+            }
+        }
+
+        WHEN("The range is changed")
+        {
+            aleatoric::Range newRange(2, 10);
+
+            THEN("The returned range should match the new range")
+            {
+                instance.setRange(newRange);
+                auto returnedRange = instance.getRange();
+                REQUIRE(returnedRange.start == 2);
+                REQUIRE(returnedRange.end == 10);
+            }
+
+            THEN("The generator should be reconfigured to equal probability")
+            {
+                REQUIRE_CALL(*generatorPointer,
+                             setDistributionVector(newRange.size, 1.0));
+                instance.setRange(newRange);
+            }
+
+            AND_WHEN(
+                "The last returned number is mid-range within the new range")
+            {
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(range.size - 1);
+                auto lastReturnedNumber = instance.getIntegerNumber();
+                aleatoric::Range newRangeAround(lastReturnedNumber - 2,
+                                                lastReturnedNumber + 2);
+
+                THEN("Only the numbers either side of it are selectable")
+                {
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    REQUIRE_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAround.offset) - 1,
+                            1.0));
+                    REQUIRE_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAround.offset) + 1,
+                            1.0));
+                    instance.setRange(newRangeAround);
+                }
+            }
+
+            AND_WHEN("The last returned number is the start of the new range")
+            {
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(range.size - 1);
+                auto lastReturnedNumber = instance.getIntegerNumber();
+                aleatoric::Range newRangeAtStart(lastReturnedNumber,
+                                                 lastReturnedNumber + 2);
+
+                THEN("Only the number above should be selectable")
+                {
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    FORBID_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAtStart.offset) - 1,
+                            1.0));
+                    REQUIRE_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAtStart.offset) + 1,
+                            1.0));
+                    instance.setRange(newRangeAtStart);
+                }
+            }
+
+            AND_WHEN("The last returned number is the end of the new range")
+            {
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(range.size - 1);
+                auto lastReturnedNumber = instance.getIntegerNumber();
+                aleatoric::Range newRangeAtEnd(lastReturnedNumber - 2,
+                                               lastReturnedNumber);
+
+                THEN("Only the number below should be selectable")
+                {
+                    REQUIRE_CALL(*generatorPointer,
+                                 updateDistributionVector(0.0));
+                    REQUIRE_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAtEnd.offset) - 1,
+                            1.0));
+                    FORBID_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(
+                            (lastReturnedNumber - newRangeAtEnd.offset) + 1,
+                            1.0));
+                    instance.setRange(newRangeAtEnd);
+                }
+            }
+
+            AND_WHEN("The last returned number is not within the new range")
+            {
+                REQUIRE_CALL(*generatorPointer, getNumber())
+                    .RETURN(range.size - 1);
+                auto lastReturnedNumber = instance.getIntegerNumber();
+                aleatoric::Range newRangeOutsideAndAbove(lastReturnedNumber + 1,
+                                                         lastReturnedNumber +
+                                                             3);
+
+                aleatoric::Range newRangeOutsideAndBelow(lastReturnedNumber - 5,
+                                                         lastReturnedNumber -
+                                                             1);
+                THEN("No further treatment is required")
+                {
+                    FORBID_CALL(*generatorPointer,
+                                updateDistributionVector(0.0));
+                    FORBID_CALL(
+                        *generatorPointer,
+                        updateDistributionVector(ANY(int), ANY(double)));
+                    instance.setRange(newRangeOutsideAndAbove);
+                    instance.setRange(newRangeOutsideAndBelow);
                 }
             }
         }
     }
 
-    GIVEN("The class is instantiated with an invalid initialSelection value")
+    GIVEN("Construction: with invalid initialSelection value")
     {
         WHEN("The value provided is greater than the range end")
         {
@@ -169,14 +284,14 @@ SCENARIO("Numbers::AdjacentSteps")
                 REQUIRE_THROWS_AS(
                     aleatoric::AdjacentSteps(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
                     aleatoric::AdjacentSteps(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
@@ -192,14 +307,14 @@ SCENARIO("Numbers::AdjacentSteps")
                 REQUIRE_THROWS_AS(
                     aleatoric::AdjacentSteps(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         initialSelectionOutOfRange),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
                     aleatoric::AdjacentSteps(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         initialSelectionOutOfRange),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 3");
@@ -207,27 +322,25 @@ SCENARIO("Numbers::AdjacentSteps")
         }
     }
 
-    GIVEN("The class is instantiated with an initial number selection")
+    GIVEN("Construction: with initialSelection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
                 REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
-                aleatoric::AdjacentSteps(std::move(generator),
-                                         std::move(range));
+                             setDistributionVector(range.size, 1.0));
+                aleatoric::AdjacentSteps(std::move(generator), range);
             }
         }
     }
 
-    GIVEN("The class is instantiated with an initial number selection")
+    GIVEN("The object is constructed: with initialSelection")
     {
         int initialSelection = 2; // a mid-range selection (within range)
 
@@ -237,12 +350,11 @@ SCENARIO("Numbers::AdjacentSteps")
         ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         int generatedNumber = 1;
         aleatoric::AdjacentSteps instance(std::move(generator),
-                                          std::move(range),
+                                          range,
                                           initialSelection);
 
         WHEN("A number is first requested")
@@ -261,16 +373,16 @@ SCENARIO("Numbers::AdjacentSteps")
                 REQUIRE_CALL(*generatorPointer, updateDistributionVector(0.0));
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(
-                                 (initialSelection - rangePointer->offset) - 1,
+                                 (initialSelection - range.offset) - 1,
                                  1.0));
                 REQUIRE_CALL(*generatorPointer,
                              updateDistributionVector(
-                                 (initialSelection - rangePointer->offset) + 1,
+                                 (initialSelection - range.offset) + 1,
                                  1.0));
-                FORBID_CALL(*generatorPointer,
-                            updateDistributionVector(
-                                (initialSelection - rangePointer->offset),
-                                1.0));
+                FORBID_CALL(
+                    *generatorPointer,
+                    updateDistributionVector((initialSelection - range.offset),
+                                             1.0));
 
                 instance.getIntegerNumber();
             }
@@ -290,8 +402,7 @@ SCENARIO("Numbers::AdjacentSteps")
                 auto secondCallResult =
                     instance.getIntegerNumber(); // subsequent call
 
-                REQUIRE(secondCallResult ==
-                        generatedNumber + rangePointer->offset);
+                REQUIRE(secondCallResult == generatedNumber + range.offset);
             }
 
             AND_THEN("The stepwise distribution logic is run")

@@ -17,23 +17,23 @@ namespace aleatoric {
 // future.
 Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
                std::unique_ptr<IDiscreteGenerator> discreteGenerator,
-               std::unique_ptr<Range> range,
+               Range range,
                int subsetMin,
                int subsetMax)
 : m_uniformGenerator(std::move(uniformGenerator)),
   m_discreteGenerator(std::move(discreteGenerator)),
-  m_range(std::move(range)),
+  m_range(range),
   m_subsetMin(subsetMin),
   m_subsetMax(subsetMax),
   m_seriesPrinciple()
 {
-    if(m_subsetMin < 1 || m_subsetMin > m_range->size) {
+    if(m_subsetMin < 1 || m_subsetMin > m_range.size) {
         throw std::invalid_argument(
             "The value passed as argument for subsetMin must be between 1 and "
             "the range size, inclusive");
     }
 
-    if(m_subsetMax < 1 || m_subsetMax > m_range->size) {
+    if(m_subsetMax < 1 || m_subsetMax > m_range.size) {
         throw std::invalid_argument(
             "The value passed as argument for subsetMax must be between 1 and "
             "the range size, inclusive");
@@ -44,8 +44,7 @@ Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
                                     "greater than that of subsetMax");
     }
 
-    m_discreteGenerator->setDistributionVector(m_range->size, 1.0);
-
+    m_discreteGenerator->setDistributionVector(m_range.size, 1.0);
     setSubset();
 }
 
@@ -68,6 +67,23 @@ void Subset::reset()
     setSubset();
 }
 
+void Subset::setRange(Range newRange)
+{
+    m_range = newRange;
+    m_discreteGenerator->setDistributionVector(m_range.size, 1.0);
+    setSubset();
+    // TODO: DYNAMIC-PARAMS: there is coupling here between range and subset
+    // min/max. have disregarded possibility of these two getting out of sync
+    // (as per exception checks above) as they should be addressed when params
+    // as a whole can be updated in next stage
+}
+
+Range Subset::getRange()
+{
+    return m_range;
+}
+
+// Private methods
 void Subset::setSubset()
 {
     m_uniformGenerator->setDistribution(m_subsetMin, m_subsetMax);
@@ -76,7 +92,7 @@ void Subset::setSubset()
     m_subset.resize(m_uniformGenerator->getNumber());
 
     for(auto &&i : m_subset) {
-        i = m_seriesPrinciple.getNumber(m_discreteGenerator) + m_range->offset;
+        i = m_seriesPrinciple.getNumber(m_discreteGenerator) + m_range.offset;
     }
 
     // now set the uniformGenerator to pick indices from the subset

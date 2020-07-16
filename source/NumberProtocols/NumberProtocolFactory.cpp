@@ -25,7 +25,7 @@ NumberProtocolFactory::createAdjacentSteps(int rangeStart, int rangeEnd)
 {
     return std::make_unique<AdjacentSteps>(
         std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd));
+        Range(rangeStart, rangeEnd));
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createAdjacentSteps(
@@ -33,25 +33,23 @@ std::unique_ptr<NumberProtocol> NumberProtocolFactory::createAdjacentSteps(
 {
     return std::make_unique<AdjacentSteps>(
         std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
+        Range(rangeStart, rangeEnd),
         initialSelection);
 }
 
 std::unique_ptr<NumberProtocol>
 NumberProtocolFactory::createBasic(int rangeStart, int rangeEnd)
 {
-    return std::make_unique<Basic>(
-        std::make_unique<UniformGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd));
+    return std::make_unique<Basic>(std::make_unique<UniformGenerator>(),
+                                   Range(rangeStart, rangeEnd));
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createCycle(
     int rangeStart, int rangeEnd, bool bidirectional, bool reverseDirection)
 {
-    return std::make_unique<Cycle>(
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        bidirectional,
-        reverseDirection);
+    return std::make_unique<Cycle>(Range(rangeStart, rangeEnd),
+                                   bidirectional,
+                                   reverseDirection);
 }
 
 std::unique_ptr<NumberProtocol>
@@ -61,11 +59,10 @@ NumberProtocolFactory::createCycle(int rangeStart,
                                    bool bidirectional,
                                    bool reverseDirection)
 {
-    return std::make_unique<Cycle>(
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        initialSelection,
-        bidirectional,
-        reverseDirection);
+    return std::make_unique<Cycle>(Range(rangeStart, rangeEnd),
+                                   initialSelection,
+                                   bidirectional,
+                                   reverseDirection);
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createGroupedRepetition(
@@ -74,25 +71,23 @@ std::unique_ptr<NumberProtocol> NumberProtocolFactory::createGroupedRepetition(
     return std::make_unique<GroupedRepetition>(
         std::make_unique<DiscreteGenerator>(),
         std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
+        Range(rangeStart, rangeEnd),
         groupings);
 }
 
 std::unique_ptr<NumberProtocol>
 NumberProtocolFactory::createNoRepetition(int rangeStart, int rangeEnd)
 {
-    return std::make_unique<NoRepetition>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd));
+    return std::make_unique<NoRepetition>(std::make_unique<DiscreteGenerator>(),
+                                          Range(rangeStart, rangeEnd));
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createPeriodic(
     int rangeStart, int rangeEnd, double chanceOfRepetition)
 {
-    return std::make_unique<Periodic>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        chanceOfRepetition);
+    return std::make_unique<Periodic>(std::make_unique<DiscreteGenerator>(),
+                                      Range(rangeStart, rangeEnd),
+                                      chanceOfRepetition);
 }
 
 std::unique_ptr<NumberProtocol>
@@ -101,20 +96,18 @@ NumberProtocolFactory::createPeriodic(int rangeStart,
                                       double chanceOfRepetition,
                                       int initialSelection)
 {
-    return std::make_unique<Periodic>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        chanceOfRepetition,
-        initialSelection);
+    return std::make_unique<Periodic>(std::make_unique<DiscreteGenerator>(),
+                                      Range(rangeStart, rangeEnd),
+                                      chanceOfRepetition,
+                                      initialSelection);
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createPrecision(
     int rangeStart, int rangeEnd, std::vector<double> distribution)
 {
-    return std::make_unique<Precision>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        distribution);
+    return std::make_unique<Precision>(std::make_unique<DiscreteGenerator>(),
+                                       Range(rangeStart, rangeEnd),
+                                       distribution);
 }
 
 std::unique_ptr<NumberProtocol>
@@ -123,46 +116,42 @@ NumberProtocolFactory::createPrecision(int rangeStart,
                                        std::vector<double> distribution,
                                        int initialSelection)
 {
-    return std::make_unique<Precision>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        distribution,
-        initialSelection);
+    return std::make_unique<Precision>(std::make_unique<DiscreteGenerator>(),
+                                       Range(rangeStart, rangeEnd),
+                                       distribution,
+                                       initialSelection);
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createRatio(
     int rangeStart, int rangeEnd, std::vector<int> ratios)
 {
-    return std::make_unique<Ratio>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        ratios);
+    return std::make_unique<Ratio>(std::make_unique<DiscreteGenerator>(),
+                                   Range(rangeStart, rangeEnd),
+                                   ratios);
 }
 
 std::unique_ptr<NumberProtocol>
 NumberProtocolFactory::createSerial(int rangeStart, int rangeEnd)
 {
-    return std::make_unique<Serial>(
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd));
+    return std::make_unique<Serial>(std::make_unique<DiscreteGenerator>(),
+                                    Range(rangeStart, rangeEnd));
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createSubset(
     int rangeStart, int rangeEnd, int subsetMin, int subsetMax)
 {
-    return std::make_unique<Subset>(
-        std::make_unique<UniformGenerator>(),
-        std::make_unique<DiscreteGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        subsetMin,
-        subsetMax);
+    return std::make_unique<Subset>(std::make_unique<UniformGenerator>(),
+                                    std::make_unique<DiscreteGenerator>(),
+                                    Range(rangeStart, rangeEnd),
+                                    subsetMin,
+                                    subsetMax);
 }
 
 std::unique_ptr<NumberProtocol>
 NumberProtocolFactory::createWalk(int rangeStart, int rangeEnd, int maxStep)
 {
     return std::make_unique<Walk>(std::make_unique<UniformGenerator>(),
-                                  std::make_unique<Range>(rangeStart, rangeEnd),
+                                  Range(rangeStart, rangeEnd),
                                   maxStep);
 }
 
@@ -170,7 +159,7 @@ std::unique_ptr<NumberProtocol> NumberProtocolFactory::createWalk(
     int rangeStart, int rangeEnd, int maxStep, int initialSelection)
 {
     return std::make_unique<Walk>(std::make_unique<UniformGenerator>(),
-                                  std::make_unique<Range>(rangeStart, rangeEnd),
+                                  Range(rangeStart, rangeEnd),
                                   maxStep,
                                   initialSelection);
 }
@@ -178,19 +167,17 @@ std::unique_ptr<NumberProtocol> NumberProtocolFactory::createWalk(
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createGranularWalk(
     int rangeStart, int rangeEnd, double deviationFactor)
 {
-    return std::make_unique<GranularWalk>(
-        std::make_unique<UniformGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        deviationFactor);
+    return std::make_unique<GranularWalk>(std::make_unique<UniformGenerator>(),
+                                          Range(rangeStart, rangeEnd),
+                                          deviationFactor);
 }
 
 std::unique_ptr<NumberProtocol> NumberProtocolFactory::createGranularWalk(
     int rangeStart, int rangeEnd, double deviationFactor, int initialSelection)
 {
-    return std::make_unique<GranularWalk>(
-        std::make_unique<UniformGenerator>(),
-        std::make_unique<Range>(rangeStart, rangeEnd),
-        deviationFactor,
-        initialSelection);
+    return std::make_unique<GranularWalk>(std::make_unique<UniformGenerator>(),
+                                          Range(rangeStart, rangeEnd),
+                                          deviationFactor,
+                                          initialSelection);
 }
 } // namespace aleatoric

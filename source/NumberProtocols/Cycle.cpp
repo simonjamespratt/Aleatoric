@@ -3,31 +3,27 @@
 #include "ErrorChecker.hpp"
 
 namespace aleatoric {
-Cycle::Cycle(std::unique_ptr<Range> range,
-             bool bidirectional,
-             bool reverseDirection)
-: m_range(std::move(range)),
-  m_bidirectional(bidirectional),
-  m_reverse(reverseDirection),
-  m_initialStateReverse(reverseDirection)
+Cycle::Cycle(Range range, bool bidirectional, bool reverseDirection)
+: m_range(range), m_haveRequestedFirstNumber(false)
 {
-    m_reverse ? m_position = m_range->end : m_position = m_range->start;
+    setState(bidirectional, reverseDirection);
+
+    reverseDirection ? m_nextPosition = m_range.end
+                     : m_nextPosition = m_range.start;
     m_hasInitialSelection = false;
 }
 
-Cycle::Cycle(std::unique_ptr<Range> range,
+Cycle::Cycle(Range range,
              int initialSelection,
              bool bidirectional,
              bool reverseDirection)
-: m_range(std::move(range)),
-  m_initialSelection(initialSelection),
-  m_bidirectional(bidirectional),
-  m_reverse(reverseDirection),
-  m_initialStateReverse(reverseDirection)
+: m_range(range), m_initialSelection(initialSelection)
 {
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
 
-    m_position = m_initialSelection;
+    setState(bidirectional, reverseDirection);
+
+    m_nextPosition = m_initialSelection;
     m_hasInitialSelection = true;
 }
 
@@ -36,47 +32,9 @@ Cycle::~Cycle()
 
 int Cycle::getIntegerNumber()
 {
-    if(!m_bidirectional) {
-        if(!m_reverse) {
-            if(m_position == m_range->end) {
-                int returnValue = m_position;
-                m_position = m_range->start;
-                return returnValue;
-            }
-
-            return m_position++;
-        }
-
-        if(m_reverse) {
-            if(m_position == m_range->start) {
-                int returnValue = m_position;
-                m_position = m_range->end;
-                return returnValue;
-            }
-
-            return m_position--;
-        }
-    }
-
-    if(m_bidirectional) {
-        if(!m_reverse) {
-            if(m_position == m_range->end) {
-                m_reverse = !m_reverse;
-                return m_position--;
-            }
-
-            return m_position++;
-        }
-
-        if(m_reverse) {
-            if(m_position == m_range->start) {
-                m_reverse = !m_reverse;
-                return m_position++;
-            }
-
-            return m_position--;
-        }
-    }
+    auto number = m_state->getPosition(m_nextPosition, m_range);
+    m_haveRequestedFirstNumber = true;
+    return number;
 }
 
 double Cycle::getDecimalNumber()
@@ -86,20 +44,38 @@ double Cycle::getDecimalNumber()
 
 void Cycle::reset()
 {
-    if(m_bidirectional) {
-        m_reverse = m_initialStateReverse;
-    }
+    m_state->reset(m_nextPosition, m_range);
 
     if(m_hasInitialSelection) {
-        m_position = m_initialSelection;
-    } else {
-        if(!m_reverse) {
-            m_position = m_range->start;
-        }
-
-        if(m_reverse) {
-            m_position = m_range->end;
-        }
+        m_nextPosition = m_initialSelection;
     }
 }
+
+void Cycle::setRange(Range newRange)
+{
+    m_range = newRange;
+
+    m_state->setRange(m_nextPosition, m_range, m_haveRequestedFirstNumber);
+}
+
+Range Cycle::getRange()
+{
+    return m_range;
+}
+
+void Cycle::setState(bool bidirectional, bool reverseDirection)
+{
+    if(bidirectional) {
+        m_state = std::make_unique<Bidirectional>(reverseDirection);
+    }
+
+    if(!bidirectional && reverseDirection) {
+        m_state = std::make_unique<UniReverse>();
+    }
+
+    if(!bidirectional && !reverseDirection) {
+        m_state = std::make_unique<UniForward>();
+    }
+}
+
 } // namespace aleatoric

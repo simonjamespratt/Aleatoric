@@ -7,7 +7,7 @@
 
 // In fact, these tests use just the Cycle number protocol as a way to get the
 // items from the duration protocols in a way that is uniform across all
-// duration protocols under test. It is used because it is the simplest and most
+// duration protocols under test. It is used because it is the most
 // predictable of all the number protocols.
 
 #include "DurationsProducer.hpp"
@@ -28,9 +28,8 @@ SCENARIO("TimeDomain: Integration using Prescribed and Cycle")
 
     aleatoric::Prescribed durationProtocol(sourceDurations);
 
-    aleatoric::DurationsProducer instance(
-        durationProtocol,
-        numbersFactory.createCycle(0, sourceDurations.size() - 1));
+    aleatoric::DurationsProducer instance(durationProtocol,
+                                          numbersFactory.createCycle(0, 1));
 
     WHEN("A sample has been gathered that matches the size of the duration "
          "collection")
@@ -56,15 +55,8 @@ SCENARIO("TimeDomain: Integration using Multiples and Cycle")
 
         aleatoric::Multiples durationProcotol(baseIncrement, range);
 
-        // TODO: DYNAMIC-PARAMS: This is a good example of the reason why it is
-        // difficult for a caller to get the number protocol configured with the
-        // correct range: The caller needs to know that the number protocol must
-        // be configured for selecting INDICES that match the produced internal
-        // durations collection of the duration protocol, rather than matching
-        // the range provided to the duration protocol.
-        aleatoric::DurationsProducer instance(
-            durationProcotol,
-            numbersFactory.createCycle(0, range.size - 1));
+        aleatoric::DurationsProducer instance(durationProcotol,
+                                              numbersFactory.createCycle(0, 1));
 
         WHEN("A sample has been gathered that matches the size of the range")
         {
@@ -95,10 +87,8 @@ SCENARIO("TimeDomain: Integration using Multiples and Cycle")
             deviationFactor,
             std::make_unique<aleatoric::UniformGenerator>());
 
-        // TODO: DYNAMIC-PARAMS: same as above
-        aleatoric::DurationsProducer instance(
-            durationProtocol,
-            numbersFactory.createCycle(0, range.size - 1));
+        aleatoric::DurationsProducer instance(durationProtocol,
+                                              numbersFactory.createCycle(0, 1));
 
         WHEN("A sample has been gathered that matches the size of the range")
         {
@@ -144,10 +134,8 @@ SCENARIO("TimeDomain: Integration using Multiples and Cycle")
 
         aleatoric::Multiples durationProtocol(baseIncrement, multipliers);
 
-        // TODO: DYNAMIC-PARAMS: same as above
-        aleatoric::DurationsProducer instance(
-            durationProtocol,
-            numbersFactory.createCycle(0, multipliers.size() - 1));
+        aleatoric::DurationsProducer instance(durationProtocol,
+                                              numbersFactory.createCycle(0, 1));
 
         WHEN("A sample has been gathered that matches the size of the "
              "multiples collection")
@@ -179,10 +167,8 @@ SCENARIO("TimeDomain: Integration using Multiples and Cycle")
             deviationFactor,
             std::make_unique<aleatoric::UniformGenerator>());
 
-        // TODO: DYNAMIC-PARAMS: same as above
-        aleatoric::DurationsProducer instance(
-            durationProtocol,
-            numbersFactory.createCycle(0, multipliers.size() - 1));
+        aleatoric::DurationsProducer instance(durationProtocol,
+                                              numbersFactory.createCycle(0, 1));
 
         WHEN("A sample has been gathered that matches the size of the "
              "multiples collection")
@@ -234,10 +220,8 @@ SCENARIO("TimeDomain: Integration using Geometric and Cycle")
 
         aleatoric::Geometric durationProtocol(range, collectionSize);
 
-        // TODO: DYNAMIC-PARAMS: same as above
-        aleatoric::DurationsProducer instance(
-            durationProtocol,
-            numbersFactory.createCycle(0, range.size - 1));
+        aleatoric::DurationsProducer instance(durationProtocol,
+                                              numbersFactory.createCycle(0, 1));
 
         WHEN("A sample is gathered that is the size of the collection size "
              "argument")

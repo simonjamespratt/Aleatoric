@@ -29,8 +29,7 @@ class Basic : public NumberProtocol {
 
         @param range The range within which to produce numbers.
     */
-    Basic(std::unique_ptr<IUniformGenerator> generator,
-          std::unique_ptr<Range> range);
+    Basic(std::unique_ptr<IUniformGenerator> generator, Range range);
     ~Basic();
     /*! @brief returns a random number */
     int getIntegerNumber() override;
@@ -40,8 +39,11 @@ class Basic : public NumberProtocol {
     /*! @brief resets the instance to initial settings */
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IUniformGenerator> m_generator;
 };
 } // namespace aleatoric

@@ -10,7 +10,7 @@ namespace aleatoric {
 class Ratio : public NumberProtocol {
   public:
     Ratio(std::unique_ptr<IDiscreteGenerator> generator,
-          std::unique_ptr<Range> range,
+          Range range,
           std::vector<int> ratios);
 
     ~Ratio();
@@ -21,11 +21,16 @@ class Ratio : public NumberProtocol {
 
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;
-    std::unique_ptr<Range> m_range;
+    Range m_range;
+    std::vector<int> m_ratios;
     std::vector<int> m_selectables;
     Utilities::SeriesPrinciple m_seriesPrinciple;
+    void setSelectables();
 };
 } // namespace aleatoric
 

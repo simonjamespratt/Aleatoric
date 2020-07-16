@@ -11,7 +11,7 @@ class GroupedRepetition : public NumberProtocol {
   public:
     GroupedRepetition(std::unique_ptr<IDiscreteGenerator> numberGenerator,
                       std::unique_ptr<IDiscreteGenerator> groupingGenerator,
-                      std::unique_ptr<Range> range,
+                      Range range,
                       std::vector<int> groupings);
 
     ~GroupedRepetition();
@@ -22,10 +22,13 @@ class GroupedRepetition : public NumberProtocol {
 
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
     std::unique_ptr<IDiscreteGenerator> m_numberGenerator;
     std::unique_ptr<IDiscreteGenerator> m_groupingGenerator;
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::vector<int> m_groupings;
     Utilities::SeriesPrinciple m_seriesPrinciple;
     int m_groupingCount;

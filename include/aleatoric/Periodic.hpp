@@ -67,7 +67,7 @@ class Periodic : public NumberProtocol {
      * detailed description for more details.
      */
     Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-             std::unique_ptr<Range> range,
+             Range range,
              double chanceOfRepetition);
 
     /*! @overload
@@ -80,7 +80,7 @@ class Periodic : public NumberProtocol {
      * call to getNumber()
      */
     Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-             std::unique_ptr<Range> range,
+             Range range,
              double chanceOfRepetition,
              int initialSelection);
 
@@ -107,15 +107,20 @@ class Periodic : public NumberProtocol {
      */
     void reset() override;
 
+    void setRange(Range newRange) override;
+
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
     double m_periodicity;
-    double m_remainderAllocation;
     void setPeriodicDistribution(int selectedIndex);
+    double calculateRemainerAllocation();
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
+    int m_lastReturnedNumber;
 };
 } // namespace aleatoric
 

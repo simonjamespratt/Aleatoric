@@ -1,5 +1,6 @@
 #include "Serial.hpp"
 
+#include "DiscreteGenerator.hpp"
 #include "DiscreteGeneratorMock.hpp"
 #include "Range.hpp"
 
@@ -9,26 +10,25 @@
 
 SCENARIO("Numbers::Serial")
 {
-    GIVEN("The class is instantiated")
+    GIVEN("Construction")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
                 REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
-                aleatoric::Serial(std::move(generator), std::move(range));
+                             setDistributionVector(range.size, 1.0));
+                aleatoric::Serial(std::move(generator), range);
             }
         }
     }
 
-    GIVEN("The class is instantiated")
+    GIVEN("The object is constructed")
     {
         int generatedNumber = 1;
 
@@ -48,10 +48,9 @@ SCENARIO("Numbers::Serial")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
-        aleatoric::Serial instance(std::move(generator), std::move(range));
+        aleatoric::Serial instance(std::move(generator), range);
 
         WHEN("A number is requested")
         {
@@ -77,7 +76,7 @@ SCENARIO("Numbers::Serial")
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
                 auto number = instance.getIntegerNumber();
-                REQUIRE(number == generatedNumber + rangePointer->offset);
+                REQUIRE(number == generatedNumber + range.offset);
             }
 
             THEN("It gets the state of the generator distribution for "
@@ -120,6 +119,64 @@ SCENARIO("Numbers::Serial")
             {
                 REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
                 instance.reset();
+            }
+        }
+
+        AND_WHEN("A range change is made")
+        {
+            // NB: using real dependencies
+            aleatoric::Serial realInstance(
+                std::make_unique<aleatoric::DiscreteGenerator>(),
+                aleatoric::Range(1, 3));
+
+            aleatoric::Range newRange(4, 9); // size 6
+
+            std::vector<int> expectedValues {4, 5, 6, 7, 8, 9};
+            auto expectedValuesPermutation =
+                Catch::UnorderedEquals(expectedValues);
+
+            std::vector<int> set(newRange.size);
+
+            THEN("The returned range should match the new range")
+            {
+                realInstance.setRange(newRange);
+                auto returnedRange = realInstance.getRange();
+                REQUIRE(returnedRange.start == newRange.start);
+                REQUIRE(returnedRange.end == newRange.end);
+            }
+
+            AND_WHEN("change is made before a number has been returned")
+            {
+                realInstance.setRange(newRange);
+
+                for(auto &&i : set) {
+                    i = realInstance.getIntegerNumber();
+                }
+
+                THEN("A set covering the range will have the expected result")
+                {
+                    REQUIRE_THAT(set, expectedValuesPermutation);
+                }
+            }
+
+            AND_WHEN("change is made after some numbers have been returned")
+            {
+                // request some numbers
+                for(int i = 0; i < 3; i++) {
+                    realInstance.getIntegerNumber();
+                }
+
+                // then change the range
+                realInstance.setRange(newRange);
+
+                for(auto &&i : set) {
+                    i = realInstance.getIntegerNumber();
+                }
+
+                THEN("A set covering the range will have the expected result")
+                {
+                    REQUIRE_THAT(set, expectedValuesPermutation);
+                }
             }
         }
     }

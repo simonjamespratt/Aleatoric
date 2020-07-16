@@ -14,7 +14,7 @@ class Subset : public NumberProtocol {
   public:
     Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
            std::unique_ptr<IDiscreteGenerator> discreteGenerator,
-           std::unique_ptr<Range> range,
+           Range range,
            int subsetMin,
            int subsetMax);
 
@@ -25,10 +25,13 @@ class Subset : public NumberProtocol {
 
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
     std::unique_ptr<IUniformGenerator> m_uniformGenerator;
     std::unique_ptr<IDiscreteGenerator> m_discreteGenerator;
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     Utilities::SeriesPrinciple m_seriesPrinciple;
     int m_subsetMin;
     int m_subsetMax;

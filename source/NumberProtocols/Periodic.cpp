@@ -8,9 +8,9 @@
 
 namespace aleatoric {
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-                   std::unique_ptr<Range> range,
+                   Range range,
                    double chanceOfRepetition)
-: m_range(std::move(range)),
+: m_range(range),
   m_generator(std::move(generator)),
   m_periodicity(chanceOfRepetition),
   m_haveInitialSelection(false),
@@ -22,21 +22,16 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
             "within the range of 0.0 - 1.0");
     }
 
-    m_generator->setDistributionVector(m_range->size, 1.0);
-
-    // calculate the remainder allocation
-    double vectorSize =
-        static_cast<double>(m_generator->getDistributionVector().size());
-    m_remainderAllocation = (1.0 - m_periodicity) / (vectorSize - 1.0);
+    m_generator->setDistributionVector(m_range.size, 1.0);
 }
 
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-                   std::unique_ptr<Range> range,
+                   Range range,
                    double chanceOfRepetition,
                    int initialSelection)
-: Periodic(std::move(generator), std::move(range), chanceOfRepetition)
+: Periodic(std::move(generator), range, chanceOfRepetition)
 {
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -48,14 +43,17 @@ Periodic::~Periodic()
 int Periodic::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        setPeriodicDistribution(m_initialSelection - m_range->offset);
-        m_haveRequestedFirstNumber = true;
-        return m_initialSelection;
+        setPeriodicDistribution(m_initialSelection - m_range.offset);
+        m_lastReturnedNumber = m_initialSelection;
+    } else {
+        auto generatedNumber = m_generator->getNumber();
+        setPeriodicDistribution(generatedNumber);
+        m_lastReturnedNumber = generatedNumber + m_range.offset;
     }
 
-    auto generatedNumber = m_generator->getNumber();
-    setPeriodicDistribution(generatedNumber);
-    return generatedNumber + m_range->offset;
+    m_haveRequestedFirstNumber = true;
+
+    return m_lastReturnedNumber;
 }
 
 double Periodic::getDecimalNumber()
@@ -69,6 +67,30 @@ void Periodic::reset()
     m_haveRequestedFirstNumber = false;
 }
 
+void Periodic::setRange(Range newRange)
+{
+    auto oldRange = m_range;
+    m_range = newRange;
+
+    m_generator->setDistributionVector(newRange.size, 1.0);
+
+    if(m_haveRequestedFirstNumber &&
+       newRange.numberIsInRange(m_lastReturnedNumber)) {
+        setPeriodicDistribution(m_lastReturnedNumber - newRange.offset);
+    }
+}
+
+Range Periodic::getRange()
+{
+    return m_range;
+}
+
+double Periodic::calculateRemainerAllocation()
+{
+    auto vectorSize = m_generator->getDistributionVector().size();
+    return (1.0 - m_periodicity) / (vectorSize - 1.0);
+}
+
 void Periodic::setPeriodicDistribution(int selectedIndex)
 {
     // The total of all values in the vector must equal 1.0.
@@ -76,11 +98,13 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
     // must have the value of the periodicity (chanceOfRepetition).
     // The remainder of 1.0 - periodicity is shared equally amongst
     // the remaining vector indices.
+
     auto distributionVector = m_generator->getDistributionVector();
+    auto remainderAllocation = calculateRemainerAllocation();
 
     for(int i = 0; i < distributionVector.size(); i++) {
         auto newVectorValue =
-            i == selectedIndex ? m_periodicity : m_remainderAllocation;
+            i == selectedIndex ? m_periodicity : remainderAllocation;
         distributionVector[i] = newVectorValue;
     }
 

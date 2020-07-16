@@ -1,6 +1,7 @@
 #ifndef Cycle_hpp
 #define Cycle_hpp
 
+#include "CycleStates.hpp"
 #include "NumberProtocol.hpp"
 #include "Range.hpp"
 
@@ -9,11 +10,11 @@
 namespace aleatoric {
 class Cycle : public NumberProtocol {
   public:
-    Cycle(std::unique_ptr<Range> range,
+    Cycle(Range range,
           bool bidirectional = false,
           bool reverseDirection = false);
 
-    Cycle(std::unique_ptr<Range> range,
+    Cycle(Range range,
           int initialSelction,
           bool bidirectional = false,
           bool reverseDirection = false);
@@ -26,14 +27,18 @@ class Cycle : public NumberProtocol {
 
     void reset() override;
 
+    void setRange(Range newRange) override;
+
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
-    int m_position;
-    bool m_bidirectional;
-    bool m_reverse;
-    bool m_initialStateReverse;
+    Range m_range;
+    std::unique_ptr<CycleState> m_state;
+    void setState(bool bidirectional, bool reverseDirection);
+    int m_nextPosition;
     int m_initialSelection;
     bool m_hasInitialSelection;
+    bool m_haveRequestedFirstNumber;
 };
 } // namespace aleatoric
 

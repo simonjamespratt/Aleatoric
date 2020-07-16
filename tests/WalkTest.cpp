@@ -9,7 +9,7 @@
 
 SCENARIO("Numbers::Walk")
 {
-    GIVEN("The class is instantiated with an invalid max step")
+    GIVEN("Construction: with an invalid max step")
     {
         WHEN("The value provided is greater than the range size")
         {
@@ -18,44 +18,44 @@ SCENARIO("Numbers::Walk")
                 int invalidMaxStep = 11;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 invalidMaxStep),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        invalidMaxStep),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 invalidMaxStep),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        invalidMaxStep),
                     "The value passed as argument for maxStep must be less "
                     "than or equal to 10");
             }
         }
     }
 
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("Construction: no initial selection")
     {
         int maxStep = 2;
 
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        auto range = std::make_unique<aleatoric::Range>(1, 10);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 10);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range start and end")
             {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistribution(rangePointer->start, rangePointer->end));
-                aleatoric::Walk(std::move(generator), std::move(range), maxStep);
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(range.start, range.end));
+                aleatoric::Walk(std::move(generator), range, maxStep);
             }
         }
     }
 
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("The object is constructed: no initial selection")
     {
         int maxStep = 2;
 
@@ -63,10 +63,9 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 10);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 10);
 
-        aleatoric::Walk instance(std::move(generator), std::move(range), maxStep);
+        aleatoric::Walk instance(std::move(generator), range, maxStep);
 
         WHEN("A number is requested")
         {
@@ -136,15 +135,89 @@ SCENARIO("Numbers::Walk")
         {
             THEN("The generator distribution is set to the full range")
             {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistribution(rangePointer->start, rangePointer->end));
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(range.start, range.end));
                 instance.reset();
             }
         }
     }
 
-    GIVEN("The class is instantiated with an invalid initial number selection")
+    GIVEN("The object is constructed with real instance: no initial selection")
+    {
+        int maxStep = 5;
+        aleatoric::Walk realInstance(
+            std::make_unique<aleatoric::UniformGenerator>(),
+            aleatoric::Range(1, 10),
+            maxStep);
+
+        WHEN("The range is changed")
+        {
+            THEN("The returned range should match the one received")
+            {
+                aleatoric::Range newRange(11, 30);
+                realInstance.setRange(newRange);
+                auto returnedRange = realInstance.getRange();
+                REQUIRE(returnedRange.start == newRange.start);
+                REQUIRE(returnedRange.end == newRange.end);
+            }
+
+            AND_WHEN("A set of numbers is gathered")
+            {
+                aleatoric::Range newRange(11, 30);
+                realInstance.setRange(newRange);
+                std::vector<int> set(100);
+                for(auto &&i : set) {
+                    i = realInstance.getIntegerNumber();
+                }
+
+                THEN("All numbers in the set should be within the new range")
+                {
+                    for(auto &&i : set) {
+                        REQUIRE(i >= newRange.start);
+                        REQUIRE(i <= newRange.end);
+                    }
+                }
+
+                THEN("All numbers in the set should be no more than the "
+                     "maxStep from the last number")
+                {
+                    std::vector<int> differences(set.size());
+                    std::adjacent_difference(set.begin(),
+                                             set.end(),
+                                             differences.begin());
+
+                    //  remove the first element as it is the value of the first
+                    //  element in the set (and not a difference between two
+                    //  numbers in the set)
+                    differences.erase(differences.begin());
+
+                    for(auto &&i : differences) {
+                        REQUIRE(i <= maxStep);
+                    }
+                }
+            }
+
+            AND_WHEN("The number last selected before the range change is "
+                     "within the new range")
+            {
+                // old range: 1, 10
+                auto lastNumber = realInstance.getIntegerNumber();
+                aleatoric::Range newRange(lastNumber - 100, lastNumber + 100);
+                realInstance.setRange(newRange);
+
+                THEN("The next selected number should be no more than the "
+                     "maxStep from the number last selected before the range "
+                     "change")
+                {
+                    auto nextNumber = realInstance.getIntegerNumber();
+                    auto difference = std::abs(lastNumber - nextNumber);
+                    REQUIRE(difference <= maxStep);
+                }
+            }
+        }
+    }
+
+    GIVEN("Construction: with invalid initial selection")
     {
         int maxStep = 1;
 
@@ -155,17 +228,19 @@ SCENARIO("Numbers::Walk")
                 auto initialSelection = 11;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 maxStep,
-                                 initialSelection),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        maxStep,
+                        initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 maxStep,
-                                 initialSelection),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        maxStep,
+                        initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
@@ -178,24 +253,26 @@ SCENARIO("Numbers::Walk")
                 auto initialSelection = 0;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 maxStep,
-                                 initialSelection),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        maxStep,
+                        initialSelection),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(std::make_unique<aleatoric::UniformGenerator>(),
-                                 std::make_unique<aleatoric::Range>(1, 10),
-                                 maxStep,
-                                 initialSelection),
+                    aleatoric::Walk(
+                        std::make_unique<aleatoric::UniformGenerator>(),
+                        aleatoric::Range(1, 10),
+                        maxStep,
+                        initialSelection),
                     "The value passed as argument for initialSelection must be "
                     "within the range of 1 to 10");
             }
         }
     }
 
-    GIVEN("The class is instantiated with a valid initial number selection")
+    GIVEN("Construction: with initial selection")
     {
         int maxStep = 2;
         int initialSelection = 4;
@@ -204,26 +281,24 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 10);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 10);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range start and end")
             {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistribution(rangePointer->start, rangePointer->end));
+                REQUIRE_CALL(*generatorPointer,
+                             setDistribution(range.start, range.end));
 
                 aleatoric::Walk(std::move(generator),
-                             std::move(range),
-                             maxStep,
-                             initialSelection);
+                                range,
+                                maxStep,
+                                initialSelection);
             }
         }
     }
 
-    GIVEN("The class is instantiated with a valid initial number selection")
+    GIVEN("The object is constructed: with initial selection")
     {
         int maxStep = 2;
         int initialSelection = 4;
@@ -232,13 +307,12 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 10);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 10);
 
         aleatoric::Walk instance(std::move(generator),
-                              std::move(range),
-                              maxStep,
-                              initialSelection);
+                                 range,
+                                 maxStep,
+                                 initialSelection);
 
         WHEN("The first number is requested")
         {

@@ -9,11 +9,11 @@ namespace aleatoric {
 class Precision : public NumberProtocol {
   public:
     Precision(std::unique_ptr<IDiscreteGenerator> generator,
-              std::unique_ptr<Range> range,
+              Range range,
               std::vector<double> distribution);
 
     Precision(std::unique_ptr<IDiscreteGenerator> generator,
-              std::unique_ptr<Range> range,
+              Range range,
               std::vector<double> distribution,
               int initialSelection);
 
@@ -25,9 +25,12 @@ class Precision : public NumberProtocol {
 
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;

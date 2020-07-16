@@ -7,33 +7,33 @@
 
 namespace aleatoric {
 GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                           std::unique_ptr<Range> range,
+                           Range range,
                            double deviationFactor)
-: m_externalRange(std::move(range)),
-  m_generator(std::move(generator)),
+: m_generator(std::move(generator)),
+  m_externalRange(range),
+  m_internalRange(0, 65000),
   m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
     ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
                                                "deviationFactor");
 
-    m_internalRange = {0, 65000, 0};
     double maxStep = scaleToRange(deviationFactor,
                                   m_internalRange.start,
                                   m_internalRange.end);
-    m_internalRange.maxStep = static_cast<int>(round(maxStep));
+    m_maxStep = static_cast<int>(round(maxStep));
 
     m_generator->setDistribution(m_internalRange.start, m_internalRange.end);
 }
 
 GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                           std::unique_ptr<Range> range,
+                           Range range,
                            double deviationFactor,
                            int initialSelection)
 : GranularWalk(std::move(generator), std::move(range), deviationFactor)
 {
     ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                               *m_externalRange);
+                                               m_externalRange);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -54,26 +54,20 @@ double GranularWalk::getDecimalNumber()
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
         m_haveRequestedFirstNumber = true;
 
-        auto normalized = normalize(m_initialSelection,
-                                    m_externalRange->start,
-                                    m_externalRange->end);
+        auto mappedValue =
+            mapToNewRange(m_initialSelection, m_externalRange, m_internalRange);
 
-        auto scaled = scaleToRange(normalized,
-                                   m_internalRange.start,
-                                   m_internalRange.end);
+        setForNextStep(static_cast<int>(round(mappedValue)));
 
-        setForNextStep(static_cast<int>(round(scaled)));
-
-        return static_cast<double>(m_initialSelection);
+        return m_lastReturnedNumber = static_cast<double>(m_initialSelection);
     }
 
     auto selectedNumber = m_generator->getNumber();
+    m_haveRequestedFirstNumber = true;
     setForNextStep(selectedNumber);
-    auto normalized =
-        normalize(selectedNumber, m_internalRange.start, m_internalRange.end);
-    return scaleToRange(normalized,
-                        m_externalRange->start,
-                        m_externalRange->end);
+
+    return m_lastReturnedNumber =
+               mapToNewRange(selectedNumber, m_internalRange, m_externalRange);
 }
 
 void GranularWalk::reset()
@@ -82,6 +76,33 @@ void GranularWalk::reset()
     m_haveRequestedFirstNumber = false;
 }
 
+void GranularWalk::setRange(Range newRange)
+{
+    m_externalRange = newRange;
+
+    if(!m_haveRequestedFirstNumber) {
+        return;
+    }
+
+    if(m_externalRange.numberIsInRange(m_lastReturnedNumber)) {
+        auto mappedValue = mapToNewRange(m_lastReturnedNumber,
+                                         m_externalRange,
+                                         m_internalRange);
+
+        setForNextStep(static_cast<int>(round(mappedValue)));
+
+    } else {
+        m_generator->setDistribution(m_internalRange.start,
+                                     m_internalRange.end);
+    }
+}
+
+Range GranularWalk::getRange()
+{
+    return m_externalRange;
+}
+
+// Private methods=====================================================
 double
 GranularWalk::scaleToRange(double normalizedValue, int rangeMin, int rangeMax)
 {
@@ -94,10 +115,16 @@ double GranularWalk::normalize(int value, int rangeMin, int rangeMax)
            static_cast<double>(rangeMax - rangeMin);
 }
 
+double GranularWalk::mapToNewRange(double value, Range fromRange, Range toRange)
+{
+    auto normalized = normalize(value, fromRange.start, fromRange.end);
+    return scaleToRange(normalized, toRange.start, toRange.end);
+}
+
 void GranularWalk::setForNextStep(int lastSelectedNumber)
 {
     auto newSubRange = Utilities::getMaxStepSubRange(lastSelectedNumber,
-                                                     m_internalRange.maxStep,
+                                                     m_maxStep,
                                                      m_internalRange.start,
                                                      m_internalRange.end);
 

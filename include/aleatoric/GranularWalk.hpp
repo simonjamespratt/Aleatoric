@@ -88,7 +88,7 @@ class GranularWalk : public NumberProtocol {
      * be between 0.0 and 1.0 (inclusive).
      */
     GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                 std::unique_ptr<Range> range,
+                 Range range,
                  double deviationFactor);
 
     /*!
@@ -100,7 +100,7 @@ class GranularWalk : public NumberProtocol {
      * limits of the range supplied.
      */
     GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                 std::unique_ptr<Range> range,
+                 Range range,
                  double deviationFactor,
                  int initialSelection);
 
@@ -128,21 +128,22 @@ class GranularWalk : public NumberProtocol {
      */
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
-    struct InternalRange {
-        int start;
-        int end;
-        int maxStep;
-    };
-    std::unique_ptr<Range> m_externalRange;
     std::unique_ptr<IUniformGenerator> m_generator;
-    InternalRange m_internalRange;
+    Range m_externalRange;
+    Range m_internalRange;
+    int m_maxStep;
     double scaleToRange(double normalizedValue, int rangeMin, int rangeMax);
     double normalize(int value, int rangeMin, int rangeMax);
+    double mapToNewRange(double value, Range fromRange, Range toRange);
     void setForNextStep(int lastSelectedNumber);
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
+    double m_lastReturnedNumber;
 };
 } // namespace aleatoric
 
