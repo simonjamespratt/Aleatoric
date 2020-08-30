@@ -1,6 +1,14 @@
 #include "NoRepetition.hpp"
 
 namespace aleatoric {
+NoRepetition::NoRepetition(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)),
+  m_range(0, 1),
+  m_haveRequestedFirstNumber(false)
+{
+    m_generator->setDistributionVector(m_range.size, 1.0);
+}
+
 NoRepetition::NoRepetition(std::unique_ptr<IDiscreteGenerator> generator,
                            Range range)
 : m_generator(std::move(generator)),
@@ -35,24 +43,27 @@ void NoRepetition::reset()
     m_generator->updateDistributionVector(1.0);
 }
 
-void NoRepetition::setRange(Range newRange)
+void NoRepetition::setParams(NumberProtocolParameters newParams)
 {
-    auto oldRange = m_range;
-    auto lastNumberGenerated = m_lastNumberReturned - oldRange.offset;
-
+    auto newRange = newParams.getRange();
     m_generator->setDistributionVector(newRange.size, 1.0);
 
     if(m_haveRequestedFirstNumber &&
        newRange.numberIsInRange(m_lastNumberReturned)) {
-        m_generator->updateDistributionVector(lastNumberGenerated, 0.0);
+        m_generator->updateDistributionVector(m_lastNumberReturned -
+                                                  newRange.offset,
+                                              0.0);
     }
 
     m_range = newRange;
 }
 
-Range NoRepetition::getRange()
+NumberProtocolParameters NoRepetition::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::NoRepetition()));
 }
 
 } // namespace aleatoric

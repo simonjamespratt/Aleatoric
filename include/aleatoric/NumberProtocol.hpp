@@ -1,6 +1,7 @@
 #ifndef NumberProtocol_hpp
 #define NumberProtocol_hpp
 
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 namespace aleatoric {
@@ -24,11 +25,28 @@ class NumberProtocol {
     /*! Pure virtual method for resetting a protocol to its initial state */
     virtual void reset() = 0;
 
-    virtual void setRange(Range newRange) = 0;
+    virtual void setParams(NumberProtocolParameters newParams) = 0;
 
-    virtual Range getRange() = 0;
+    virtual NumberProtocolParameters getParams() = 0;
 
     virtual ~NumberProtocol() = default;
+
+    enum class Type {
+        adjacentSteps,
+        basic,
+        cycle,
+        granularWalk,
+        groupedRepetition,
+        noRepetition,
+        periodic,
+        precision,
+        ratio,
+        serial,
+        subset,
+        walk
+    };
+
+    static std::unique_ptr<NumberProtocol> create(Type type);
 };
 } // namespace aleatoric
 

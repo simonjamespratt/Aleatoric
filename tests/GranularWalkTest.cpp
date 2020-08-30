@@ -1,5 +1,6 @@
 #include "GranularWalk.hpp"
 
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 #include "UniformGenerator.hpp"
 #include "UniformGeneratorMock.hpp"
@@ -7,8 +8,38 @@
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
+SCENARIO("Numbers::GranularWalk: default constructor")
+{
+    using namespace aleatoric;
+
+    GranularWalk instance(std::make_unique<UniformGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        auto deviationFactor =
+            params.protocols.getGranularWalk().getDeviationFactor();
+
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+        REQUIRE(deviationFactor == 1.0);
+    }
+
+    THEN("All numbers returned should be within default range")
+    {
+        for(int i = 0; i < 1000; i++) {
+            auto number = instance.getDecimalNumber();
+            REQUIRE(number >= 0);
+            REQUIRE(number <= 1);
+        }
+    }
+}
+
 SCENARIO("Numbers::GranularWalk")
 {
+    using namespace aleatoric;
+
     int internalRangeMin = 0;
     int internalRangeMax = 65000;
 
@@ -21,17 +52,15 @@ SCENARIO("Numbers::GranularWalk")
                 double invalidDeviation = -0.01;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::GranularWalk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(10, 20),
-                        invalidDeviation),
+                    GranularWalk(std::make_unique<UniformGenerator>(),
+                                 Range(10, 20),
+                                 invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::GranularWalk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(10, 20),
-                        invalidDeviation),
+                    GranularWalk(std::make_unique<UniformGenerator>(),
+                                 Range(10, 20),
+                                 invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -43,17 +72,15 @@ SCENARIO("Numbers::GranularWalk")
             {
                 double invalidDeviation = 1.01;
                 REQUIRE_THROWS_AS(
-                    aleatoric::GranularWalk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(10, 20),
-                        invalidDeviation),
+                    GranularWalk(std::make_unique<UniformGenerator>(),
+                                 Range(10, 20),
+                                 invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::GranularWalk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(10, 20),
-                        invalidDeviation),
+                    GranularWalk(std::make_unique<UniformGenerator>(),
+                                 Range(10, 20),
+                                 invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
                     "within the range of 0.0 to 1.0");
             }
@@ -66,7 +93,7 @@ SCENARIO("Numbers::GranularWalk")
 
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
-        auto range = aleatoric::Range(10, 20);
+        auto range = Range(10, 20);
 
         WHEN("The object is constructed")
         {
@@ -76,9 +103,7 @@ SCENARIO("Numbers::GranularWalk")
                     *generatorPointer,
                     setDistribution(internalRangeMin, internalRangeMax));
 
-                aleatoric::GranularWalk(std::move(generator),
-                                        range,
-                                        deviationFactor);
+                GranularWalk(std::move(generator), range, deviationFactor);
             }
         }
     }
@@ -90,15 +115,13 @@ SCENARIO("Numbers::GranularWalk")
 
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        auto range = aleatoric::Range(10, 20);
+        auto range = Range(10, 20);
 
         double deviationFactor = 0.25;
         auto expectedMaxStep = deviationFactor * internalRangeMax;
         int internalRangeMidValue = 32500;
 
-        aleatoric::GranularWalk instance(std::move(generator),
-                                         range,
-                                         deviationFactor);
+        GranularWalk instance(std::move(generator), range, deviationFactor);
 
         WHEN("A number is requested")
         {
@@ -208,9 +231,9 @@ SCENARIO("Numbers::GranularWalk")
                     ALLOW_CALL(*roundingGeneratorPointer,
                                setDistribution(ANY(int), ANY(int)));
 
-                    auto roundingRange = aleatoric::Range(10, 20);
+                    auto roundingRange = Range(10, 20);
 
-                    aleatoric::GranularWalk instanceNeedingStepRounding(
+                    GranularWalk instanceNeedingStepRounding(
                         std::move(roundingGenerator),
                         roundingRange,
                         devFactorThatCausesRounding);
@@ -248,114 +271,163 @@ SCENARIO("Numbers::GranularWalk")
                 instance.reset();
             }
         }
+    }
+}
 
-        WHEN("The range is changed")
+SCENARIO("Numbers::GranularWalk: params")
+{
+    using namespace aleatoric;
+
+    GranularWalk instance(std::make_unique<UniformGenerator>(),
+                          Range(10, 20),
+                          0.5);
+
+    WHEN("Get params")
+    {
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+
+        THEN("range should match the state of the object")
         {
-            THEN("The returned range should match the new range")
-            {
-                instance.setRange(aleatoric::Range(30, 40));
-                auto returnedRange = instance.getRange();
-                REQUIRE(returnedRange.start == 30);
-                REQUIRE(returnedRange.end == 40);
+            REQUIRE(returnedRange.start == 10);
+            REQUIRE(returnedRange.end == 20);
+        }
+
+        THEN("deviation factor should match state of object")
+        {
+            REQUIRE(params.protocols.getGranularWalk().getDeviationFactor() ==
+                    0.5);
+        }
+
+        THEN("active protocol should be granular walk")
+        {
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocolParameters::Protocols::ActiveProtocol::
+                        granularWalk);
+        }
+    }
+
+    WHEN("Set params")
+    {
+        Range newRange(20, 40);
+        double newDeviationFactor = 0.1;
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::GranularWalk(newDeviationFactor)));
+
+        instance.setParams(newParams);
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+
+        THEN("range is updated")
+        {
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+        }
+
+        THEN("deviation factor is updated")
+        {
+            REQUIRE(params.protocols.getGranularWalk().getDeviationFactor() ==
+                    newDeviationFactor);
+        }
+
+        AND_WHEN("A set of numbers is gathered")
+        {
+            std::vector<double> set(1000);
+            for(auto &&i : set) {
+                i = instance.getDecimalNumber();
             }
 
-            AND_WHEN(
-                "The last returned number is mid-range within the new range")
+            THEN("All numbers should be in the new range")
             {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMax);
-                instance.getDecimalNumber(); // lastReturnedNumber: 20.0
-                aleatoric::Range newRange(15, 25);
-
-                THEN("The generator is set to the correct maxStep sub range")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution(
-                            (internalRangeMidValue - expectedMaxStep),
-                            (internalRangeMidValue + expectedMaxStep)));
-                    instance.setRange(newRange);
+                for(auto &&i : set) {
+                    REQUIRE_FALSE(i < newRange.start);
+                    REQUIRE_FALSE(i > newRange.end);
                 }
             }
 
-            AND_WHEN(
-                "The last returned number is at the start of the new range")
+            THEN("All numbers should no more than the new deviation factor "
+                 "from the last number")
             {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMax);
-                instance.getDecimalNumber(); // lastReturnedNumber: 20.0
-                aleatoric::Range newRange(20, 30);
+                double newMaxStep =
+                    (newRange.end - newRange.start) * newDeviationFactor; // 2
 
-                THEN("The generator is set to the correct maxStep sub range")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution(internalRangeMin,
-                                        (internalRangeMin + expectedMaxStep)));
-                    instance.setRange(newRange);
+                std::vector<double> differences(set.size());
+                std::adjacent_difference(set.begin(),
+                                         set.end(),
+                                         differences.begin());
+
+                //  remove the first element as it is the value of the first
+                //  element in the set (and not a difference between two
+                //  numbers in the set)
+                differences.erase(differences.begin());
+
+                for(auto &&i : differences) {
+                    REQUIRE(i <= newMaxStep);
                 }
             }
+        }
+    }
 
-            AND_WHEN("The last returned number is at the end of the new range")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMidValue);
-                instance.getDecimalNumber(); // lastReturnedNumber: 15.0
-                aleatoric::Range newRange(5, 15);
+    WHEN("Set params: Last returned number is within new range")
+    {
+        auto lastNumber = instance.getDecimalNumber();
 
-                THEN("The generator is set to the correct maxStep sub range")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution((internalRangeMax - expectedMaxStep),
-                                        internalRangeMax));
-                    instance.setRange(newRange);
-                }
-            }
+        double newDeviationFactor = 0.1;
+        Range newRange(lastNumber - 10, lastNumber + 10);
 
-            AND_WHEN("When the last returned number is above the new range")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMax);
-                instance.getDecimalNumber(); // lastReturnedNumber: 20.0
-                aleatoric::Range newRange(9, 19);
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::GranularWalk(newDeviationFactor)));
 
-                THEN("The generator is set to the full internal range")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution(internalRangeMin, internalRangeMax));
-                    instance.setRange(newRange);
-                }
-            }
+        instance.setParams(newParams);
 
-            AND_WHEN("When the last returned number is above the new range")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMax);
-                instance.getDecimalNumber(); // lastReturnedNumber: 20.0
-                aleatoric::Range newRange(21, 31);
+        auto nextNumber = instance.getDecimalNumber();
 
-                THEN("The generator is set to the full internal range")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution(internalRangeMin, internalRangeMax));
-                    instance.setRange(newRange);
-                }
-            }
+        THEN("The next number should be no more than the new deviation factor "
+             "from the last number")
+        {
+            double newMaxStep =
+                (newRange.end - newRange.start) * newDeviationFactor; // 2
 
-            AND_WHEN("There is no last number returned")
-            {
-                // In other words, a call to get a number has not yet been made
+            auto difference = std::abs(lastNumber - nextNumber);
+            REQUIRE(difference <= newMaxStep);
+        }
 
-                THEN("The no further action is required")
-                {
-                    FORBID_CALL(*generatorPointer,
-                                setDistribution(ANY(int), ANY(int)));
-                    instance.setRange(aleatoric::Range(30, 40));
-                }
-            }
+        THEN("The next number should be within the new range")
+        {
+            REQUIRE_FALSE(nextNumber < newRange.start);
+            REQUIRE_FALSE(nextNumber > newRange.end);
+        }
+    }
+
+    WHEN("Set params: invalid deviation factor")
+    {
+        double devFactorTooHigh = 1.1;
+        double devFactorTooLow = -0.1;
+
+        Range newRange(20, 40);
+
+        THEN("Throw exception if too high")
+        {
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::GranularWalk(devFactorTooHigh)));
+
+            REQUIRE_THROWS_AS(instance.setParams(newParams),
+                              std::invalid_argument);
+        }
+
+        THEN("Throw exception if too low")
+        {
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::GranularWalk(devFactorTooLow));
+            REQUIRE_THROWS_AS(instance.setParams(newParams),
+                              std::invalid_argument);
         }
     }
 }

@@ -1,17 +1,43 @@
 #include "Basic.hpp"
 
 #include "Range.hpp"
+#include "UniformGenerator.hpp"
 #include "UniformGeneratorMock.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 #include <memory>
 
+SCENARIO("Numbers::Basic: default constructor")
+{
+    using namespace aleatoric;
+
+    Basic instance(std::make_unique<UniformGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+    }
+
+    THEN("A set of numbers should be as expected")
+    {
+        for(int i = 0; i < 1000; i++) {
+            auto number = instance.getIntegerNumber();
+            REQUIRE((number == 0 || number == 1));
+        }
+    }
+}
+
 SCENARIO("Numbers::Basic")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction")
     {
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
@@ -22,7 +48,7 @@ SCENARIO("Numbers::Basic")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistribution(range.start, range.end));
-                aleatoric::Basic(std::move(generator), range);
+                Basic(std::move(generator), range);
             }
         }
     }
@@ -31,13 +57,13 @@ SCENARIO("Numbers::Basic")
     {
         int generatedNumber = 2;
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
 
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
-        aleatoric::Basic instance(std::move(generator), range);
+        Basic instance(std::move(generator), range);
 
         WHEN("A number is requested")
         {
@@ -49,21 +75,57 @@ SCENARIO("Numbers::Basic")
                 REQUIRE(generatedNumber == returnedNumber);
             }
         }
+    }
+}
 
-        WHEN("The range is changed")
+SCENARIO("Numbers::Basic: params")
+{
+    using namespace aleatoric;
+
+    Basic instance(std::make_unique<UniformGenerator>(), Range(1, 10));
+
+    WHEN("Get params")
+    {
+        THEN("should match the object state")
         {
-            THEN("The returned range should match the new range")
-            {
-                instance.setRange(aleatoric::Range(2, 10));
-                auto returnedRange = instance.getRange();
-                REQUIRE(returnedRange.start == 2);
-                REQUIRE(returnedRange.end == 10);
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == 1);
+            REQUIRE(returnedRange.end == 10);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocolParameters::Protocols::ActiveProtocol::basic);
+        }
+    }
+
+    WHEN("Set params")
+    {
+        Range newRange(20, 30);
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Basic()));
+        instance.setParams(newParams);
+
+        THEN("object state is updated")
+        {
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+        }
+
+        AND_WHEN("A set of numbers is requested")
+        {
+            std::vector<int> set(1000);
+            for(auto &&i : set) {
+                i = instance.getIntegerNumber();
             }
 
-            THEN("The generator should be set with the new range")
+            THEN("All values will be from new range")
             {
-                REQUIRE_CALL(*generatorPointer, setDistribution(3, 7));
-                instance.setRange(aleatoric::Range(3, 7));
+                for(auto &&i : set) {
+                    REQUIRE(newRange.numberIsInRange(i));
+                }
             }
         }
     }

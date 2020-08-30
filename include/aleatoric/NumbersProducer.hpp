@@ -30,7 +30,7 @@ class NumbersProducer {
     // protocol in different Producers, are unknown, as internal state of a
     // Protocol may be different from that expected, having potentially been
     // used by another Producer
-    NumbersProducer(std::unique_ptr<NumberProtocol> protocol, Range range);
+    NumbersProducer(std::unique_ptr<NumberProtocol> protocol);
 
     ~NumbersProducer();
 
@@ -43,6 +43,12 @@ class NumbersProducer {
     std::vector<int> getIntegerCollection(int size);
 
     std::vector<double> getDecimalCollection(int size);
+
+    NumberProtocolParameters getParams();
+
+    void setParams(NumberProtocolParameters newParams);
+
+    void setProtocol(std::unique_ptr<NumberProtocol> protocol);
 
     /*!
      * @brief Resets the protocol being used

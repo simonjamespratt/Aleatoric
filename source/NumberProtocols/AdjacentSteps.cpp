@@ -3,6 +3,14 @@
 #include "ErrorChecker.hpp"
 
 namespace aleatoric {
+AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)),
+  m_range(Range(0, 1)),
+  m_haveRequestedFirstNumber(false)
+{
+    m_generator->setDistributionVector(m_range.size, 1.0);
+}
+
 AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
                              Range range)
 : m_generator(std::move(generator)),
@@ -39,20 +47,23 @@ void AdjacentSteps::reset()
     m_haveRequestedFirstNumber = false;
 }
 
-void AdjacentSteps::setRange(Range newRange)
+void AdjacentSteps::setParams(NumberProtocolParameters newParams)
 {
-    m_range = newRange;
+    m_range = newParams.getRange();
     m_generator->setDistributionVector(m_range.size, 1.0);
 
     if(m_haveRequestedFirstNumber &&
-       newRange.numberIsInRange(m_lastReturnedNumber)) {
+       m_range.numberIsInRange(m_lastReturnedNumber)) {
         prepareStepBasedDistribution(m_lastReturnedNumber);
     }
 }
 
-Range AdjacentSteps::getRange()
+NumberProtocolParameters AdjacentSteps::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::AdjacentSteps()));
 }
 
 void AdjacentSteps::prepareStepBasedDistribution(int number)

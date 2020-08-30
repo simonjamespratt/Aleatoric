@@ -3,6 +3,7 @@
 
 #include "IDiscreteGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -27,6 +28,8 @@ namespace aleatoric {
  */
 class NoRepetition : public NumberProtocol {
   public:
+    NoRepetition(std::unique_ptr<IDiscreteGenerator> generator);
+
     /*! @brief Takes a DiscreteGenerator derived from the IDiscreteGenerator,
      * and a Range
      *
@@ -57,8 +60,9 @@ class NoRepetition : public NumberProtocol {
      * upon the next call to @ref getNumber */
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     Range m_range;

@@ -3,6 +3,18 @@
 namespace aleatoric {
 GroupedRepetition::GroupedRepetition(
     std::unique_ptr<IDiscreteGenerator> numberGenerator,
+    std::unique_ptr<IDiscreteGenerator> groupingGenerator)
+: m_numberGenerator(std::move(numberGenerator)),
+  m_groupingGenerator(std::move(groupingGenerator)),
+  m_range(0, 1),
+  m_groupings({1}),
+  m_seriesPrinciple()
+{
+    initialise();
+}
+
+GroupedRepetition::GroupedRepetition(
+    std::unique_ptr<IDiscreteGenerator> numberGenerator,
     std::unique_ptr<IDiscreteGenerator> groupingGenerator,
     Range range,
     std::vector<int> groupings)
@@ -12,9 +24,7 @@ GroupedRepetition::GroupedRepetition(
   m_groupings(groupings),
   m_seriesPrinciple()
 {
-    m_numberGenerator->setDistributionVector(m_range.size, 1.0);
-    m_groupingGenerator->setDistributionVector(m_groupings.size(), 1.0);
-    m_groupingCount = 0;
+    initialise();
 }
 
 GroupedRepetition::~GroupedRepetition()
@@ -55,16 +65,31 @@ void GroupedRepetition::reset()
     m_seriesPrinciple.resetSeries(m_groupingGenerator);
 }
 
-void GroupedRepetition::setRange(Range newRange)
+void GroupedRepetition::setParams(NumberProtocolParameters newParams)
 {
-    m_range = newRange;
+    m_groupings = newParams.protocols.getGroupedRepetition().getGroupings();
+    m_groupingGenerator->setDistributionVector(m_groupings.size(), 1.0);
+
+    m_range = newParams.getRange();
     m_numberGenerator->setDistributionVector(m_range.size, 1.0);
+
     m_groupingCount = 0;
 }
 
-Range GroupedRepetition::getRange()
+NumberProtocolParameters GroupedRepetition::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::GroupedRepetition(m_groupings)));
+}
+
+// Private methods
+void GroupedRepetition::initialise()
+{
+    m_numberGenerator->setDistributionVector(m_range.size, 1.0);
+    m_groupingGenerator->setDistributionVector(m_groupings.size(), 1.0);
+    m_groupingCount = 0;
 }
 
 } // namespace aleatoric

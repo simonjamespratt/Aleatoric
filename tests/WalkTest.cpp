@@ -7,8 +7,55 @@
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
+SCENARIO("Numbers::Walk: default constructor")
+{
+    using namespace aleatoric;
+
+    Walk instance(std::make_unique<UniformGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        auto maxStep = params.protocols.getWalk().getMaxStep();
+
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+        REQUIRE(maxStep == 1);
+    }
+
+    std::vector<int> set(1000);
+    for(auto &&i : set) {
+        i = instance.getIntegerNumber();
+    }
+
+    THEN("A set is within range")
+    {
+        for(auto &&i : set) {
+            REQUIRE((i == 0 || i == 1));
+        }
+    }
+
+    THEN("Each item in a set will be within max step of the last")
+    {
+        std::vector<int> differences(set.size());
+        std::adjacent_difference(set.begin(), set.end(), differences.begin());
+
+        //  remove the first element as it is the value of the first
+        //  element in the set (and not a difference between two
+        //  numbers in the set)
+        differences.erase(differences.begin());
+
+        for(auto &&i : differences) {
+            REQUIRE(i <= 1);
+        }
+    }
+}
+
 SCENARIO("Numbers::Walk")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction: with an invalid max step")
     {
         WHEN("The value provided is greater than the range size")
@@ -17,18 +64,15 @@ SCENARIO("Numbers::Walk")
             {
                 int invalidMaxStep = 11;
 
-                REQUIRE_THROWS_AS(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        invalidMaxStep),
-                    std::invalid_argument);
+                REQUIRE_THROWS_AS(Walk(std::make_unique<UniformGenerator>(),
+                                       Range(1, 10),
+                                       invalidMaxStep),
+                                  std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        invalidMaxStep),
+                    Walk(std::make_unique<UniformGenerator>(),
+                         Range(1, 10),
+                         invalidMaxStep),
                     "The value passed as argument for maxStep must be less "
                     "than or equal to 10");
             }
@@ -42,7 +86,7 @@ SCENARIO("Numbers::Walk")
         auto generator = std::make_unique<UniformGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        aleatoric::Range range(1, 10);
+        Range range(1, 10);
 
         WHEN("The object is constructed")
         {
@@ -50,7 +94,7 @@ SCENARIO("Numbers::Walk")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistribution(range.start, range.end));
-                aleatoric::Walk(std::move(generator), range, maxStep);
+                Walk(std::move(generator), range, maxStep);
             }
         }
     }
@@ -63,9 +107,9 @@ SCENARIO("Numbers::Walk")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
 
-        aleatoric::Range range(1, 10);
+        Range range(1, 10);
 
-        aleatoric::Walk instance(std::move(generator), range, maxStep);
+        Walk instance(std::move(generator), range, maxStep);
 
         WHEN("A number is requested")
         {
@@ -141,78 +185,151 @@ SCENARIO("Numbers::Walk")
             }
         }
     }
+}
 
-    GIVEN("The object is constructed with real instance")
+SCENARIO("Numbers::Walk: params")
+{
+    using namespace aleatoric;
+
+    int maxStep = 5;
+    Walk instance(std::make_unique<UniformGenerator>(), Range(1, 10), maxStep);
+
+    WHEN("Get params")
     {
-        int maxStep = 5;
-        aleatoric::Walk realInstance(
-            std::make_unique<aleatoric::UniformGenerator>(),
-            aleatoric::Range(1, 10),
-            maxStep);
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
 
-        WHEN("The range is changed")
+        THEN("maxStep state is returned")
         {
-            THEN("The returned range should match the one received")
-            {
-                aleatoric::Range newRange(11, 30);
-                realInstance.setRange(newRange);
-                auto returnedRange = realInstance.getRange();
-                REQUIRE(returnedRange.start == newRange.start);
-                REQUIRE(returnedRange.end == newRange.end);
+            REQUIRE(params.protocols.getWalk().getMaxStep() == maxStep);
+        }
+
+        THEN("range state is returned")
+        {
+            REQUIRE(returnedRange.start == 1);
+            REQUIRE(returnedRange.end == 10);
+        }
+
+        THEN("active protocol is set correctly")
+        {
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocolParameters::Protocols::ActiveProtocol::walk);
+        }
+    }
+
+    WHEN("Set params")
+    {
+        int newMaxStep = 3;
+        Range newRange(20, 30);
+
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Walk(newMaxStep)));
+
+        instance.setParams(newParams);
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+
+        THEN("maxStep is updated")
+        {
+            REQUIRE(params.protocols.getWalk().getMaxStep() == 3);
+        }
+
+        THEN("range is updated")
+        {
+            REQUIRE(returnedRange.start == 20);
+            REQUIRE(returnedRange.end == 30);
+        }
+
+        AND_WHEN("A set of numbers is gathered")
+        {
+            std::vector<int> set(1000);
+            for(auto &&i : set) {
+                i = instance.getIntegerNumber();
             }
 
-            AND_WHEN("A set of numbers is gathered")
+            THEN("All numbers should be in the new range")
             {
-                aleatoric::Range newRange(11, 30);
-                realInstance.setRange(newRange);
-                std::vector<int> set(100);
                 for(auto &&i : set) {
-                    i = realInstance.getIntegerNumber();
-                }
-
-                THEN("All numbers in the set should be within the new range")
-                {
-                    for(auto &&i : set) {
-                        REQUIRE(i >= newRange.start);
-                        REQUIRE(i <= newRange.end);
-                    }
-                }
-
-                THEN("All numbers in the set should be no more than the "
-                     "maxStep from the last number")
-                {
-                    std::vector<int> differences(set.size());
-                    std::adjacent_difference(set.begin(),
-                                             set.end(),
-                                             differences.begin());
-
-                    //  remove the first element as it is the value of the first
-                    //  element in the set (and not a difference between two
-                    //  numbers in the set)
-                    differences.erase(differences.begin());
-
-                    for(auto &&i : differences) {
-                        REQUIRE(i <= maxStep);
-                    }
+                    REQUIRE(newRange.numberIsInRange(i));
                 }
             }
 
-            AND_WHEN("The number last selected before the range change is "
-                     "within the new range")
+            THEN("All numbers in the set should be no more than the "
+                 "new maxStep from the last number")
             {
-                // old range: 1, 10
-                auto lastNumber = realInstance.getIntegerNumber();
-                aleatoric::Range newRange(lastNumber - 100, lastNumber + 100);
-                realInstance.setRange(newRange);
+                std::vector<int> differences(set.size());
+                std::adjacent_difference(set.begin(),
+                                         set.end(),
+                                         differences.begin());
 
-                THEN("The next selected number should be no more than the "
-                     "maxStep from the number last selected before the range "
-                     "change")
-                {
-                    auto nextNumber = realInstance.getIntegerNumber();
-                    auto difference = std::abs(lastNumber - nextNumber);
-                    REQUIRE(difference <= maxStep);
+                //  remove the first element as it is the value of the first
+                //  element in the set (and not a difference between two
+                //  numbers in the set)
+                differences.erase(differences.begin());
+
+                for(auto &&i : differences) {
+                    REQUIRE(i <= newMaxStep);
                 }
+            }
+        }
+    }
+
+    WHEN("Set params: The last returned number is within new range")
+    {
+        auto lastNumber = instance.getIntegerNumber();
+
+        int newMaxStep = 3;
+        Range newRange(lastNumber - 20, lastNumber + 20);
+
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Walk(newMaxStep)));
+
+        instance.setParams(newParams);
+
+        THEN("The next number should be no more than the new maxStep from the "
+             "last number")
+        {
+            auto nextNumber = instance.getIntegerNumber();
+            auto difference = std::abs(lastNumber - nextNumber);
+            REQUIRE(difference <= newMaxStep);
+        }
+    }
+
+    WHEN("Set params: check maxStep value is valid")
+    {
+        Range newRange(20, 30);
+
+        AND_WHEN("it is greater than new range size")
+        {
+            auto newMaxStep = newRange.size + 1;
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Walk(newMaxStep)));
+
+            THEN("An exception is thrown")
+            {
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
+            }
+        }
+
+        AND_WHEN("it is less than 1")
+        {
+            int newMaxStep = 0;
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Walk(newMaxStep)));
+
+            THEN("An exception is thrown")
+            {
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
             }
         }
     }

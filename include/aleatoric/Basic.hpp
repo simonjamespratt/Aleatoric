@@ -3,6 +3,7 @@
 
 #include "IUniformGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -20,6 +21,8 @@ namespace aleatoric {
  */
 class Basic : public NumberProtocol {
   public:
+    Basic(std::unique_ptr<IUniformGenerator> generator);
+
     /*!
         @brief Takes a UniformGenerator derived from the IUniformGenerator and a
         Range
@@ -39,8 +42,9 @@ class Basic : public NumberProtocol {
     /*! @brief resets the instance to initial settings */
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    NumberProtocolParameters getParams() override;
+
+    void setParams(NumberProtocolParameters newParams) override;
 
   private:
     Range m_range;

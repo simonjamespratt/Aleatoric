@@ -7,7 +7,7 @@
 namespace aleatoric {
 class DurationsProducer {
   public:
-    DurationsProducer(DurationProtocol &durationProtocol,
+    DurationsProducer(std::unique_ptr<DurationProtocol> durationProtocol,
                       std::unique_ptr<NumberProtocol> numberProtocol);
     ~DurationsProducer();
 
@@ -17,9 +17,19 @@ class DurationsProducer {
 
     void reset();
 
+    NumberProtocolParameters::Protocols getParams();
+
+    void setParams(NumberProtocolParameters::Protocols newParams);
+
+    void setNumberProtocol(std::unique_ptr<NumberProtocol> numberProtocol);
+
+    void
+    setDurationProtocol(std::unique_ptr<DurationProtocol> durationProtocol);
+
   private:
-    DurationProtocol &m_durationProtocol;
+    std::unique_ptr<DurationProtocol> m_durationProtocol;
     std::unique_ptr<NumberProtocol> m_numberProtocol;
+    int m_durationCollectionSize;
 };
 
 } // namespace aleatoric

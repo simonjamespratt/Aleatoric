@@ -9,16 +9,20 @@ namespace aleatoric {
 template<typename T>
 class CollectionsProducer {
   public:
-    CollectionsProducer(const std::vector<T> &source,
+    CollectionsProducer(std::vector<T> source,
                         std::unique_ptr<NumberProtocol> protocol);
     ~CollectionsProducer();
 
     const T &getItem();
     std::vector<T> getCollection(int size);
     void reset();
+    NumberProtocolParameters::Protocols getParams();
+    void setParams(NumberProtocolParameters::Protocols newParams);
+    void setProtocol(std::unique_ptr<NumberProtocol> protocol);
+    void setSource(std::vector<T> newSource);
 
   private:
-    const std::vector<T> &m_source;
+    std::vector<T> m_source;
     std::unique_ptr<NumberProtocol> m_protocol;
 };
 
@@ -26,10 +30,10 @@ class CollectionsProducer {
 // available to the compiler in some other way.
 template<typename T>
 CollectionsProducer<T>::CollectionsProducer(
-    const std::vector<T> &source, std::unique_ptr<NumberProtocol> protocol)
+    std::vector<T> source, std::unique_ptr<NumberProtocol> protocol)
 : m_source(source), m_protocol(std::move(protocol))
 {
-    m_protocol->setRange(Range(0, m_source.size() - 1));
+    m_protocol->setParams(Range(0, m_source.size() - 1));
 }
 
 template<typename T>
@@ -50,9 +54,7 @@ std::vector<T> CollectionsProducer<T>::getCollection(int size)
     std::vector<T> collection(size);
 
     for(auto &&it : collection) {
-        // NB: using .at() because it will throw an out_of_range exception if
-        // the number is out of bounds
-        it = m_source.at(m_protocol->getIntegerNumber());
+        it = getItem();
     }
 
     return collection;
@@ -62,6 +64,44 @@ template<typename T>
 void CollectionsProducer<T>::reset()
 {
     m_protocol->reset();
+}
+
+template<typename T>
+NumberProtocolParameters::Protocols CollectionsProducer<T>::getParams()
+{
+    return m_protocol->getParams().protocols;
+}
+
+template<typename T>
+void CollectionsProducer<T>::setParams(
+    NumberProtocolParameters::Protocols newParams)
+{
+    if(newParams.getActiveProtocol() !=
+       m_protocol->getParams().protocols.getActiveProtocol()) {
+        throw std::invalid_argument(
+            "Active protocol for new params is not consistent with protocol "
+            "currently in use");
+    }
+
+    m_protocol->setParams(
+        NumberProtocolParameters(Range(0, m_source.size() - 1), newParams));
+}
+
+template<typename T>
+void CollectionsProducer<T>::setProtocol(
+    std::unique_ptr<NumberProtocol> protocol)
+{
+    m_protocol = std::move(protocol);
+}
+
+template<typename T>
+void CollectionsProducer<T>::setSource(std::vector<T> newSource)
+{
+    if(newSource.size() != m_source.size()) {
+        m_protocol->setParams(Range(0, newSource.size() - 1));
+    }
+
+    m_source = newSource;
 }
 
 } // namespace aleatoric

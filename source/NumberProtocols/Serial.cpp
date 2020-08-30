@@ -1,8 +1,14 @@
 #include "Serial.hpp"
 
 namespace aleatoric {
+Serial::Serial(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)), m_range(0, 1)
+{
+    m_generator->setDistributionVector(m_range.size, 1.0);
+}
+
 Serial::Serial(std::unique_ptr<IDiscreteGenerator> generator, Range range)
-: m_range(range), m_generator(std::move(generator)), m_seriesPrinciple()
+: m_generator(std::move(generator)), m_range(range)
 {
     m_generator->setDistributionVector(m_range.size, 1.0);
 }
@@ -30,15 +36,17 @@ void Serial::reset()
     m_seriesPrinciple.resetSeries(m_generator);
 }
 
-void Serial::setRange(Range newRange)
+void Serial::setParams(NumberProtocolParameters newParams)
 {
-    m_range = newRange;
+    m_range = newParams.getRange();
     m_generator->setDistributionVector(m_range.size, 1.0);
 }
 
-Range Serial::getRange()
+NumberProtocolParameters Serial::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(m_range,
+                                    NumberProtocolParameters::Protocols(
+                                        NumberProtocolParameters::Serial()));
 }
 
 } // namespace aleatoric

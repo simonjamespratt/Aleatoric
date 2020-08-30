@@ -2,13 +2,42 @@
 
 #include "DiscreteGenerator.hpp"
 #include "DiscreteGeneratorMock.hpp"
+#include "NumberProtocolParameters.hpp"
 
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 #include <stdexcept> // std::invalid_argument
 
+SCENARIO("Numbers::Precision: default constructor")
+{
+    using namespace aleatoric;
+
+    Precision instance(std::make_unique<DiscreteGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        auto distribution = params.protocols.getPrecision().getDistribution();
+
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+        REQUIRE(distribution == std::vector<double> {0.5, 0.5});
+    }
+
+    THEN("Set is within range")
+    {
+        for(int i = 0; i < 1000; i++) {
+            auto number = instance.getIntegerNumber();
+            REQUIRE((number == 0 || number == 1));
+        }
+    }
+}
+
 SCENARIO("Numbers::Precision")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction: with an invalid distribution")
     {
         WHEN("The sum of the values in the distribution is less than 1")
@@ -16,17 +45,15 @@ SCENARIO("Numbers::Precision")
             THEN("A standard invalid_argument exception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        std::vector<double> {0.99}),
+                    Precision(std::make_unique<DiscreteGenerator>(),
+                              Range(1, 4),
+                              std::vector<double> {0.99}),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        std::vector<double> {0.99}),
+                    Precision(std::make_unique<DiscreteGenerator>(),
+                              Range(1, 4),
+                              std::vector<double> {0.99}),
                     "The sum of the values provided as the vector for the "
                     "distribution must equal 1.0");
             }
@@ -37,17 +64,15 @@ SCENARIO("Numbers::Precision")
             THEN("A standard invalid_argument exception is thrown")
             {
                 REQUIRE_THROWS_AS(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        std::vector<double> {1.01}),
+                    Precision(std::make_unique<DiscreteGenerator>(),
+                              Range(1, 4),
+                              std::vector<double> {1.01}),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        std::vector<double> {1.01}),
+                    Precision(std::make_unique<DiscreteGenerator>(),
+                              Range(1, 4),
+                              std::vector<double> {1.01}),
                     "The sum of the values provided as the vector for the "
                     "distribution must equal 1.0");
             }
@@ -56,18 +81,15 @@ SCENARIO("Numbers::Precision")
         WHEN("The size of the distribution vector does not match the size of "
              "the range")
         {
-            REQUIRE_THROWS_AS(
-                aleatoric::Precision(
-                    std::make_unique<aleatoric::DiscreteGenerator>(),
-                    aleatoric::Range(1, 4),
-                    std::vector<double> {1.0}),
-                std::invalid_argument);
+            REQUIRE_THROWS_AS(Precision(std::make_unique<DiscreteGenerator>(),
+                                        Range(1, 4),
+                                        std::vector<double> {1.0}),
+                              std::invalid_argument);
 
             REQUIRE_THROWS_WITH(
-                aleatoric::Precision(
-                    std::make_unique<aleatoric::DiscreteGenerator>(),
-                    aleatoric::Range(1, 4),
-                    std::vector<double> {1.0}),
+                Precision(std::make_unique<DiscreteGenerator>(),
+                          Range(1, 4),
+                          std::vector<double> {1.0}),
                 "The vector size for the distribution must match the size of "
                 "the provided range");
         }
@@ -80,7 +102,7 @@ SCENARIO("Numbers::Precision")
             auto generator = std::make_unique<DiscreteGeneratorMock>();
             auto generatorPointer = generator.get();
 
-            aleatoric::Range range(1, 4);
+            Range range(1, 4);
 
             std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
 
@@ -90,7 +112,7 @@ SCENARIO("Numbers::Precision")
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(distribution));
 
-                aleatoric::Precision(std::move(generator), range, distribution);
+                Precision(std::move(generator), range, distribution);
             }
         }
     }
@@ -103,11 +125,9 @@ SCENARIO("Numbers::Precision")
         auto generatorPointer = generator.get();
         ALLOW_CALL(*generatorPointer, setDistributionVector(distribution));
 
-        aleatoric::Range range(1, 4);
+        Range range(1, 4);
 
-        aleatoric::Precision instance(std::move(generator),
-                                      range,
-                                      distribution);
+        Precision instance(std::move(generator), range, distribution);
 
         WHEN("A number is requested")
         {
@@ -121,73 +141,115 @@ SCENARIO("Numbers::Precision")
                 REQUIRE(returnedNumber == generatedNumber + range.offset);
             }
         }
+    }
+}
 
-        WHEN("The range is changed")
+SCENARIO("Numbers:Precision: params")
+{
+    using namespace aleatoric;
+
+    auto generator = std::make_unique<DiscreteGenerator>();
+    auto generatorPointer = generator.get();
+    std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
+    Precision instance(std::move(generator), Range(1, 4), distribution);
+
+    WHEN("Get params")
+    {
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+
+        THEN("Reflects the state of the object")
         {
-            ALLOW_CALL(*generatorPointer, getDistributionVector())
-                .RETURN(distribution);
-            ALLOW_CALL(*generatorPointer,
-                       setDistributionVector(ANY(std::vector<double>)));
+            REQUIRE(returnedRange.start == 1);
+            REQUIRE(returnedRange.end == 4);
+            REQUIRE(params.protocols.getPrecision().getDistribution() ==
+                    distribution);
+            REQUIRE(
+                params.protocols.getActiveProtocol() ==
+                NumberProtocolParameters::Protocols::ActiveProtocol::precision);
+        }
+    }
 
-            THEN("The returned range should match the new range")
-            {
-                instance.setRange(aleatoric::Range(2, 10));
-                auto returnedRange = instance.getRange();
-                REQUIRE(returnedRange.start == 2);
-                REQUIRE(returnedRange.end == 10);
+    WHEN("Set params")
+    {
+        Range newRange(11, 15);
+        std::vector<double> newDistribution {0.2, 0.2, 0.2, 0.2, 0.2};
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Precision(newDistribution)));
+        instance.setParams(newParams);
+
+        THEN("Object state is updated")
+        {
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+            REQUIRE(params.protocols.getPrecision().getDistribution() ==
+                    newDistribution);
+        }
+
+        THEN("Generator is set with new distribution")
+        {
+            REQUIRE(generatorPointer->getDistributionVector() ==
+                    newDistribution);
+        }
+
+        THEN("A set of numbers should be from new range")
+        {
+            std::vector<int> set(1000);
+            for(auto &&i : set) {
+                i = instance.getIntegerNumber();
             }
 
-            // TODO: DYNAMIC-PARAMS: this is an interim measure and should be
-            // updated when the solution for altering all params at the same
-            // time is implemented.
-            AND_WHEN("The new range size is larger than the original range")
-            {
-                aleatoric::Range largerRange(0, 5);
-
-                THEN("The difference should be added to the distribution where "
-                     "each additional value is set to 0.0")
-                {
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistributionVector(std::vector<double> {0.25,
-                                                                   0.25,
-                                                                   0.25,
-                                                                   0.25,
-                                                                   0,
-                                                                   0}));
-                    instance.setRange(largerRange);
-                }
+            for(auto &&i : set) {
+                REQUIRE(newRange.numberIsInRange(i));
             }
+        }
+    }
 
-            // TODO: DYNAMIC-PARAMS: this is an interim measure and should be
-            // updated when the solution for altering all params at the same
-            // time is implemented.
-            AND_WHEN("The new range is smaller than the original range")
-            {
-                aleatoric::Range smallerRange(2, 3);
+    WHEN("Set params: new distribution does not sum to 1")
+    {
+        Range newRange(1, 2);
 
-                THEN("The difference should be removed from the end of the "
-                     "distribution")
-                {
-                    REQUIRE_CALL(*generatorPointer,
-                                 setDistributionVector(
-                                     std::vector<double> {0.25, 0.25}));
-                    instance.setRange(smallerRange);
-                }
-            }
+        THEN("Throw exception")
+        {
+            std::vector<double> newDistribution {0.5, 0.6}; // > 1
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Precision(newDistribution)));
+            REQUIRE_THROWS_AS(instance.setParams(newParams),
+                              std::invalid_argument);
+        }
 
-            AND_WHEN("The range size is the same as the original range")
-            {
-                aleatoric::Range sameSizeRange(2, 5);
+        THEN("Throw exception")
+        {
+            std::vector<double> newDistribution {0.5, 0.4}; // < 1
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Precision(newDistribution)));
+            REQUIRE_THROWS_AS(instance.setParams(newParams),
+                              std::invalid_argument);
+        }
+    }
 
-                THEN("No further treatment is required")
-                {
-                    FORBID_CALL(
-                        *generatorPointer,
-                        setDistributionVector(ANY(std::vector<double>)));
-                    instance.setRange(sameSizeRange);
-                }
-            }
+    WHEN("Set params: new distribution and new range sizes do not match")
+    {
+        Range newRange(1, 2);
+        std::vector<double> newDistribution {1};
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Precision(newDistribution)));
+
+        THEN("Throw exception")
+        {
+            REQUIRE_THROWS_AS(instance.setParams(newParams),
+                              std::invalid_argument);
         }
     }
 }
