@@ -12,11 +12,6 @@ class Precision : public NumberProtocol {
               Range range,
               std::vector<double> distribution);
 
-    Precision(std::unique_ptr<IDiscreteGenerator> generator,
-              Range range,
-              std::vector<double> distribution,
-              int initialSelection);
-
     ~Precision();
 
     int getIntegerNumber() override;
@@ -31,8 +26,6 @@ class Precision : public NumberProtocol {
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;
     Range m_range;
-    int m_initialSelection;
-    bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
 };
 } // namespace aleatoric

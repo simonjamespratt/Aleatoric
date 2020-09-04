@@ -73,7 +73,7 @@ SCENARIO("Numbers::Precision")
         }
     }
 
-    GIVEN("Construction: no initialSelection")
+    GIVEN("Construction")
     {
         WHEN("The object is constructed")
         {
@@ -95,7 +95,7 @@ SCENARIO("Numbers::Precision")
         }
     }
 
-    GIVEN("The object is constructed: no initialSelection")
+    GIVEN("The object is constructed")
     {
         std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
 
@@ -186,145 +186,6 @@ SCENARIO("Numbers::Precision")
                         *generatorPointer,
                         setDistributionVector(ANY(std::vector<double>)));
                     instance.setRange(sameSizeRange);
-                }
-            }
-        }
-    }
-
-    GIVEN("Construction: with an invalid initialSelection")
-    {
-        std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
-
-        WHEN("The value provided is greater than the range end")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                int initialSelectionOutOfRange = 5;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        distribution,
-                        initialSelectionOutOfRange),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        distribution,
-                        initialSelectionOutOfRange),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 1 to 4");
-            }
-        }
-
-        WHEN("The value provided is less than the range start")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                int initialSelectionOutOfRange = 0;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        distribution,
-                        initialSelectionOutOfRange),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Precision(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 4),
-                        distribution,
-                        initialSelectionOutOfRange),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 1 to 4");
-            }
-        }
-    }
-
-    GIVEN("The object is constructed: with initialSelection")
-    {
-        std::vector<double> distribution {0.25, 0.25, 0.25, 0.25};
-
-        int initialSelection = 2;
-
-        auto generator = std::make_unique<DiscreteGeneratorMock>();
-        auto generatorPointer = generator.get();
-        ALLOW_CALL(*generatorPointer, setDistributionVector(distribution));
-
-        aleatoric::Range range(1, 4);
-
-        aleatoric::Precision instance(std::move(generator),
-                                      range,
-                                      distribution,
-                                      initialSelection);
-
-        WHEN("The first number is requested")
-        {
-            THEN("It should return the value provided as the initial selection")
-            {
-                FORBID_CALL(*generatorPointer, getNumber());
-
-                int returnedNumber = instance.getIntegerNumber();
-
-                REQUIRE(returnedNumber == initialSelection);
-            }
-        }
-
-        WHEN("A subsequent number is requested")
-        {
-            THEN("It returns a generated number with the range offset added")
-            {
-                int generatedNumber = 1;
-
-                instance.getIntegerNumber(); // first call
-
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(generatedNumber);
-
-                auto returnedNumner = instance.getIntegerNumber();
-
-                REQUIRE(returnedNumner == generatedNumber + range.offset);
-            }
-        }
-
-        WHEN("A reset is requested")
-        {
-            AND_WHEN("A number is requested")
-            {
-                THEN("The number returned should be the value provided as the "
-                     "initial selection")
-                {
-                    instance.reset();
-
-                    FORBID_CALL(*generatorPointer, getNumber());
-
-                    int returnedNumber = instance.getIntegerNumber();
-
-                    REQUIRE(returnedNumber == initialSelection);
-                }
-            }
-
-            AND_WHEN("A subsequent number is requested")
-            {
-                THEN(
-                    "It returns a generated number with the range offset added")
-                {
-                    instance.reset();
-                    instance.getIntegerNumber(); // first call
-                    int generatedNumber = 1;
-
-                    REQUIRE_CALL(*generatorPointer, getNumber())
-                        .RETURN(generatedNumber);
-
-                    auto returnedNumner =
-                        instance.getIntegerNumber(); // second call
-
-                    REQUIRE(returnedNumner == generatedNumber + range.offset);
                 }
             }
         }

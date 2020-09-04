@@ -139,30 +139,6 @@ SCENARIO("Numbers: Integration using Cycle")
             }
         }
     }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        // NB: Not bothering with tests for all the mode variations as would
-        // just be repeating the unit tests
-
-        WHEN("A number is first requested")
-        {
-            THEN("The number should be the initial selection")
-            {
-                int initialSelection = 2;
-
-                // TODO: DYNAMIC-PARAMS: This temporary fix is required until
-                // work is done to make params updatable at same time
-                aleatoric::NumbersProducer instance(
-                    factory.createCycle(0, 2, initialSelection),
-                    referenceRange);
-
-                auto returnedNumber = instance.getIntegerNumber();
-
-                REQUIRE(returnedNumber == initialSelection);
-            }
-        }
-    }
 }
 
 SCENARIO("Numbers: Integration using Serial")
@@ -505,7 +481,7 @@ SCENARIO("Numbers: Integration using Precision")
     aleatoric::NumberProtocolFactory factory;
     aleatoric::Range referenceRange(0, 3);
 
-    GIVEN("The Producer has been instantiated with no initial selection")
+    GIVEN("The Producer has been instantiated")
     {
         WHEN("The distribution is uniform")
         {
@@ -561,103 +537,6 @@ SCENARIO("Numbers: Integration using Precision")
                         REQUIRE(i == 0);
                     }
                 }
-            }
-        }
-    }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        int initialSelection = 2;
-
-        WHEN("The distribution is uniform")
-        {
-            std::vector<double> distribution(referenceRange.size);
-
-            // Make a uniform distribution
-            for(auto &&i : distribution) {
-                i = 1.0 / referenceRange.size;
-            }
-
-            AND_WHEN("A sample is requested")
-            {
-                THEN("The first number in the set should be the initial "
-                     "selection value")
-                {
-                    // TODO: DYNAMIC-PARAMS: because of coupling of range and
-                    // distribution collection size in the Precision protocol,
-                    // have to set the range in protocol constructor to the
-                    // right range. When params can be updated all at once, this
-                    // can go.
-                    aleatoric::NumbersProducer instance(
-                        factory.createPrecision(0,
-                                                3,
-                                                distribution,
-                                                initialSelection),
-                        referenceRange);
-
-                    auto sample = instance.getIntegerCollection(1000);
-
-                    REQUIRE(sample[0] == initialSelection);
-                }
-            }
-        }
-
-        WHEN("The distribution favours one number in the range")
-        {
-            AND_WHEN("A sample is requested")
-            {
-                THEN("The first number in the set should be the initial "
-                     "selection value")
-                {
-                    // Biased distribution in favour of a certain number (0)
-                    std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
-
-                    // TODO: DYNAMIC-PARAMS: because of coupling of range and
-                    // distribution collection size in the Precision protocol,
-                    // have to set the range in protocol constructor to the
-                    // right range. When params can be updated all at once, this
-                    // can go.
-                    aleatoric::NumbersProducer instance(
-                        factory.createPrecision(0,
-                                                3,
-                                                distribution,
-                                                initialSelection),
-                        referenceRange);
-
-                    auto sample = instance.getIntegerCollection(1000);
-
-                    REQUIRE(sample[0] == initialSelection);
-                    REQUIRE(sample[1] == 0);
-                }
-            }
-        }
-
-        WHEN("A reset is requested")
-        {
-            std::vector<double> distribution(referenceRange.size);
-
-            // Make a uniform distribution
-            for(auto &&i : distribution) {
-                i = 1.0 / referenceRange.size;
-            }
-
-            THEN("The first number requested after the reset should be the "
-                 "initial selection")
-            {
-                // TODO: DYNAMIC-PARAMS: because of coupling of range and
-                // distribution collection size in the Precision protocol, have
-                // to set the range in protocol constructor to the right range.
-                // When params can be updated all at once, this can go.
-                aleatoric::NumbersProducer instance(
-                    factory.createPrecision(0,
-                                            3,
-                                            distribution,
-                                            initialSelection),
-                    referenceRange);
-
-                instance.getIntegerNumber(); // first call
-                instance.reset();
-                REQUIRE(instance.getIntegerNumber() == initialSelection);
             }
         }
     }
@@ -791,49 +670,6 @@ SCENARIO("Numbers: Integration using Periodic")
             }
         }
     }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        // NB: chance of repetition is not important for these tests
-
-        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
-        // done to make params updatable at same time
-        int initialSelection = 5;
-        aleatoric::NumbersProducer instance(
-            factory.createPeriodic(0, 9, 0.5, initialSelection),
-            referenceRange);
-
-        WHEN("A sample has been gathered")
-        {
-            auto sample = instance.getIntegerCollection(1000);
-
-            THEN("The first number produced should be the initial selection")
-            {
-                REQUIRE(sample[0] == initialSelection);
-            }
-
-            THEN("All numbers of the sample should fall within the specified "
-                 "range")
-            {
-                for(auto &&i : sample) {
-                    REQUIRE(i >= referenceRange.start);
-                    REQUIRE(i <= referenceRange.end);
-                }
-            }
-        }
-
-        AND_WHEN("Following a reset, a number is requested")
-        {
-            instance.getIntegerNumber();
-            instance.reset();
-            auto nextNumberAfterReset = instance.getIntegerNumber();
-
-            THEN("The first number produced should be the initial selection")
-            {
-                REQUIRE(nextNumberAfterReset == initialSelection);
-            }
-        }
-    }
 }
 
 SCENARIO("Numbers: Integration using AdjacentSteps")
@@ -841,7 +677,7 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
     aleatoric::NumberProtocolFactory factory;
     aleatoric::Range referenceRange(0, 9);
 
-    GIVEN("The Producer has been instantiated with no initial selection")
+    GIVEN("The Producer has been instantiated")
     {
         // NB: No tests for reset() where an initial number selection has not
         // been made because it could lead to sporadic test failures. There is
@@ -882,63 +718,6 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
             }
         }
     }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        int initialSelection = 5;
-
-        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
-        // done to make params updatable at same time
-        aleatoric::NumbersProducer instance(
-            factory.createAdjacentSteps(0, 9, initialSelection),
-            referenceRange);
-
-        WHEN("A sample has been gathered")
-        {
-            auto sample = instance.getIntegerCollection(1000);
-
-            THEN("The first number produced should be the initial selection")
-            {
-                REQUIRE(sample[0] == initialSelection);
-            }
-
-            THEN("All numbers of the sample should fall within the specified "
-                 "range")
-            {
-                for(auto &&i : sample) {
-                    REQUIRE(i >= referenceRange.start);
-                    REQUIRE(i <= referenceRange.end);
-                }
-            }
-
-            THEN("Each number should be directly adjacent - either side - to "
-                 "the last")
-            {
-                for(auto i = sample.begin(); i != sample.end(); ++i) {
-                    // Don't make assertion for first number in collection as
-                    // there is no previous number to compare with
-                    if(i != sample.begin()) {
-                        auto current = *i;
-                        auto prev = *std::prev(i);
-                        REQUIRE(
-                            ((current == prev + 1) || (current == prev - 1)));
-                    }
-                }
-            }
-
-            AND_WHEN("Following a reset")
-            {
-                instance.getIntegerNumber();
-                instance.reset();
-                auto producedNumber = instance.getIntegerNumber();
-                THEN(
-                    "The first number produced should be the initial selection")
-                {
-                    REQUIRE(producedNumber == initialSelection);
-                }
-            }
-        }
-    }
 }
 
 SCENARIO("Numbers: Integration using Walk")
@@ -946,7 +725,7 @@ SCENARIO("Numbers: Integration using Walk")
     aleatoric::NumberProtocolFactory factory;
     aleatoric::Range referenceRange(0, 9);
 
-    GIVEN("The Producer has been instantiated with no initial selection")
+    GIVEN("The Producer has been instantiated")
     {
         // NB: No tests for reset() where an initial number selection has not
         // been made because it could lead to sporadic test failures. There is
@@ -991,65 +770,6 @@ SCENARIO("Numbers: Integration using Walk")
             }
         }
     }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        int maxStep = 3;
-        int initialSelection = 5;
-
-        // TODO: DYNAMIC-PARAMS: because of coupling of range and
-        // maxStep collection size in the Walk protocol, have to
-        // set the range in protocol constructor to the right range. When
-        // params can be updated all at once, this can go.
-        aleatoric::NumbersProducer instance(
-            factory.createWalk(0, 9, maxStep, initialSelection),
-            referenceRange);
-
-        WHEN("A sample has been gathered")
-        {
-            auto sample = instance.getIntegerCollection(1000);
-
-            THEN("The first number produced should be the initial selection")
-            {
-                REQUIRE(sample[0] == initialSelection);
-            }
-
-            THEN("All numbers of the sample should fall within the specified "
-                 "range")
-            {
-                for(auto &&i : sample) {
-                    REQUIRE(i >= referenceRange.start);
-                    REQUIRE(i <= referenceRange.end);
-                }
-            }
-
-            THEN("Each number should be within the max step range of the last")
-            {
-                for(auto i = sample.begin(); i != sample.end(); ++i) {
-                    // Don't make assertion for first number in collection as
-                    // there is no previous number to compare with
-                    if(i != sample.begin()) {
-                        auto current = *i;
-                        auto prev = *std::prev(i);
-                        REQUIRE(current >= prev - maxStep);
-                        REQUIRE(current <= prev + maxStep);
-                    }
-                }
-            }
-
-            AND_WHEN("Following a reset")
-            {
-                instance.getIntegerNumber();
-                instance.reset();
-                auto producedNumber = instance.getIntegerNumber();
-                THEN(
-                    "The first number produced should be the initial selection")
-                {
-                    REQUIRE(producedNumber == initialSelection);
-                }
-            }
-        }
-    }
 }
 
 SCENARIO("Numbers: Integration using GranularWalk")
@@ -1058,7 +778,7 @@ SCENARIO("Numbers: Integration using GranularWalk")
     aleatoric::Range referenceRange(0, 10);
     aleatoric::UniformGenerator generator;
 
-    GIVEN("The Producer has been instantiated with no initial selection")
+    GIVEN("The Producer has been instantiated")
     {
         // NB: No tests for reset() where an initial number selection has not
         // been made because it could lead to sporadic test failures. There is
@@ -1099,67 +819,6 @@ SCENARIO("Numbers: Integration using GranularWalk")
                         REQUIRE(current >= prev - dfRange);
                         REQUIRE(current <= prev + dfRange);
                     }
-                }
-            }
-        }
-    }
-
-    GIVEN("The Producer has been instantiated with an initial selection")
-    {
-        double deviationFactor = 0.3;
-        double dfRange = 3.0;
-        int initialSelection = 5;
-
-        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
-        // done to make params updatable at same time
-        aleatoric::NumbersProducer instance(
-            factory.createGranularWalk(0,
-                                       10,
-                                       deviationFactor,
-                                       initialSelection),
-            referenceRange);
-
-        WHEN("A sample has been gathered")
-        {
-            auto sample = instance.getDecimalCollection(1000);
-
-            THEN("The first number produced should be the initial selection")
-            {
-                REQUIRE(sample[0] == initialSelection);
-            }
-
-            THEN("All numbers of the sample should fall within the specified "
-                 "range")
-            {
-                for(auto &&i : sample) {
-                    REQUIRE(i >= referenceRange.start);
-                    REQUIRE(i <= referenceRange.end);
-                }
-            }
-
-            THEN("Each number should be within the max step range of the last")
-            {
-                for(auto i = sample.begin(); i != sample.end(); ++i) {
-                    // Don't make assertion for first number in collection as
-                    // there is no previous number to compare with
-                    if(i != sample.begin()) {
-                        auto current = *i;
-                        auto prev = *std::prev(i);
-                        REQUIRE(current >= prev - dfRange);
-                        REQUIRE(current <= prev + dfRange);
-                    }
-                }
-            }
-
-            AND_WHEN("Following a reset")
-            {
-                instance.getDecimalNumber();
-                instance.reset();
-                auto producedNumber = instance.getDecimalNumber();
-                THEN(
-                    "The first number produced should be the initial selection")
-                {
-                    REQUIRE(producedNumber == initialSelection);
                 }
             }
         }

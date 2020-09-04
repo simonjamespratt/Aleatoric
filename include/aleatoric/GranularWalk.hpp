@@ -91,19 +91,6 @@ class GranularWalk : public NumberProtocol {
                  Range range,
                  double deviationFactor);
 
-    /*!
-     * @overload
-     *
-     * @param initialSelection This number will be returned upon the first call
-     * to getNumber() and will be the starting point for the walk through the
-     * range from thereon. Note that the number supplied must be within the
-     * limits of the range supplied.
-     */
-    GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                 Range range,
-                 double deviationFactor,
-                 int initialSelection);
-
     ~GranularWalk();
 
     int getIntegerNumber() override;
@@ -140,8 +127,6 @@ class GranularWalk : public NumberProtocol {
     double normalize(int value, int rangeMin, int rangeMax);
     double mapToNewRange(double value, Range fromRange, Range toRange);
     void setForNextStep(int lastSelectedNumber);
-    int m_initialSelection;
-    bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
     double m_lastReturnedNumber;
 };

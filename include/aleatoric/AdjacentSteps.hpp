@@ -51,19 +51,6 @@ class AdjacentSteps : public NumberProtocol {
      */
     AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator, Range range);
 
-    /*! @overload
-     *
-     * Accepts an additional parameter for setting the initial number to be
-     * selected.
-     *
-     * @param initialSelection this number will be returned on the first call to
-     * getNumber() and will be the starting point for the range traversal from
-     * thereon
-     */
-    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                  Range range,
-                  int initialSelection);
-
     ~AdjacentSteps();
 
     /*! @brief Returns a number according to the protocol.
@@ -95,8 +82,6 @@ class AdjacentSteps : public NumberProtocol {
     Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
     void prepareStepBasedDistribution(int number);
-    int m_initialSelection;
-    bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
     int m_lastReturnedNumber;
 };

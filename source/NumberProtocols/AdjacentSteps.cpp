@@ -5,21 +5,11 @@
 namespace aleatoric {
 AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
                              Range range)
-: m_generator(std::move(generator)), m_range(range)
+: m_generator(std::move(generator)),
+  m_range(range),
+  m_haveRequestedFirstNumber(false)
 {
     m_generator->setDistributionVector(m_range.size, 1.0);
-    m_haveInitialSelection = false;
-    m_haveRequestedFirstNumber = false;
-}
-
-AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                             Range range,
-                             int initialSelection)
-: AdjacentSteps(std::move(generator), range)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
-    m_initialSelection = initialSelection;
-    m_haveInitialSelection = true;
 }
 
 AdjacentSteps::~AdjacentSteps()
@@ -27,12 +17,8 @@ AdjacentSteps::~AdjacentSteps()
 
 int AdjacentSteps::getIntegerNumber()
 {
-    if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        m_lastReturnedNumber = m_initialSelection;
-    } else {
-        auto generatedNumber = m_generator->getNumber();
-        m_lastReturnedNumber = generatedNumber + m_range.offset;
-    }
+    auto generatedNumber = m_generator->getNumber();
+    m_lastReturnedNumber = generatedNumber + m_range.offset;
 
     m_haveRequestedFirstNumber = true;
 

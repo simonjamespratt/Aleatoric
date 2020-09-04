@@ -14,7 +14,6 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
 : m_range(range),
   m_generator(std::move(generator)),
   m_maxStep(maxStep),
-  m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
     if(maxStep > m_range.size) {
@@ -26,31 +25,14 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
     m_generator->setDistribution(m_range.start, m_range.end);
 }
 
-Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
-           Range range,
-           int maxStep,
-           int initialSelection)
-: Walk(std::move(generator), range, maxStep)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
-
-    m_initialSelection = initialSelection;
-    m_haveInitialSelection = true;
-}
-
 Walk::~Walk()
 {}
 
 int Walk::getIntegerNumber()
 {
-    if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        setForNextStep(m_initialSelection);
-        m_lastNumberSelected = m_initialSelection;
-    } else {
-        auto generatedNumber = m_generator->getNumber();
-        setForNextStep(generatedNumber);
-        m_lastNumberSelected = generatedNumber;
-    }
+    auto generatedNumber = m_generator->getNumber();
+    setForNextStep(generatedNumber);
+    m_lastNumberSelected = generatedNumber;
 
     m_haveRequestedFirstNumber = true;
 

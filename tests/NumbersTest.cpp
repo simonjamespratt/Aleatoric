@@ -38,19 +38,6 @@ SCENARIO("Numbers::Numbers")
                 REQUIRE(castInstance != nullptr);
             }
         }
-
-        WHEN("Requested with an initial selection")
-        {
-            auto createdInstance =
-                factory.createAdjacentSteps(rangeStart, rangeEnd, 5);
-            THEN("It returns an instance of the AdjacentSteps class")
-            {
-                auto castInstance = dynamic_cast<aleatoric::AdjacentSteps *>(
-                    createdInstance.get());
-
-                REQUIRE(castInstance != nullptr);
-            }
-        }
     }
 
     GIVEN("An instance of the Basic protocol is requested")
@@ -71,7 +58,7 @@ SCENARIO("Numbers::Numbers")
 
     GIVEN("An instance of the Cycle protocol is requested")
     {
-        WHEN("Requested without an initial selection")
+        WHEN("Requested")
         {
             AND_WHEN("In the default state")
             {
@@ -91,37 +78,6 @@ SCENARIO("Numbers::Numbers")
             {
                 auto createdInstance =
                     factory.createCycle(rangeStart, rangeEnd, true, true);
-
-                THEN("It returns an instance of the Cycle class")
-                {
-                    auto castInstance =
-                        dynamic_cast<aleatoric::Cycle *>(createdInstance.get());
-
-                    REQUIRE(castInstance != nullptr);
-                }
-            }
-        }
-
-        WHEN("Requested with an initial selection")
-        {
-            AND_WHEN("In the default state")
-            {
-                auto createdInstance =
-                    factory.createCycle(rangeStart, rangeEnd, 5);
-
-                THEN("It returns an instance of the Cycle class")
-                {
-                    auto castInstance =
-                        dynamic_cast<aleatoric::Cycle *>(createdInstance.get());
-
-                    REQUIRE(castInstance != nullptr);
-                }
-            }
-
-            AND_WHEN("Optional parameters are provided")
-            {
-                auto createdInstance =
-                    factory.createCycle(rangeStart, rangeEnd, 5, true, true);
 
                 THEN("It returns an instance of the Cycle class")
                 {
@@ -186,20 +142,6 @@ SCENARIO("Numbers::Numbers")
                 REQUIRE(castInstance != nullptr);
             }
         }
-
-        WHEN("Requested with an initial selection")
-        {
-            auto createdInstance =
-                factory.createPeriodic(rangeStart, rangeEnd, 0.5, 5);
-
-            THEN("It returns an instance of the Periodic class")
-            {
-                auto castInstance =
-                    dynamic_cast<aleatoric::Periodic *>(createdInstance.get());
-
-                REQUIRE(castInstance != nullptr);
-            }
-        }
     }
 
     GIVEN("An instance of the Precision protocol is requested")
@@ -219,27 +161,11 @@ SCENARIO("Numbers::Numbers")
             i = 0.25;
         }
 
-        WHEN("Requested without an initial selection")
+        WHEN("Requested")
         {
             auto createdInstance = factory.createPrecision(referenceRange.start,
                                                            referenceRange.end,
                                                            distribution);
-
-            THEN("It returns an instance of the Precision class")
-            {
-                auto castInstance =
-                    dynamic_cast<aleatoric::Precision *>(createdInstance.get());
-
-                REQUIRE(castInstance != nullptr);
-            }
-        }
-
-        WHEN("Requested with an initial selection")
-        {
-            auto createdInstance = factory.createPrecision(referenceRange.start,
-                                                           referenceRange.end,
-                                                           distribution,
-                                                           2);
 
             THEN("It returns an instance of the Precision class")
             {
@@ -303,23 +229,9 @@ SCENARIO("Numbers::Numbers")
 
     GIVEN("An instance of the Walk protocol is requested")
     {
-        WHEN("Requested without an initial selection")
+        WHEN("Requested")
         {
             auto createdInstance = factory.createWalk(rangeStart, rangeEnd, 1);
-
-            THEN("It returns an instance of the Walk class")
-            {
-                auto castInstance =
-                    dynamic_cast<aleatoric::Walk *>(createdInstance.get());
-
-                REQUIRE(castInstance != nullptr);
-            }
-        }
-
-        WHEN("Requested with an initial selection")
-        {
-            auto createdInstance =
-                factory.createWalk(rangeStart, rangeEnd, 1, 5);
 
             THEN("It returns an instance of the Walk class")
             {
@@ -333,24 +245,10 @@ SCENARIO("Numbers::Numbers")
 
     GIVEN("An instance of the GranularWalk protocol is requested")
     {
-        WHEN("Requested without an initial selection")
+        WHEN("Requested")
         {
             auto createdInstance =
                 factory.createGranularWalk(rangeStart, rangeEnd, 0.5);
-
-            THEN("It returns an instance of the GranularWalk class")
-            {
-                auto castInstance = dynamic_cast<aleatoric::GranularWalk *>(
-                    createdInstance.get());
-
-                REQUIRE(castInstance != nullptr);
-            }
-        }
-
-        WHEN("Requested with an initial selection")
-        {
-            auto createdInstance =
-                factory.createGranularWalk(rangeStart, rangeEnd, 0.5, 5.0);
 
             THEN("It returns an instance of the GranularWalk class")
             {

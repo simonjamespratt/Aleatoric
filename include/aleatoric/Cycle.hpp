@@ -14,11 +14,6 @@ class Cycle : public NumberProtocol {
           bool bidirectional = false,
           bool reverseDirection = false);
 
-    Cycle(Range range,
-          int initialSelction,
-          bool bidirectional = false,
-          bool reverseDirection = false);
-
     ~Cycle();
 
     int getIntegerNumber() override;
@@ -36,8 +31,6 @@ class Cycle : public NumberProtocol {
     std::unique_ptr<CycleState> m_state;
     void setState(bool bidirectional, bool reverseDirection);
     int m_nextPosition;
-    int m_initialSelection;
-    bool m_hasInitialSelection;
     bool m_haveRequestedFirstNumber;
 };
 } // namespace aleatoric

@@ -35,7 +35,7 @@ SCENARIO("Numbers::Walk")
         }
     }
 
-    GIVEN("Construction: no initial selection")
+    GIVEN("Construction")
     {
         int maxStep = 2;
 
@@ -55,7 +55,7 @@ SCENARIO("Numbers::Walk")
         }
     }
 
-    GIVEN("The object is constructed: no initial selection")
+    GIVEN("The object is constructed")
     {
         int maxStep = 2;
 
@@ -142,7 +142,7 @@ SCENARIO("Numbers::Walk")
         }
     }
 
-    GIVEN("The object is constructed with real instance: no initial selection")
+    GIVEN("The object is constructed with real instance")
     {
         int maxStep = 5;
         aleatoric::Walk realInstance(
@@ -212,161 +212,6 @@ SCENARIO("Numbers::Walk")
                     auto nextNumber = realInstance.getIntegerNumber();
                     auto difference = std::abs(lastNumber - nextNumber);
                     REQUIRE(difference <= maxStep);
-                }
-            }
-        }
-    }
-
-    GIVEN("Construction: with invalid initial selection")
-    {
-        int maxStep = 1;
-
-        WHEN("The value provided is greater than the range end")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                auto initialSelection = 11;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        maxStep,
-                        initialSelection),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        maxStep,
-                        initialSelection),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 1 to 10");
-            }
-        }
-
-        WHEN("The value provided is less than the range start")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                auto initialSelection = 0;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        maxStep,
-                        initialSelection),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Walk(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        aleatoric::Range(1, 10),
-                        maxStep,
-                        initialSelection),
-                    "The value passed as argument for initialSelection must be "
-                    "within the range of 1 to 10");
-            }
-        }
-    }
-
-    GIVEN("Construction: with initial selection")
-    {
-        int maxStep = 2;
-        int initialSelection = 4;
-
-        auto generator = std::make_unique<UniformGeneratorMock>();
-        auto generatorPointer = generator.get();
-        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
-
-        aleatoric::Range range(1, 10);
-
-        WHEN("The object is constructed")
-        {
-            THEN("The generator distribution is set to the range start and end")
-            {
-                REQUIRE_CALL(*generatorPointer,
-                             setDistribution(range.start, range.end));
-
-                aleatoric::Walk(std::move(generator),
-                                range,
-                                maxStep,
-                                initialSelection);
-            }
-        }
-    }
-
-    GIVEN("The object is constructed: with initial selection")
-    {
-        int maxStep = 2;
-        int initialSelection = 4;
-
-        auto generator = std::make_unique<UniformGeneratorMock>();
-        auto generatorPointer = generator.get();
-        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
-
-        aleatoric::Range range(1, 10);
-
-        aleatoric::Walk instance(std::move(generator),
-                                 range,
-                                 maxStep,
-                                 initialSelection);
-
-        WHEN("The first number is requested")
-        {
-            THEN("It should not call the generator for a number but return the "
-                 "initial selection")
-            {
-                FORBID_CALL(*generatorPointer, getNumber());
-                auto returnedNumber = instance.getIntegerNumber();
-                REQUIRE(returnedNumber == initialSelection);
-            }
-
-            AND_THEN("Sets the the generator distribution in readiness for "
-                     "next call to get a number")
-            {
-                REQUIRE_CALL(*generatorPointer,
-                             setDistribution(ANY(int), ANY(int)));
-                instance.getIntegerNumber();
-            }
-        }
-
-        WHEN("A subsequent number is requested")
-        {
-            instance.getIntegerNumber(); // first call
-
-            THEN("It does call the generator for a number and return it")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
-                auto returnedNumber = instance.getIntegerNumber();
-                REQUIRE(returnedNumber == 1);
-            }
-
-            AND_THEN("Sets the the generator distribution in readiness for "
-                     "next call to get a number")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber()).TIMES(1).RETURN(1);
-                REQUIRE_CALL(*generatorPointer,
-                             setDistribution(ANY(int), ANY(int)));
-                instance.getIntegerNumber();
-            }
-        }
-
-        WHEN("A reset is performed following a previous call to get a number")
-        {
-            instance.getIntegerNumber(); // unsets the initial state
-
-            AND_WHEN("The next number is requested")
-            {
-                THEN("The initial selection is returned, due to the initial "
-                     "state having been reinstated during the reset")
-                {
-                    instance.reset();
-                    FORBID_CALL(*generatorPointer, getNumber());
-                    auto returnedNumber = instance.getIntegerNumber();
-                    REQUIRE(returnedNumber == initialSelection);
                 }
             }
         }

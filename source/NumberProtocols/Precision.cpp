@@ -8,7 +8,9 @@ namespace aleatoric {
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
                      Range range,
                      std::vector<double> distribution)
-: m_generator(std::move(generator)), m_range(range)
+: m_generator(std::move(generator)),
+  m_range(range),
+  m_haveRequestedFirstNumber(false)
 {
     double sumDistValues =
         std::accumulate(distribution.begin(), distribution.end(), 0.0);
@@ -37,20 +39,6 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
     }
 
     m_generator->setDistributionVector(distribution);
-    m_haveInitialSelection = false;
-    m_haveRequestedFirstNumber = false;
-}
-
-Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
-                     Range range,
-                     std::vector<double> distribution,
-                     int initialSelection)
-: Precision(std::move(generator), range, distribution)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
-
-    m_initialSelection = initialSelection;
-    m_haveInitialSelection = true;
 }
 
 Precision::~Precision()
@@ -58,11 +46,7 @@ Precision::~Precision()
 
 int Precision::getIntegerNumber()
 {
-    if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        m_haveRequestedFirstNumber = true;
-        return m_initialSelection;
-    }
-
+    m_haveRequestedFirstNumber = true;
     return m_generator->getNumber() + m_range.offset;
 }
 
@@ -73,9 +57,7 @@ double Precision::getDecimalNumber()
 
 void Precision::reset()
 {
-    if(m_haveInitialSelection) {
-        m_haveRequestedFirstNumber = false;
-    }
+    m_haveRequestedFirstNumber = false;
 }
 
 void Precision::setRange(Range newRange)
