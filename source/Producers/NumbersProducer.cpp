@@ -1,9 +1,12 @@
 #include "NumbersProducer.hpp"
 
 namespace aleatoric {
-NumbersProducer::NumbersProducer(std::unique_ptr<NumberProtocol> protocol)
+NumbersProducer::NumbersProducer(std::unique_ptr<NumberProtocol> protocol,
+                                 Range range)
 : m_protocol(std::move(protocol))
-{}
+{
+    m_protocol->setRange(range);
+}
 
 NumbersProducer::~NumbersProducer()
 {}

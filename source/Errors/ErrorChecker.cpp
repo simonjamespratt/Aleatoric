@@ -11,7 +11,7 @@ ErrorChecker::~ErrorChecker()
 void ErrorChecker::checkInitialSelectionInRange(int initialSelection,
                                                 Range const &range)
 {
-    if(initialSelection < range.start || initialSelection > range.end) {
+    if(!range.numberIsInRange(initialSelection)) {
         throw std::invalid_argument(
             "The value passed as argument for initialSelection must be "
             "within the range of " +

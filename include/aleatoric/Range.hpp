@@ -23,6 +23,8 @@ struct Range {
 
     /*! @brief range size. This is inclusive of the start and end */
     int size;
+
+    bool numberIsInRange(int number) const;
 }; // namespace Range
 } // namespace aleatoric
 

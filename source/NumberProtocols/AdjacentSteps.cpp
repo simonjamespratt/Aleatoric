@@ -2,29 +2,22 @@
 
 #include "ErrorChecker.hpp"
 
-// TODO: DYNAMIC-PARAMS: Think about whether there is a need for an internal and
-// external range. This class brings it into focus. See getNumber() and the
-// addition or subtraction of range.offset depending on whether we're talking
-// about the number within the context of the range of in the context of the
-// generator's vector and the numbers the generator returns. Not sure what the
-// right answer is though!
-
 namespace aleatoric {
 AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                             std::unique_ptr<Range> range)
-: m_generator(std::move(generator)), m_range(std::move(range))
+                             Range range)
+: m_generator(std::move(generator)), m_range(range)
 {
-    m_generator->setDistributionVector(m_range->size, 1.0);
+    m_generator->setDistributionVector(m_range.size, 1.0);
     m_haveInitialSelection = false;
     m_haveRequestedFirstNumber = false;
 }
 
 AdjacentSteps::AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                             std::unique_ptr<Range> range,
+                             Range range,
                              int initialSelection)
-: AdjacentSteps(std::move(generator), std::move(range))
+: AdjacentSteps(std::move(generator), range)
 {
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
 }
@@ -35,24 +28,18 @@ AdjacentSteps::~AdjacentSteps()
 int AdjacentSteps::getIntegerNumber()
 {
     if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        // step configuring in preparation for next call
-        prepareStepBasedDistribution(m_initialSelection,
-                                     m_initialSelection - m_range->offset);
-
-        // this only needs to be in here for now as it is only used in the above
-        // if statement
-        m_haveRequestedFirstNumber = true;
-
-        return m_initialSelection;
+        m_lastReturnedNumber = m_initialSelection;
+    } else {
+        auto generatedNumber = m_generator->getNumber();
+        m_lastReturnedNumber = generatedNumber + m_range.offset;
     }
 
-    auto generatedNumber = m_generator->getNumber();
-    auto numberPlacedWithinRange = generatedNumber + m_range->offset;
+    m_haveRequestedFirstNumber = true;
 
     // step configuring in preparation for next call
-    prepareStepBasedDistribution(numberPlacedWithinRange, generatedNumber);
+    prepareStepBasedDistribution(m_lastReturnedNumber);
 
-    return numberPlacedWithinRange;
+    return m_lastReturnedNumber;
 }
 
 double AdjacentSteps::getDecimalNumber()
@@ -66,14 +53,31 @@ void AdjacentSteps::reset()
     m_haveRequestedFirstNumber = false;
 }
 
-void AdjacentSteps::prepareStepBasedDistribution(int number, int vectorIndex)
+void AdjacentSteps::setRange(Range newRange)
 {
+    m_range = newRange;
+    m_generator->setDistributionVector(m_range.size, 1.0);
+
+    if(m_haveRequestedFirstNumber &&
+       newRange.numberIsInRange(m_lastReturnedNumber)) {
+        prepareStepBasedDistribution(m_lastReturnedNumber);
+    }
+}
+
+Range AdjacentSteps::getRange()
+{
+    return m_range;
+}
+
+void AdjacentSteps::prepareStepBasedDistribution(int number)
+{
+    auto vectorIndex = number - m_range.offset;
     m_generator->updateDistributionVector(0.0);
 
-    if(number == m_range->start) {
+    if(number == m_range.start) {
         m_generator->updateDistributionVector(vectorIndex + 1, 1.0);
 
-    } else if(number == m_range->end) {
+    } else if(number == m_range.end) {
         m_generator->updateDistributionVector(vectorIndex - 1, 1.0);
 
     } else {

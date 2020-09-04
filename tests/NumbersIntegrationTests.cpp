@@ -21,12 +21,12 @@
 SCENARIO("Numbers: Integration using Basic")
 {
     aleatoric::NumberProtocolFactory factory;
-    aleatoric::Range referenceRange(0, 9);
+    aleatoric::Range referenceRange(10, 20);
 
     GIVEN("The Producer has been instantiated")
     {
-        aleatoric::NumbersProducer instance(
-            factory.createBasic(referenceRange.start, referenceRange.end));
+        aleatoric::NumbersProducer instance(factory.createBasic(0, 1),
+                                            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -45,9 +45,9 @@ SCENARIO("Numbers: Integration using Basic")
                  "chosen at least once")
             {
                 for(int i = 0; i < referenceRange.size; i++) {
-                    auto findResult =
-                        std::find(sample.begin(), sample.end(), i);
-                    REQUIRE(findResult != sample.end());
+                    REQUIRE_THAT(
+                        sample,
+                        Catch::VectorContains(i + referenceRange.offset));
                 }
             }
         }
@@ -66,8 +66,8 @@ SCENARIO("Numbers: Integration using Cycle")
 
         WHEN("It is configured in the default state")
         {
-            aleatoric::NumbersProducer instance(
-                factory.createCycle(referenceRange.start, referenceRange.end));
+            aleatoric::NumbersProducer instance(factory.createCycle(0, 1),
+                                                referenceRange);
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -85,10 +85,8 @@ SCENARIO("Numbers: Integration using Cycle")
         WHEN("It is configured in the reverse, unidirectional mode")
         {
             aleatoric::NumbersProducer instance(
-                factory.createCycle(referenceRange.start,
-                                    referenceRange.end,
-                                    false,
-                                    true));
+                factory.createCycle(0, 1, false, true),
+                referenceRange);
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -106,10 +104,8 @@ SCENARIO("Numbers: Integration using Cycle")
         WHEN("It is configured in the bidirectional mode")
         {
             aleatoric::NumbersProducer instance(
-                factory.createCycle(referenceRange.start,
-                                    referenceRange.end,
-                                    true,
-                                    false));
+                factory.createCycle(0, 1, true, false),
+                referenceRange);
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -127,10 +123,8 @@ SCENARIO("Numbers: Integration using Cycle")
         WHEN("It is configured in the bidirectionla, reverse mode")
         {
             aleatoric::NumbersProducer instance(
-                factory.createCycle(referenceRange.start,
-                                    referenceRange.end,
-                                    true,
-                                    true));
+                factory.createCycle(0, 1, true, true),
+                referenceRange);
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -156,10 +150,12 @@ SCENARIO("Numbers: Integration using Cycle")
             THEN("The number should be the initial selection")
             {
                 int initialSelection = 2;
+
+                // TODO: DYNAMIC-PARAMS: This temporary fix is required until
+                // work is done to make params updatable at same time
                 aleatoric::NumbersProducer instance(
-                    factory.createCycle(referenceRange.start,
-                                        referenceRange.end,
-                                        initialSelection));
+                    factory.createCycle(0, 2, initialSelection),
+                    referenceRange);
 
                 auto returnedNumber = instance.getIntegerNumber();
 
@@ -176,8 +172,8 @@ SCENARIO("Numbers: Integration using Serial")
 
     GIVEN("The Producer has been instantiated")
     {
-        aleatoric::NumbersProducer instance(
-            factory.createSerial(referenceRange.start, referenceRange.end));
+        aleatoric::NumbersProducer instance(factory.createSerial(0, 1),
+                                            referenceRange);
 
         WHEN("A full series sample set has been gathered")
         {
@@ -266,11 +262,12 @@ SCENARIO("Numbers: Integration using Subset")
 
     GIVEN("The Producer has been instantiated")
     {
+        // TODO: DYNAMIC-PARAMS: because of coupling of range and subset min/max
+        // in Subset protocol, have to set the range in protocol constructor to
+        // the right range. When params can be updated all at once, this can go.
         aleatoric::NumbersProducer instance(
-            factory.createSubset(referenceRange.start,
-                                 referenceRange.end,
-                                 subsetMin,
-                                 subsetMax));
+            factory.createSubset(1, 10, subsetMin, subsetMax),
+            referenceRange);
 
         WHEN("A sample has been collected")
         {
@@ -335,9 +332,8 @@ SCENARIO("Numbers: Integration using GroupedRepetition")
     GIVEN("The Producer has been instantiated")
     {
         aleatoric::NumbersProducer instance(
-            factory.createGroupedRepetition(referenceRange.start,
-                                            referenceRange.end,
-                                            groupings));
+            factory.createGroupedRepetition(0, 1, groupings),
+            referenceRange);
 
         WHEN("Two samples each consisting of a full series set has been "
              "gathered")
@@ -383,10 +379,12 @@ SCENARIO("Numbers: Integration using Ratio")
         std::vector<int> ratios {3, 1, 0, 2, 4};
         int ratiosSum = 10;
 
-        aleatoric::NumbersProducer instance(
-            factory.createRatio(referenceRange.start,
-                                referenceRange.end,
-                                ratios));
+        // TODO: DYNAMIC-PARAMS: because of coupling of range and ratio
+        // collection size in the Ratio protocol, have to set the range in
+        // protocol constructor to the right range. When params can be updated
+        // all at once, this can go.
+        aleatoric::NumbersProducer instance(factory.createRatio(0, 4, ratios),
+                                            referenceRange);
 
         WHEN("A full series sample set has been gathered")
         {
@@ -421,10 +419,12 @@ SCENARIO("Numbers: Integration using Ratio")
 
         std::vector<int> ratios {1, 1, 1, 1, 1};
 
-        aleatoric::NumbersProducer instance(
-            factory.createRatio(referenceRange.start,
-                                referenceRange.end,
-                                ratios));
+        // TODO: DYNAMIC-PARAMS: because of coupling of range and ratio
+        // collection size in the Ratio protocol, have to set the range in
+        // protocol constructor to the right range. When params can be updated
+        // all at once, this can go.
+        aleatoric::NumbersProducer instance(factory.createRatio(0, 4, ratios),
+                                            referenceRange);
 
         WHEN("A full series sample set has been gathered")
         {
@@ -516,10 +516,13 @@ SCENARIO("Numbers: Integration using Precision")
                 i = 1.0 / referenceRange.size;
             }
 
+            // TODO: DYNAMIC-PARAMS: because of coupling of range and
+            // distribution collection size in the Precision protocol, have to
+            // set the range in protocol constructor to the right range. When
+            // params can be updated all at once, this can go.
             aleatoric::NumbersProducer instance(
-                factory.createPrecision(referenceRange.start,
-                                        referenceRange.end,
-                                        distribution));
+                factory.createPrecision(0, 3, distribution),
+                referenceRange);
 
             AND_WHEN("A sample is requested")
             {
@@ -540,10 +543,13 @@ SCENARIO("Numbers: Integration using Precision")
             // Biased distribution in favour of a certain number (0)
             std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
 
+            // TODO: DYNAMIC-PARAMS: because of coupling of range and
+            // distribution collection size in the Precision protocol, have to
+            // set the range in protocol constructor to the right range. When
+            // params can be updated all at once, this can go.
             aleatoric::NumbersProducer instance(
-                factory.createPrecision(referenceRange.start,
-                                        referenceRange.end,
-                                        distribution));
+                factory.createPrecision(0, 3, distribution),
+                referenceRange);
 
             AND_WHEN("A sample is requested")
             {
@@ -577,11 +583,17 @@ SCENARIO("Numbers: Integration using Precision")
                 THEN("The first number in the set should be the initial "
                      "selection value")
                 {
+                    // TODO: DYNAMIC-PARAMS: because of coupling of range and
+                    // distribution collection size in the Precision protocol,
+                    // have to set the range in protocol constructor to the
+                    // right range. When params can be updated all at once, this
+                    // can go.
                     aleatoric::NumbersProducer instance(
-                        factory.createPrecision(referenceRange.start,
-                                                referenceRange.end,
+                        factory.createPrecision(0,
+                                                3,
                                                 distribution,
-                                                initialSelection));
+                                                initialSelection),
+                        referenceRange);
 
                     auto sample = instance.getIntegerCollection(1000);
 
@@ -600,11 +612,17 @@ SCENARIO("Numbers: Integration using Precision")
                     // Biased distribution in favour of a certain number (0)
                     std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
 
+                    // TODO: DYNAMIC-PARAMS: because of coupling of range and
+                    // distribution collection size in the Precision protocol,
+                    // have to set the range in protocol constructor to the
+                    // right range. When params can be updated all at once, this
+                    // can go.
                     aleatoric::NumbersProducer instance(
-                        factory.createPrecision(referenceRange.start,
-                                                referenceRange.end,
+                        factory.createPrecision(0,
+                                                3,
                                                 distribution,
-                                                initialSelection));
+                                                initialSelection),
+                        referenceRange);
 
                     auto sample = instance.getIntegerCollection(1000);
 
@@ -626,11 +644,16 @@ SCENARIO("Numbers: Integration using Precision")
             THEN("The first number requested after the reset should be the "
                  "initial selection")
             {
+                // TODO: DYNAMIC-PARAMS: because of coupling of range and
+                // distribution collection size in the Precision protocol, have
+                // to set the range in protocol constructor to the right range.
+                // When params can be updated all at once, this can go.
                 aleatoric::NumbersProducer instance(
-                    factory.createPrecision(referenceRange.start,
-                                            referenceRange.end,
+                    factory.createPrecision(0,
+                                            3,
                                             distribution,
-                                            initialSelection));
+                                            initialSelection),
+                    referenceRange);
 
                 instance.getIntegerNumber(); // first call
                 instance.reset();
@@ -648,8 +671,8 @@ SCENARIO("Numbers: Integration using NoRepetition")
     aleatoric::NumberProtocolFactory factory;
     aleatoric::Range referenceRange(0, 9);
 
-    aleatoric::NumbersProducer instance(
-        factory.createNoRepetition(referenceRange.start, referenceRange.end));
+    aleatoric::NumbersProducer instance(factory.createNoRepetition(0, 1),
+                                        referenceRange);
 
     GIVEN("The Producer has been instantiated")
     {
@@ -693,9 +716,8 @@ SCENARIO("Numbers: Integration using Periodic")
         AND_GIVEN("The chance of repetition is mid range")
         {
             aleatoric::NumbersProducer instance(
-                factory.createPeriodic(referenceRange.start,
-                                       referenceRange.end,
-                                       0.5));
+                factory.createPeriodic(0, 1, 0.5),
+                referenceRange);
 
             WHEN("A sample has been gathered")
             {
@@ -723,9 +745,8 @@ SCENARIO("Numbers: Integration using Periodic")
         AND_GIVEN("There is no chance of repetition")
         {
             aleatoric::NumbersProducer instance(
-                factory.createPeriodic(referenceRange.start,
-                                       referenceRange.end,
-                                       0.0));
+                factory.createPeriodic(0, 1, 0.0),
+                referenceRange);
 
             WHEN("A sample has been gathered")
             {
@@ -754,9 +775,8 @@ SCENARIO("Numbers: Integration using Periodic")
         AND_GIVEN("There can only be the chance of repetition")
         {
             aleatoric::NumbersProducer instance(
-                factory.createPeriodic(referenceRange.start,
-                                       referenceRange.end,
-                                       1.0));
+                factory.createPeriodic(0, 1, 1.0),
+                referenceRange);
 
             WHEN("A sample has been gathered")
             {
@@ -775,12 +795,13 @@ SCENARIO("Numbers: Integration using Periodic")
     GIVEN("The Producer has been instantiated with an initial selection")
     {
         // NB: chance of repetition is not important for these tests
+
+        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
+        // done to make params updatable at same time
         int initialSelection = 5;
         aleatoric::NumbersProducer instance(
-            factory.createPeriodic(referenceRange.start,
-                                   referenceRange.end,
-                                   0.5,
-                                   initialSelection));
+            factory.createPeriodic(0, 9, 0.5, initialSelection),
+            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -818,8 +839,7 @@ SCENARIO("Numbers: Integration using Periodic")
 SCENARIO("Numbers: Integration using AdjacentSteps")
 {
     aleatoric::NumberProtocolFactory factory;
-    int rangeStart = 0;
-    int rangeEnd = 9;
+    aleatoric::Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
@@ -830,8 +850,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
         // before a reset is 5, there is nothing to say that the first number
         // after reset won't be either a 4 or a 6.
 
-        aleatoric::NumbersProducer instance(
-            factory.createAdjacentSteps(rangeStart, rangeEnd));
+        aleatoric::NumbersProducer instance(factory.createAdjacentSteps(0, 1),
+                                            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -841,8 +861,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= rangeStart);
-                    REQUIRE(i <= rangeEnd);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -867,10 +887,11 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
     {
         int initialSelection = 5;
 
+        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
+        // done to make params updatable at same time
         aleatoric::NumbersProducer instance(
-            factory.createAdjacentSteps(rangeStart,
-                                        rangeEnd,
-                                        initialSelection));
+            factory.createAdjacentSteps(0, 9, initialSelection),
+            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -885,8 +906,8 @@ SCENARIO("Numbers: Integration using AdjacentSteps")
                  "range")
             {
                 for(auto &&i : sample) {
-                    REQUIRE(i >= rangeStart);
-                    REQUIRE(i <= rangeEnd);
+                    REQUIRE(i >= referenceRange.start);
+                    REQUIRE(i <= referenceRange.end);
                 }
             }
 
@@ -935,10 +956,12 @@ SCENARIO("Numbers: Integration using Walk")
         // after reset won't be within the max step range.
 
         int maxStep = 3;
-        aleatoric::NumbersProducer instance(
-            factory.createWalk(referenceRange.start,
-                               referenceRange.end,
-                               maxStep));
+        // TODO: DYNAMIC-PARAMS: because of coupling of range and
+        // maxStep collection size in the Walk protocol, have to
+        // set the range in protocol constructor to the right range. When
+        // params can be updated all at once, this can go.
+        aleatoric::NumbersProducer instance(factory.createWalk(0, 9, maxStep),
+                                            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -973,11 +996,14 @@ SCENARIO("Numbers: Integration using Walk")
     {
         int maxStep = 3;
         int initialSelection = 5;
+
+        // TODO: DYNAMIC-PARAMS: because of coupling of range and
+        // maxStep collection size in the Walk protocol, have to
+        // set the range in protocol constructor to the right range. When
+        // params can be updated all at once, this can go.
         aleatoric::NumbersProducer instance(
-            factory.createWalk(referenceRange.start,
-                               referenceRange.end,
-                               maxStep,
-                               initialSelection));
+            factory.createWalk(0, 9, maxStep, initialSelection),
+            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -1045,9 +1071,8 @@ SCENARIO("Numbers: Integration using GranularWalk")
         double dfRange = 3.0;
 
         aleatoric::NumbersProducer instance(
-            factory.createGranularWalk(referenceRange.start,
-                                       referenceRange.end,
-                                       deviationFactor));
+            factory.createGranularWalk(0, 1, deviationFactor),
+            referenceRange);
 
         WHEN("A sample has been gathered")
         {
@@ -1085,11 +1110,14 @@ SCENARIO("Numbers: Integration using GranularWalk")
         double dfRange = 3.0;
         int initialSelection = 5;
 
+        // TODO: DYNAMIC-PARAMS: This temporary fix is required until work is
+        // done to make params updatable at same time
         aleatoric::NumbersProducer instance(
-            factory.createGranularWalk(referenceRange.start,
-                                       referenceRange.end,
+            factory.createGranularWalk(0,
+                                       10,
                                        deviationFactor,
-                                       initialSelection));
+                                       initialSelection),
+            referenceRange);
 
         WHEN("A sample has been gathered")
         {

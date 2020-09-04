@@ -49,8 +49,7 @@ class AdjacentSteps : public NumberProtocol {
      *
      * @param range The range within which to producde numbers.
      */
-    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                  std::unique_ptr<Range> range);
+    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator, Range range);
 
     /*! @overload
      *
@@ -62,7 +61,7 @@ class AdjacentSteps : public NumberProtocol {
      * thereon
      */
     AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator,
-                  std::unique_ptr<Range> range,
+                  Range range,
                   int initialSelection);
 
     ~AdjacentSteps();
@@ -74,6 +73,10 @@ class AdjacentSteps : public NumberProtocol {
     int getIntegerNumber() override;
 
     double getDecimalNumber() override;
+
+    void setRange(Range newRange) override;
+
+    Range getRange() override;
 
     /*! @brief Resets the state of the class to the state upon instantiation
      *
@@ -89,13 +92,13 @@ class AdjacentSteps : public NumberProtocol {
     void reset() override;
 
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
-    void prepareStepBasedDistribution(int numberPlacedWithinRange,
-                                      int generatedNumber);
+    void prepareStepBasedDistribution(int number);
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
+    int m_lastReturnedNumber;
 };
 } // namespace aleatoric
 

@@ -9,7 +9,7 @@
 
 SCENARIO("Numbers::Periodic")
 {
-    GIVEN("The class is instantiated with an invalid chanceOfRepetition value")
+    GIVEN("Construction: with an invalid chanceOfRepetition value")
     {
         WHEN("The value provided is greater than 1.0")
         {
@@ -20,14 +20,14 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_AS(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
@@ -43,14 +43,14 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_AS(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
@@ -58,7 +58,7 @@ SCENARIO("Numbers::Periodic")
         }
     }
 
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("Construction: no initial number selection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
@@ -67,21 +67,20 @@ SCENARIO("Numbers::Periodic")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(initialGeneratorDistributionState);
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
                 REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
-                aleatoric::Periodic(std::move(generator), std::move(range), 0.5);
+                             setDistributionVector(range.size, 1.0));
+                aleatoric::Periodic(std::move(generator), range, 0.5);
             }
         }
     }
 
-    GIVEN("The class is instantiated without an initial number selection")
+    GIVEN("The object is constructed: no initialSelection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
@@ -94,14 +93,13 @@ SCENARIO("Numbers::Periodic")
                    setDistributionVector(ANY(std::vector<double>)));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         double chanceOfRepetition = 0.5;
 
         aleatoric::Periodic instance(std::move(generator),
-                                  std::move(range),
-                                  chanceOfRepetition);
+                                     range,
+                                     chanceOfRepetition);
 
         int generatedNumber = 1; // mid range selection
 
@@ -112,8 +110,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
                 auto returnedNumber = instance.getIntegerNumber();
-                REQUIRE(returnedNumber ==
-                        generatedNumber + rangePointer->offset);
+                REQUIRE(returnedNumber == generatedNumber + range.offset);
             }
 
             AND_THEN("The generator distibution should be set with a bias in "
@@ -150,9 +147,86 @@ SCENARIO("Numbers::Periodic")
                 instance.reset();
             }
         }
+
+        WHEN("The range is changed")
+        {
+            REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(range.size - 1);
+
+            auto lastReturnedNumber = instance.getIntegerNumber();
+
+            aleatoric::Range newRangeOutsideAndAbove(lastReturnedNumber + 1,
+                                                     lastReturnedNumber + 3);
+
+            aleatoric::Range newRangeOutsideAndBelow(lastReturnedNumber - 5,
+                                                     lastReturnedNumber - 1);
+
+            aleatoric::Range newRangeAround(lastReturnedNumber - 2,
+                                            lastReturnedNumber + 2);
+
+            THEN("The returned range should match the new range")
+            {
+                instance.setRange(aleatoric::Range(2, 10));
+                auto returnedRange = instance.getRange();
+                REQUIRE(returnedRange.start == 2);
+                REQUIRE(returnedRange.end == 10);
+            }
+
+            THEN("The generator should be reconfigured to equal "
+                 "probability of selection")
+            {
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistributionVector(newRangeOutsideAndAbove.size, 1.0));
+                REQUIRE_CALL(
+                    *generatorPointer,
+                    setDistributionVector(newRangeOutsideAndBelow.size, 1.0));
+                REQUIRE_CALL(*generatorPointer,
+                             setDistributionVector(newRangeAround.size, 1.0));
+                instance.setRange(newRangeOutsideAndAbove);
+                instance.setRange(newRangeOutsideAndBelow);
+                instance.setRange(newRangeAround);
+            }
+
+            AND_WHEN("The last returned number is within the new range")
+            {
+                THEN("The generator should be reconfigured to favour the last "
+                     "selected number with correct remainder allocation for "
+                     "the other possibilities")
+                {
+                    // The total of all values in the vector must equal 1.0. The
+                    // value at the index of the last selected number must have
+                    // the value of the periodicity (chanceOfRepetition). The
+                    // remainder of 1.0 - periodicity is shared equally amongst
+                    // the remaining vector indices.
+                    ALLOW_CALL(*generatorPointer, getDistributionVector())
+                        .RETURN(std::vector<double> {1, 1, 1, 1, 1});
+                    REQUIRE_CALL(*generatorPointer,
+                                 setDistributionVector(
+                                     std::vector<double> {0.125,
+                                                          0.125,
+                                                          chanceOfRepetition,
+                                                          0.125,
+                                                          0.125}));
+                    instance.setRange(newRangeAround);
+                }
+            }
+
+            AND_WHEN("The last returned number is outside the new range")
+            {
+                THEN("No further treatment is required")
+                {
+                    FORBID_CALL(
+                        *generatorPointer,
+                        setDistributionVector(ANY(std::vector<double>)));
+
+                    instance.setRange(newRangeOutsideAndAbove);
+                    instance.setRange(newRangeOutsideAndBelow);
+                }
+            }
+        }
     }
 
-    GIVEN("The class is instantiated with an invalid initialSelection value")
+    GIVEN("Construction: with invalid initialSelection value")
     {
         WHEN("The value provided is greater than the range end")
         {
@@ -163,7 +237,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_AS(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         0.5,
                         invalidInitialSelection),
                     std::invalid_argument);
@@ -171,7 +245,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_WITH(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         0.5,
                         invalidInitialSelection),
                     "The value passed as argument for initialSelection must be "
@@ -188,7 +262,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_AS(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         0.5,
                         invalidInitialSelection),
                     std::invalid_argument);
@@ -196,7 +270,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_THROWS_WITH(
                     aleatoric::Periodic(
                         std::make_unique<aleatoric::DiscreteGenerator>(),
-                        std::make_unique<aleatoric::Range>(1, 3),
+                        aleatoric::Range(1, 3),
                         0.5,
                         invalidInitialSelection),
                     "The value passed as argument for initialSelection must be "
@@ -205,7 +279,7 @@ SCENARIO("Numbers::Periodic")
         }
     }
 
-    GIVEN("The class is instantiated with a valid initial number selection")
+    GIVEN("Construction: with initialSelection")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
@@ -214,24 +288,20 @@ SCENARIO("Numbers::Periodic")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(initialGeneratorDistributionState);
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         WHEN("The object is constructed")
         {
             THEN("The generator distribution is set to the range size")
             {
                 REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
-                aleatoric::Periodic(std::move(generator),
-                                 std::move(range),
-                                 0.5,
-                                 2);
+                             setDistributionVector(range.size, 1.0));
+                aleatoric::Periodic(std::move(generator), range, 0.5, 2);
             }
         }
     }
 
-    GIVEN("The class is instantiated with a valid initial number selection")
+    GIVEN("The object is constructed: with initialSelection")
     {
         double chanceOfRepetition = 0.5;
         int initialSelection = 1; // start of range selection
@@ -247,13 +317,12 @@ SCENARIO("Numbers::Periodic")
                    setDistributionVector(ANY(std::vector<double>)));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        auto range = std::make_unique<aleatoric::Range>(1, 3);
-        auto rangePointer = range.get();
+        aleatoric::Range range(1, 3);
 
         aleatoric::Periodic instance(std::move(generator),
-                                  std::move(range),
-                                  chanceOfRepetition,
-                                  initialSelection);
+                                     range,
+                                     chanceOfRepetition,
+                                     initialSelection);
 
         WHEN("The first number is requested")
         {
@@ -296,8 +365,7 @@ SCENARIO("Numbers::Periodic")
                 REQUIRE_CALL(*generatorPointer, getNumber())
                     .RETURN(generatedNumber);
                 auto returnedNumber = instance.getIntegerNumber();
-                REQUIRE(returnedNumber ==
-                        generatedNumber + rangePointer->offset);
+                REQUIRE(returnedNumber == generatedNumber + range.offset);
             }
 
             AND_THEN("The generator distribution is set in favour of this "

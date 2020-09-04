@@ -18,7 +18,7 @@ SCENARIO("Collections: Integration using Basic")
     {
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createBasic(0, source.size() - 1));
+            factory.createBasic(0, 1));
 
         WHEN("A sample has been gathered")
         {
@@ -48,7 +48,7 @@ SCENARIO("Collections: Integration using Cycle")
         {
             aleatoric::CollectionsProducer<char> instance(
                 source,
-                factory.createCycle(0, source.size() - 1));
+                factory.createCycle(0, 1));
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -73,7 +73,7 @@ SCENARIO("Collections: Integration using Serial")
     {
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createSerial(0, source.size() - 1));
+            factory.createSerial(0, 1));
 
         WHEN("A full series sample set has been gathered")
         {
@@ -117,6 +117,8 @@ SCENARIO("Collections: Integration using Subset")
 
     GIVEN("The Producer is instantiated")
     {
+        // TODO: DYNAMIC-PARAMS: This temporary fix is required until
+        // work is done to make params updatable at same time
         aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createSubset(0, source.size() - 1, subsetMin, subsetMax));
@@ -178,7 +180,7 @@ SCENARIO("Collections: Integration using GroupedRepetition")
 
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createGroupedRepetition(0, source.size() - 1, groupings));
+            factory.createGroupedRepetition(0, 1, groupings));
 
         WHEN("Two samples each consisting of a full series set has been "
              "gathered")
@@ -224,6 +226,8 @@ SCENARIO("Collections: Integration using Ratio")
         std::vector<int> ratios {3, 1, 2};
         int ratioSum = 6;
 
+        // TODO: DYNAMIC-PARAMS: Ratio range cannot be defaulted until solutions
+        // for updating params in place
         aleatoric::CollectionsProducer<char> instance(
             source,
             factory.createRatio(0, source.size() - 1, ratios));
@@ -265,6 +269,8 @@ SCENARIO("Collections: Integration using Precision")
                 i = 1.0 / source.size();
             }
 
+            // TODO: DYNAMIC-PARAMS: Precision range cannot be defaulted until
+            // solutions for updating params in place
             aleatoric::CollectionsProducer<char> instance(
                 source,
                 factory.createPrecision(0, source.size() - 1, distribution));
@@ -294,7 +300,7 @@ SCENARIO("Collections: Integration with NoRepetition")
     {
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createNoRepetition(0, source.size() - 1));
+            factory.createNoRepetition(0, 1));
 
         WHEN("A sample has been gathered")
         {
@@ -332,7 +338,7 @@ SCENARIO("Collections: Integration using Periodic")
         {
             aleatoric::CollectionsProducer<char> instance(
                 source,
-                factory.createPeriodic(0, source.size() - 1, 0.5));
+                factory.createPeriodic(0, 1, 0.5));
 
             WHEN("A sample has been gathered")
             {
@@ -367,7 +373,7 @@ SCENARIO("Collections: Integration using AdjacentSteps")
     {
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createAdjacentSteps(0, source.size() - 1));
+            factory.createAdjacentSteps(0, 1));
 
         WHEN("A sample has been gathered")
         {
@@ -393,7 +399,7 @@ SCENARIO("Collections: Integration using Walk")
         int maxStep = 2;
         aleatoric::CollectionsProducer<char> instance(
             source,
-            factory.createWalk(0, source.size() - 1, maxStep));
+            factory.createWalk(0, 1, maxStep));
 
         WHEN("A sample has been gathered")
         {

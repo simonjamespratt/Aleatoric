@@ -35,8 +35,7 @@ class NoRepetition : public NumberProtocol {
      *
      * @param range The range within which to produce numbers.
      */
-    NoRepetition(std::unique_ptr<IDiscreteGenerator> generator,
-                 std::unique_ptr<Range> range);
+    NoRepetition(std::unique_ptr<IDiscreteGenerator> generator, Range range);
 
     ~NoRepetition();
 
@@ -58,9 +57,14 @@ class NoRepetition : public NumberProtocol {
      * upon the next call to @ref getNumber */
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
+    int m_lastNumberReturned;
+    bool m_haveRequestedFirstNumber;
 };
 } // namespace aleatoric
 

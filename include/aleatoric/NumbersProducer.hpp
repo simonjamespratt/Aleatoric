@@ -2,6 +2,7 @@
 #define NumbersProducer_hpp
 
 #include "NumberProtocol.hpp"
+#include "Range.hpp"
 
 #include <memory>
 #include <vector>
@@ -29,7 +30,7 @@ class NumbersProducer {
     // protocol in different Producers, are unknown, as internal state of a
     // Protocol may be different from that expected, having potentially been
     // used by another Producer
-    NumbersProducer(std::unique_ptr<NumberProtocol> protocol);
+    NumbersProducer(std::unique_ptr<NumberProtocol> protocol, Range range);
 
     ~NumbersProducer();
 

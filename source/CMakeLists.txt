@@ -37,6 +37,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Geometric.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/DurationsProducer.hpp
     Utilities/Utilities.hpp
+    Utilities/CycleStates.hpp
     Errors/ErrorChecker.hpp
 )
 
@@ -70,6 +71,7 @@ add_library(
     Producers/NumbersProducer.cpp
 
     Utilities/Utilities.cpp
+    Utilities/CycleStates.cpp
 
     Range.cpp
 

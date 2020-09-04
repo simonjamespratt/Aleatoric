@@ -77,7 +77,7 @@ class Walk : public NumberProtocol {
      * exceed the size of the main range.
      */
     Walk(std::unique_ptr<IUniformGenerator> generator,
-         std::unique_ptr<Range> range,
+         Range range,
          int maxStep);
 
     /*!
@@ -89,7 +89,7 @@ class Walk : public NumberProtocol {
      * limits of the range supplied.
      */
     Walk(std::unique_ptr<IUniformGenerator> generator,
-         std::unique_ptr<Range> range,
+         Range range,
          int maxStep,
          int initialSelection);
 
@@ -117,14 +117,18 @@ class Walk : public NumberProtocol {
      */
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IUniformGenerator> m_generator;
     int m_maxStep;
     void setForNextStep(int lastSelectedNumber);
     int m_initialSelection;
     bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
+    int m_lastNumberSelected;
 };
 } // namespace aleatoric
 

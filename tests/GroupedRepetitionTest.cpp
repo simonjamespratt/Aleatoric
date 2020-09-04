@@ -1,5 +1,6 @@
 #include "GroupedRepetition.hpp"
 
+#include "DiscreteGenerator.hpp"
 #include "DiscreteGeneratorMock.hpp"
 #include "Range.hpp"
 
@@ -7,7 +8,7 @@
 
 SCENARIO("Numbers::GroupedRepetition")
 {
-    GIVEN("The class is being constructed")
+    GIVEN("Construction")
     {
         auto numberGenerator = std::make_unique<DiscreteGeneratorMock>();
         auto numberGeneratorPointer = numberGenerator.get();
@@ -19,9 +20,7 @@ SCENARIO("Numbers::GroupedRepetition")
         ALLOW_CALL(*groupingGeneratorPointer,
                    setDistributionVector(ANY(int), ANY(double)));
 
-        auto range = std::make_unique<aleatoric::Range>(11, 13);
-        auto rangePointer = range.get();
-
+        aleatoric::Range range(11, 13);
         std::vector<int> groupings {1, 2, 3};
 
         WHEN("In the constructor")
@@ -30,11 +29,11 @@ SCENARIO("Numbers::GroupedRepetition")
                  "with an equal probability setting")
             {
                 REQUIRE_CALL(*numberGeneratorPointer,
-                             setDistributionVector(rangePointer->size, 1.0));
+                             setDistributionVector(range.size, 1.0));
                 aleatoric::GroupedRepetition(std::move(numberGenerator),
-                                          std::move(groupingGenerator),
-                                          std::move(range),
-                                          groupings);
+                                             std::move(groupingGenerator),
+                                             range,
+                                             groupings);
             }
 
             THEN("The grouping generator should be set to the size of the "
@@ -44,14 +43,14 @@ SCENARIO("Numbers::GroupedRepetition")
                              setDistributionVector(groupings.size(), 1.0));
 
                 aleatoric::GroupedRepetition(std::move(numberGenerator),
-                                          std::move(groupingGenerator),
-                                          std::move(range),
-                                          groupings);
+                                             std::move(groupingGenerator),
+                                             range,
+                                             groupings);
             }
         }
     }
 
-    GIVEN("The class is instantiated")
+    GIVEN("The object is constructed")
     {
         auto numberGenerator = std::make_unique<DiscreteGeneratorMock>();
         auto numberGeneratorPointer = numberGenerator.get();
@@ -77,15 +76,13 @@ SCENARIO("Numbers::GroupedRepetition")
         ALLOW_CALL(*groupingGeneratorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        auto range = std::make_unique<aleatoric::Range>(11, 13);
-        auto rangePointer = range.get();
-
+        aleatoric::Range range(11, 13);
         std::vector<int> groupings {2};
 
         aleatoric::GroupedRepetition instance(std::move(numberGenerator),
-                                           std::move(groupingGenerator),
-                                           std::move(range),
-                                           groupings);
+                                              std::move(groupingGenerator),
+                                              range,
+                                              groupings);
 
         WHEN("A number is requested")
         {
@@ -96,7 +93,7 @@ SCENARIO("Numbers::GroupedRepetition")
                 REQUIRE_CALL(*numberGeneratorPointer, getNumber())
                     .RETURN(generatedNumber);
                 REQUIRE(instance.getIntegerNumber() ==
-                        generatedNumber + rangePointer->offset);
+                        generatedNumber + range.offset);
             }
 
             AND_WHEN("It is the first number requested and so the grouping "
@@ -257,6 +254,91 @@ SCENARIO("Numbers::GroupedRepetition")
                 REQUIRE_CALL(*numberGeneratorPointer,
                              updateDistributionVector(1.0));
                 instance.reset();
+            }
+        }
+
+        WHEN("The range is changed")
+        {
+            // NB: These tests use real dependencies
+            aleatoric::GroupedRepetition realInstance(
+                std::make_unique<aleatoric::DiscreteGenerator>(),
+                std::make_unique<aleatoric::DiscreteGenerator>(),
+                aleatoric::Range(11, 13),
+                std::vector<int> {1});
+
+            aleatoric::Range newRange(2, 10);
+
+            realInstance.setRange(newRange);
+
+            THEN("The returned range should match the received range")
+            {
+                auto returnedRange = realInstance.getRange();
+                REQUIRE(returnedRange.start == 2);
+                REQUIRE(returnedRange.end == 10);
+            }
+
+            AND_WHEN(
+                "A full set of numbers matching the new range size is gathered")
+            {
+                // Note that the object is formed with only one grouping
+                // possibility, which is 1. This makes it behave as Serial does,
+                // which is fine for these tests
+                std::vector<int> fullSet(newRange.size);
+                for(auto &&i : fullSet) {
+                    i = realInstance.getIntegerNumber();
+                }
+
+                THEN("All numbers in the set should fall within the new range")
+                {
+                    for(auto &&i : fullSet) {
+                        REQUIRE(newRange.numberIsInRange(i));
+                    }
+                }
+
+                THEN("Each number from the range should appear once in the set")
+                {
+                    for(int i = 0; i < newRange.size; i++) {
+                        auto number = i + newRange.offset;
+                        auto count =
+                            std::count(fullSet.begin(), fullSet.end(), number);
+                        REQUIRE(count == 1);
+                    }
+                }
+            }
+        }
+
+        WHEN("range change: resetting the count when current grouping can be > "
+             "1")
+        {
+            // This object has only one grouping of 2. When a
+            // pre-range-change number is requested, followed by a range change
+            // where the new range is entirely outside the old range, a grouping
+            // count reset is needed otherwise the last number (which is now
+            // outside the new range) will be repeated.
+
+            aleatoric::GroupedRepetition realInstance(
+                std::make_unique<aleatoric::DiscreteGenerator>(),
+                std::make_unique<aleatoric::DiscreteGenerator>(),
+                aleatoric::Range(11, 13),
+                std::vector<int> {2});
+
+            auto numberBefore = realInstance.getIntegerNumber();
+
+            // change the range
+            aleatoric::Range newRange(2, 10);
+            realInstance.setRange(newRange);
+
+            auto numberAfter = realInstance.getIntegerNumber();
+
+            THEN("Number after range change should not match the number before "
+                 "range change")
+            {
+                REQUIRE(numberAfter != numberBefore);
+            }
+
+            THEN("Number after range change should fall within new range")
+            {
+                REQUIRE(newRange.numberIsInRange(numberAfter));
             }
         }
     }

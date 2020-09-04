@@ -6,9 +6,9 @@
 
 namespace aleatoric {
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
-                     std::unique_ptr<Range> range,
+                     Range range,
                      std::vector<double> distribution)
-: m_generator(std::move(generator)), m_range(std::move(range))
+: m_generator(std::move(generator)), m_range(range)
 {
     double sumDistValues =
         std::accumulate(distribution.begin(), distribution.end(), 0.0);
@@ -31,7 +31,7 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
             "distribution must equal 1.0");
     }
 
-    if(distribution.size() != m_range->size) {
+    if(distribution.size() != m_range.size) {
         throw std::invalid_argument("The vector size for the distribution must "
                                     "match the size of the provided range");
     }
@@ -42,12 +42,12 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
 }
 
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
-                     std::unique_ptr<Range> range,
+                     Range range,
                      std::vector<double> distribution,
                      int initialSelection)
-: Precision(std::move(generator), std::move(range), distribution)
+: Precision(std::move(generator), range, distribution)
 {
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, *m_range);
+    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
 
     m_initialSelection = initialSelection;
     m_haveInitialSelection = true;
@@ -63,7 +63,7 @@ int Precision::getIntegerNumber()
         return m_initialSelection;
     }
 
-    return m_generator->getNumber() + m_range->offset;
+    return m_generator->getNumber() + m_range.offset;
 }
 
 double Precision::getDecimalNumber()
@@ -76,5 +76,41 @@ void Precision::reset()
     if(m_haveInitialSelection) {
         m_haveRequestedFirstNumber = false;
     }
+}
+
+void Precision::setRange(Range newRange)
+{
+    auto oldRange = m_range;
+    m_range = newRange;
+
+    // TODO: DYNAMIC-PARAMS: this is an interim measure and should be
+    // updated when the solution for altering all params at the same
+    // time is implemented.
+    auto distribution = m_generator->getDistributionVector();
+
+    if(newRange.size > distribution.size()) {
+        auto difference = newRange.size - distribution.size();
+        for(int i = 0; i < difference; i++) {
+            distribution.push_back(0.0);
+        }
+        m_generator->setDistributionVector(distribution);
+    }
+
+    // NB: as it stands, this produces a set of dist values that doesn't add up
+    // to 1. Not putting it right because it's an interim measure. But if, for
+    // whatever reason, it ends up staying, then it'll need some maths to work
+    // out how the chopped off values should be redistributed.
+    if(newRange.size < distribution.size()) {
+        auto difference = distribution.size() - newRange.size;
+        for(int i = 0; i < difference; i++) {
+            distribution.pop_back();
+        }
+        m_generator->setDistributionVector(distribution);
+    }
+}
+
+Range Precision::getRange()
+{
+    return m_range;
 }
 } // namespace aleatoric

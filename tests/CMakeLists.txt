@@ -43,6 +43,7 @@ add_executable(Tests
     RatioTest.cpp
     GroupedRepetitionTest.cpp
     SubsetTest.cpp
+    RangeTest.cpp
 )
 
 target_link_libraries(Tests

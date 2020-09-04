@@ -34,8 +34,7 @@ class Serial : public NumberProtocol {
      *
      * @param range The range within which to produce numbers.
      */
-    Serial(std::unique_ptr<IDiscreteGenerator> generator,
-           std::unique_ptr<Range> range);
+    Serial(std::unique_ptr<IDiscreteGenerator> generator, Range range);
 
     ~Serial();
 
@@ -57,8 +56,11 @@ class Serial : public NumberProtocol {
      * upon the next call to @ref getNumber */
     void reset() override;
 
+    void setRange(Range newRange) override;
+    Range getRange() override;
+
   private:
-    std::unique_ptr<Range> m_range;
+    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
     Utilities::SeriesPrinciple m_seriesPrinciple;
 };
