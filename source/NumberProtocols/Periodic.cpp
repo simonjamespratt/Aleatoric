@@ -13,7 +13,6 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
 : m_range(range),
   m_generator(std::move(generator)),
   m_periodicity(chanceOfRepetition),
-  m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
     if(chanceOfRepetition < 0.0 || chanceOfRepetition > 1.0) {
@@ -25,34 +24,15 @@ Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
     m_generator->setDistributionVector(m_range.size, 1.0);
 }
 
-Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-                   Range range,
-                   double chanceOfRepetition,
-                   int initialSelection)
-: Periodic(std::move(generator), range, chanceOfRepetition)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
-
-    m_initialSelection = initialSelection;
-    m_haveInitialSelection = true;
-}
-
 Periodic::~Periodic()
 {}
 
 int Periodic::getIntegerNumber()
 {
-    if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        setPeriodicDistribution(m_initialSelection - m_range.offset);
-        m_lastReturnedNumber = m_initialSelection;
-    } else {
-        auto generatedNumber = m_generator->getNumber();
-        setPeriodicDistribution(generatedNumber);
-        m_lastReturnedNumber = generatedNumber + m_range.offset;
-    }
-
+    auto generatedNumber = m_generator->getNumber();
+    setPeriodicDistribution(generatedNumber);
+    m_lastReturnedNumber = generatedNumber + m_range.offset;
     m_haveRequestedFirstNumber = true;
-
     return m_lastReturnedNumber;
 }
 

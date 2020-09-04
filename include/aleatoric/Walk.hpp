@@ -80,19 +80,6 @@ class Walk : public NumberProtocol {
          Range range,
          int maxStep);
 
-    /*!
-     * @overload
-     *
-     * @param initialSelection This number will be returned upon the first call
-     * to getNumber() and will be the starting point for the walk through the
-     * range from thereon. Note that the number supplied must be within the
-     * limits of the range supplied.
-     */
-    Walk(std::unique_ptr<IUniformGenerator> generator,
-         Range range,
-         int maxStep,
-         int initialSelection);
-
     ~Walk();
 
     /*!
@@ -125,8 +112,6 @@ class Walk : public NumberProtocol {
     std::unique_ptr<IUniformGenerator> m_generator;
     int m_maxStep;
     void setForNextStep(int lastSelectedNumber);
-    int m_initialSelection;
-    bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
     int m_lastNumberSelected;
 };

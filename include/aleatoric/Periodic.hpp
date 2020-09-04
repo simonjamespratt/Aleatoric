@@ -70,20 +70,6 @@ class Periodic : public NumberProtocol {
              Range range,
              double chanceOfRepetition);
 
-    /*! @overload
-     *
-     * Accepts an additional parameter for setting the initial number to be
-     * selected.
-     *
-     * @param initialSelection this number will be returned on the first call to
-     * getNumber() and will have the periodicity bias applied to it for the next
-     * call to getNumber()
-     */
-    Periodic(std::unique_ptr<IDiscreteGenerator> generator,
-             Range range,
-             double chanceOfRepetition,
-             int initialSelection);
-
     ~Periodic();
 
     /*! @brief Returns a number according to the protocol.
@@ -117,8 +103,6 @@ class Periodic : public NumberProtocol {
     double m_periodicity;
     void setPeriodicDistribution(int selectedIndex);
     double calculateRemainerAllocation();
-    int m_initialSelection;
-    bool m_haveInitialSelection;
     bool m_haveRequestedFirstNumber;
     int m_lastReturnedNumber;
 };

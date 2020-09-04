@@ -12,7 +12,6 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
 : m_generator(std::move(generator)),
   m_externalRange(range),
   m_internalRange(0, 65000),
-  m_haveInitialSelection(false),
   m_haveRequestedFirstNumber(false)
 {
     ErrorChecker::checkValueWithinUnitInterval(deviationFactor,
@@ -24,19 +23,6 @@ GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
     m_maxStep = static_cast<int>(round(maxStep));
 
     m_generator->setDistribution(m_internalRange.start, m_internalRange.end);
-}
-
-GranularWalk::GranularWalk(std::unique_ptr<IUniformGenerator> generator,
-                           Range range,
-                           double deviationFactor,
-                           int initialSelection)
-: GranularWalk(std::move(generator), std::move(range), deviationFactor)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection,
-                                               m_externalRange);
-
-    m_initialSelection = initialSelection;
-    m_haveInitialSelection = true;
 }
 
 GranularWalk::~GranularWalk()
@@ -51,20 +37,9 @@ int GranularWalk::getIntegerNumber()
 
 double GranularWalk::getDecimalNumber()
 {
-    if(m_haveInitialSelection && !m_haveRequestedFirstNumber) {
-        m_haveRequestedFirstNumber = true;
-
-        auto mappedValue =
-            mapToNewRange(m_initialSelection, m_externalRange, m_internalRange);
-
-        setForNextStep(static_cast<int>(round(mappedValue)));
-
-        return m_lastReturnedNumber = static_cast<double>(m_initialSelection);
-    }
-
     auto selectedNumber = m_generator->getNumber();
-    m_haveRequestedFirstNumber = true;
     setForNextStep(selectedNumber);
+    m_haveRequestedFirstNumber = true;
 
     return m_lastReturnedNumber =
                mapToNewRange(selectedNumber, m_internalRange, m_externalRange);

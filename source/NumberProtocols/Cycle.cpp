@@ -10,21 +10,6 @@ Cycle::Cycle(Range range, bool bidirectional, bool reverseDirection)
 
     reverseDirection ? m_nextPosition = m_range.end
                      : m_nextPosition = m_range.start;
-    m_hasInitialSelection = false;
-}
-
-Cycle::Cycle(Range range,
-             int initialSelection,
-             bool bidirectional,
-             bool reverseDirection)
-: m_range(range), m_initialSelection(initialSelection)
-{
-    ErrorChecker::checkInitialSelectionInRange(initialSelection, m_range);
-
-    setState(bidirectional, reverseDirection);
-
-    m_nextPosition = m_initialSelection;
-    m_hasInitialSelection = true;
 }
 
 Cycle::~Cycle()
@@ -45,10 +30,6 @@ double Cycle::getDecimalNumber()
 void Cycle::reset()
 {
     m_state->reset(m_nextPosition, m_range);
-
-    if(m_hasInitialSelection) {
-        m_nextPosition = m_initialSelection;
-    }
 }
 
 void Cycle::setRange(Range newRange)
