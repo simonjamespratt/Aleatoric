@@ -8,14 +8,52 @@
 #include <catch2/catch.hpp>
 #include <catch2/trompeloeil.hpp>
 
+SCENARIO("Numbers::Serial: default constructor")
+{
+    using namespace aleatoric;
+
+    Serial instance(std::make_unique<DiscreteGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+    }
+
+    THEN("Set of numbers should be as per basic serial process")
+    {
+        // basic serial process
+        std::vector<std::vector<int>> possibleResults {{0, 1}, {1, 0}};
+        std::vector<std::vector<int>> set;
+
+        for(int i = 0; i < 1000; i++) {
+            std::vector<int> pair(2);
+            for(auto &&i : pair) {
+                i = instance.getIntegerNumber();
+            }
+            set.push_back(pair);
+        }
+
+        for(auto &&pair : set) {
+            REQUIRE_THAT(pair,
+                         Catch::Equals(possibleResults[0]) ||
+                             Catch::Equals(possibleResults[1]));
+        }
+    }
+}
+
 SCENARIO("Numbers::Serial")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         WHEN("The object is constructed")
         {
@@ -23,7 +61,7 @@ SCENARIO("Numbers::Serial")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(range.size, 1.0));
-                aleatoric::Serial(std::move(generator), range);
+                Serial(std::move(generator), range);
             }
         }
     }
@@ -48,9 +86,9 @@ SCENARIO("Numbers::Serial")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
-        aleatoric::Serial instance(std::move(generator), range);
+        Serial instance(std::move(generator), range);
 
         WHEN("A number is requested")
         {
@@ -121,63 +159,59 @@ SCENARIO("Numbers::Serial")
                 instance.reset();
             }
         }
+    }
+}
 
-        AND_WHEN("A range change is made")
+SCENARIO("Numbers::Serial: params")
+{
+    using namespace aleatoric;
+
+    Serial instance(std::make_unique<DiscreteGenerator>(), Range(1, 3));
+
+    WHEN("Get params")
+    {
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+
+        THEN("should match state of the object")
         {
-            // NB: using real dependencies
-            aleatoric::Serial realInstance(
-                std::make_unique<aleatoric::DiscreteGenerator>(),
-                aleatoric::Range(1, 3));
+            REQUIRE(returnedRange.start == 1);
+            REQUIRE(returnedRange.end == 3);
+            REQUIRE(
+                params.protocols.getActiveProtocol() ==
+                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
+        }
+    }
 
-            aleatoric::Range newRange(4, 9); // size 6
+    WHEN("Set params")
+    {
+        Range newRange(4, 9);
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Serial()));
+        instance.setParams(newParams);
+
+        THEN("The object state is updated")
+        {
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+        }
+
+        THEN("A set covering the range will have the expected result")
+        {
+            std::vector<int> set(newRange.size);
+            for(auto &&i : set) {
+                i = instance.getIntegerNumber();
+            }
 
             std::vector<int> expectedValues {4, 5, 6, 7, 8, 9};
             auto expectedValuesPermutation =
                 Catch::UnorderedEquals(expectedValues);
 
-            std::vector<int> set(newRange.size);
-
-            THEN("The returned range should match the new range")
-            {
-                realInstance.setRange(newRange);
-                auto returnedRange = realInstance.getRange();
-                REQUIRE(returnedRange.start == newRange.start);
-                REQUIRE(returnedRange.end == newRange.end);
-            }
-
-            AND_WHEN("change is made before a number has been returned")
-            {
-                realInstance.setRange(newRange);
-
-                for(auto &&i : set) {
-                    i = realInstance.getIntegerNumber();
-                }
-
-                THEN("A set covering the range will have the expected result")
-                {
-                    REQUIRE_THAT(set, expectedValuesPermutation);
-                }
-            }
-
-            AND_WHEN("change is made after some numbers have been returned")
-            {
-                // request some numbers
-                for(int i = 0; i < 3; i++) {
-                    realInstance.getIntegerNumber();
-                }
-
-                // then change the range
-                realInstance.setRange(newRange);
-
-                for(auto &&i : set) {
-                    i = realInstance.getIntegerNumber();
-                }
-
-                THEN("A set covering the range will have the expected result")
-                {
-                    REQUIRE_THAT(set, expectedValuesPermutation);
-                }
-            }
+            REQUIRE_THAT(set, expectedValuesPermutation);
         }
     }
 }

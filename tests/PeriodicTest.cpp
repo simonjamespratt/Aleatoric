@@ -7,8 +7,52 @@
 #include <catch2/trompeloeil.hpp>
 #include <stdexcept> // std::invalid_argument
 
+SCENARIO("Numbers::Periodic: default constructor")
+{
+    using namespace aleatoric;
+
+    Periodic instance(std::make_unique<DiscreteGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        auto chanceOfRepetition =
+            params.protocols.getPeriodic().getChanceOfRepetition();
+
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+        REQUIRE(chanceOfRepetition == 0.0);
+    }
+
+    std::vector<int> set(1000);
+    for(auto &&i : set) {
+        i = instance.getIntegerNumber();
+    }
+
+    THEN("Set is within range")
+    {
+        for(auto &&i : set) {
+            REQUIRE((i == 0 | i == 1));
+        }
+    }
+
+    THEN("There is no direct repetition within set")
+    {
+        for(auto i = set.begin(); i != set.end(); ++i) {
+            // Don't make assertion for first number in collection as
+            // there is no previous number to compare with
+            if(i != set.begin()) {
+                REQUIRE(*i != *std::prev(i));
+            }
+        }
+    }
+}
+
 SCENARIO("Numbers::Periodic")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction: with an invalid chanceOfRepetition value")
     {
         WHEN("The value provided is greater than 1.0")
@@ -18,17 +62,15 @@ SCENARIO("Numbers::Periodic")
                 double invalidChanceValue = 1.1;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::Periodic(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 3),
-                        invalidChanceValue),
+                    Periodic(std::make_unique<DiscreteGenerator>(),
+                             Range(1, 3),
+                             invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Periodic(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 3),
-                        invalidChanceValue),
+                    Periodic(std::make_unique<DiscreteGenerator>(),
+                             Range(1, 3),
+                             invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
             }
@@ -41,17 +83,15 @@ SCENARIO("Numbers::Periodic")
                 double invalidChanceValue = -0.1;
 
                 REQUIRE_THROWS_AS(
-                    aleatoric::Periodic(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 3),
-                        invalidChanceValue),
+                    Periodic(std::make_unique<DiscreteGenerator>(),
+                             Range(1, 3),
+                             invalidChanceValue),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    aleatoric::Periodic(
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(1, 3),
-                        invalidChanceValue),
+                    Periodic(std::make_unique<DiscreteGenerator>(),
+                             Range(1, 3),
+                             invalidChanceValue),
                     "The value passed as argument for chanceOfRepetition must "
                     "be within the range of 0.0 - 1.0");
             }
@@ -67,7 +107,7 @@ SCENARIO("Numbers::Periodic")
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(initialGeneratorDistributionState);
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         WHEN("The object is constructed")
         {
@@ -75,7 +115,7 @@ SCENARIO("Numbers::Periodic")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(range.size, 1.0));
-                aleatoric::Periodic(std::move(generator), range, 0.5);
+                Periodic(std::move(generator), range, 0.5);
             }
         }
     }
@@ -93,13 +133,11 @@ SCENARIO("Numbers::Periodic")
                    setDistributionVector(ANY(std::vector<double>)));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         double chanceOfRepetition = 0.5;
 
-        aleatoric::Periodic instance(std::move(generator),
-                                     range,
-                                     chanceOfRepetition);
+        Periodic instance(std::move(generator), range, chanceOfRepetition);
 
         int generatedNumber = 1; // mid range selection
 
@@ -147,81 +185,197 @@ SCENARIO("Numbers::Periodic")
                 instance.reset();
             }
         }
+    }
+}
 
-        WHEN("The range is changed")
+SCENARIO("Numbers::Periodic: params")
+{
+    using namespace aleatoric;
+
+    Range range(1, 10);
+    double chanceOfRepetition = 0.5;
+    auto generator = std::make_unique<DiscreteGenerator>();
+    auto generatorPointer = generator.get();
+    Periodic instance(std::move(generator), range, chanceOfRepetition);
+
+    WHEN("Get params")
+    {
+        THEN("They should match the state of the object")
         {
-            REQUIRE_CALL(*generatorPointer, getNumber()).RETURN(range.size - 1);
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
 
-            auto lastReturnedNumber = instance.getIntegerNumber();
+            REQUIRE(returnedRange.start == range.start);
+            REQUIRE(returnedRange.end == range.end);
 
-            aleatoric::Range newRangeOutsideAndAbove(lastReturnedNumber + 1,
-                                                     lastReturnedNumber + 3);
+            REQUIRE(params.protocols.getPeriodic().getChanceOfRepetition() ==
+                    0.5);
+            REQUIRE(
+                params.protocols.getActiveProtocol() ==
+                NumberProtocolParameters::Protocols::ActiveProtocol::periodic);
+        }
+    }
 
-            aleatoric::Range newRangeOutsideAndBelow(lastReturnedNumber - 5,
-                                                     lastReturnedNumber - 1);
-
-            aleatoric::Range newRangeAround(lastReturnedNumber - 2,
-                                            lastReturnedNumber + 2);
-
-            THEN("The returned range should match the new range")
+    WHEN("Set params: Periodicity")
+    {
+        AND_WHEN("The value is too small")
+        {
+            THEN("An exception is thrown")
             {
-                instance.setRange(aleatoric::Range(2, 10));
-                auto returnedRange = instance.getRange();
-                REQUIRE(returnedRange.start == 2);
-                REQUIRE(returnedRange.end == 10);
+                double invalidPeriodicity = -0.1;
+                NumberProtocolParameters newParams(
+                    Range(0, 1),
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::Periodic(
+                            invalidPeriodicity)));
+
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
+            }
+        }
+
+        AND_WHEN("The value is too large")
+        {
+            THEN("An exception is thrown")
+            {
+                double invalidPeriodicity = 1.1;
+                NumberProtocolParameters newParams(
+                    Range(0, 1),
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::Periodic(
+                            invalidPeriodicity)));
+
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
+            }
+        }
+
+        AND_WHEN("The value is valid")
+        {
+            double newPeriodicity = 1.0;
+            NumberProtocolParameters newParams(
+                Range(0, 1),
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Periodic(newPeriodicity)));
+            instance.setParams(newParams);
+
+            THEN("The object state is updated")
+            {
+                auto params = instance.getParams();
+                REQUIRE(
+                    params.protocols.getPeriodic().getChanceOfRepetition() ==
+                    newPeriodicity);
             }
 
-            THEN("The generator should be reconfigured to equal "
-                 "probability of selection")
+            AND_WHEN("A set of numbers is gathered")
             {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistributionVector(newRangeOutsideAndAbove.size, 1.0));
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistributionVector(newRangeOutsideAndBelow.size, 1.0));
-                REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(newRangeAround.size, 1.0));
-                instance.setRange(newRangeOutsideAndAbove);
-                instance.setRange(newRangeOutsideAndBelow);
-                instance.setRange(newRangeAround);
-            }
+                std::vector<int> set(100);
+                for(auto &&i : set) {
+                    i = instance.getIntegerNumber();
+                }
 
-            AND_WHEN("The last returned number is within the new range")
-            {
-                THEN("The generator should be reconfigured to favour the last "
-                     "selected number with correct remainder allocation for "
-                     "the other possibilities")
+                THEN("The values should be as expected")
                 {
-                    // The total of all values in the vector must equal 1.0. The
-                    // value at the index of the last selected number must have
-                    // the value of the periodicity (chanceOfRepetition). The
-                    // remainder of 1.0 - periodicity is shared equally amongst
-                    // the remaining vector indices.
-                    ALLOW_CALL(*generatorPointer, getDistributionVector())
-                        .RETURN(std::vector<double> {1, 1, 1, 1, 1});
-                    REQUIRE_CALL(*generatorPointer,
-                                 setDistributionVector(
-                                     std::vector<double> {0.125,
-                                                          0.125,
-                                                          chanceOfRepetition,
-                                                          0.125,
-                                                          0.125}));
-                    instance.setRange(newRangeAround);
+                    auto firstNumber = set.front();
+
+                    for(auto &&i : set) {
+                        REQUIRE(i == firstNumber);
+                    }
                 }
             }
+        }
+    }
 
-            AND_WHEN("The last returned number is outside the new range")
+    WHEN("Set params: Range")
+    {
+        THEN("The object state is updated")
+        {
+            Range newRange(11, 20);
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+
+            instance.setParams(newParams);
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+        }
+
+        AND_WHEN("No numbers have been returned yet")
+        {
+            Range newRange(11, 13); // was (1, 10)
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+
+            instance.setParams(newParams);
+
+            THEN("The generator distribution should be equal "
+                 "probability for the new range size")
             {
-                THEN("No further treatment is required")
-                {
-                    FORBID_CALL(
-                        *generatorPointer,
-                        setDistributionVector(ANY(std::vector<double>)));
+                std::vector<double> expectedDistribution {1, 1, 1};
+                REQUIRE(generatorPointer->getDistributionVector() ==
+                        expectedDistribution);
+            }
+        }
 
-                    instance.setRange(newRangeOutsideAndAbove);
-                    instance.setRange(newRangeOutsideAndBelow);
-                }
+        AND_WHEN("The last returned number is outside the new range")
+        {
+            auto lastNumber = instance.getIntegerNumber();
+            Range newRange(lastNumber + 1,
+                           lastNumber + 3); // size of 3
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+
+            instance.setParams(newParams);
+
+            THEN("The generator distribution should be equal "
+                 "probability for the new range size")
+            {
+                std::vector<double> expectedDistribution {1, 1, 1};
+                REQUIRE(generatorPointer->getDistributionVector() ==
+                        expectedDistribution);
+            }
+        }
+
+        AND_WHEN("The last returned number is within the new range")
+        {
+            auto lastNumber = instance.getIntegerNumber();
+            Range newRange(lastNumber - 2,
+                           lastNumber + 2); // size of 5
+            double newChanceOfRepetition = 0.25;
+
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Periodic(newChanceOfRepetition)));
+
+            instance.setParams(newParams);
+
+            THEN("The generator distribution should favour the last "
+                 "number returned with the new chance of repetition")
+            {
+                // The total of all values in the vector must equal 1.0.
+                // The
+                // value at the index of the last selected number must
+                // have the value of the periodicity
+                // (chanceOfRepetition). The remainder of 1.0 -
+                // periodicity is shared equally amongst the remaining
+                // vector indices.
+
+                std::vector<double> expectedDistribution {0.1875,
+                                                          0.1875,
+                                                          newChanceOfRepetition,
+                                                          0.1875,
+                                                          0.1875};
+
+                REQUIRE(generatorPointer->getDistributionVector() ==
+                        expectedDistribution);
             }
         }
     }

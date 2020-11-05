@@ -3,6 +3,7 @@
 
 #include "IUniformGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -72,20 +73,22 @@ namespace aleatoric {
  */
 class GranularWalk : public NumberProtocol {
   public:
+    GranularWalk(std::unique_ptr<IUniformGenerator> generator);
+
     /*!
      * @brief Construct a new GranularWalk object
      *
-     * @param generator An instance of UniformGenerator. Default construction is
-     * fine.
+     * @param generator An instance of UniformGenerator. Default
+     * construction is fine.
      *
      * @param range The range within which to produce numbers.
      *
-     * @param deviationFactor The value represents a fraction of the whole range
-     * which is used internally to calculate an absolute value for the maximum
-     * step which in turn is used for calculating the sub-range for the walk
-     * through the main range. For a detailed description of the use of the
-     * maximum step and sub-ranges, see above. Note that the value provided must
-     * be between 0.0 and 1.0 (inclusive).
+     * @param deviationFactor The value represents a fraction of the whole
+     * range which is used internally to calculate an absolute value for the
+     * maximum step which in turn is used for calculating the sub-range for
+     * the walk through the main range. For a detailed description of the
+     * use of the maximum step and sub-ranges, see above. Note that the
+     * value provided must be between 0.0 and 1.0 (inclusive).
      */
     GranularWalk(std::unique_ptr<IUniformGenerator> generator,
                  Range range,
@@ -115,18 +118,23 @@ class GranularWalk : public NumberProtocol {
      */
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     std::unique_ptr<IUniformGenerator> m_generator;
     Range m_externalRange;
     Range m_internalRange;
+    double m_deviationFactor;
     int m_maxStep;
     double scaleToRange(double normalizedValue, int rangeMin, int rangeMax);
     double normalize(int value, int rangeMin, int rangeMax);
     double mapToNewRange(double value, Range fromRange, Range toRange);
     void setForNextStep(int lastSelectedNumber);
+    void setMaxStep();
+    void setRange(Range newRange);
+    void initialise();
     bool m_haveRequestedFirstNumber;
     double m_lastReturnedNumber;
 };

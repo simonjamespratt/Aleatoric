@@ -3,6 +3,7 @@
 
 #include "IDiscreteGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 #include "Utilities.hpp"
 
@@ -26,8 +27,10 @@ namespace aleatoric {
  */
 class Serial : public NumberProtocol {
   public:
-    /*! @brief Takes a DiscreteGenerator derived from the IDiscreteGenerator,
-     * and a Range.
+    Serial(std::unique_ptr<IDiscreteGenerator> generator);
+
+    /*! @brief Takes a DiscreteGenerator derived from the
+     * IDiscreteGenerator, and a Range.
      *
      * @param generator Should be an instance of DiscreteGenerator. Default
      * construction is fine.
@@ -56,8 +59,9 @@ class Serial : public NumberProtocol {
      * upon the next call to @ref getNumber */
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     Range m_range;

@@ -3,6 +3,15 @@
 #include <stdexcept>
 
 namespace aleatoric {
+Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)),
+  m_range(0, 1),
+  m_ratios(std::vector<int> {1, 1}),
+  m_seriesPrinciple()
+{
+    initialise();
+}
+
 Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator,
              Range range,
              std::vector<int> ratios)
@@ -11,13 +20,8 @@ Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator,
   m_ratios(ratios),
   m_seriesPrinciple()
 {
-    if(m_range.size != ratios.size()) {
-        throw std::invalid_argument(
-            "The size of ratios collection must match the size of the range");
-    }
-
-    setSelectables();
-    m_generator->setDistributionVector(m_selectables.size(), 1.0);
+    checkRangeAndRatiosMatch(m_range, m_ratios);
+    initialise();
 }
 
 Ratio::~Ratio()
@@ -43,37 +47,24 @@ void Ratio::reset()
     m_seriesPrinciple.resetSeries(m_generator);
 }
 
-void Ratio::setRange(Range newRange)
+void Ratio::setParams(NumberProtocolParameters newParams)
 {
-    // TODO: DYNAMIC-PARAMS: interim measure until we set all params at the same
-    // time. At that point, replace this for a check that newRange size is same
-    // as received ratios size
-    if(newRange.size > m_range.size) {
-        auto difference = newRange.size - m_range.size;
-
-        for(int i = 0; i < difference; i++) {
-            m_ratios.push_back(1);
-        }
-    }
-
-    if(newRange.size < m_range.size) {
-        auto difference = m_range.size - newRange.size;
-
-        for(int i = 0; i < difference; i++) {
-            m_ratios.pop_back();
-        }
-    }
-
+    auto newRatios = newParams.protocols.getRatio().getRatios();
+    auto newRange = newParams.getRange();
+    checkRangeAndRatiosMatch(newRange, newRatios);
+    m_ratios = newRatios;
     m_range = newRange;
-
     m_selectables.clear();
     setSelectables();
     m_generator->setDistributionVector(m_selectables.size(), 1.0);
 }
 
-Range Ratio::getRange()
+NumberProtocolParameters Ratio::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::Ratio(m_ratios)));
 }
 
 // Private methods
@@ -84,6 +75,21 @@ void Ratio::setSelectables()
             m_selectables.push_back(m_range.offset + i);
         }
     }
+}
+
+void Ratio::checkRangeAndRatiosMatch(const Range &range,
+                                     const std::vector<int> &ratios)
+{
+    if(range.size != ratios.size()) {
+        throw std::invalid_argument(
+            "The size of ratios collection must match the size of the range");
+    }
+}
+
+void Ratio::initialise()
+{
+    setSelectables();
+    m_generator->setDistributionVector(m_selectables.size(), 1.0);
 }
 
 } // namespace aleatoric

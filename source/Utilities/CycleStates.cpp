@@ -19,11 +19,13 @@ void UniForward::reset(int &nextPosition, const Range &range)
     nextPosition = range.start;
 }
 
-void UniForward::setRange(int &nextPosition,
+void UniForward::setRange(const int &lastPosition,
+                          int &nextPosition,
                           const Range &range,
                           const bool &haveRequestedFirstNumber)
 {
-    auto lastPosition = nextPosition - 1;
+    nextPosition = lastPosition + 1;
+
     if(lastPosition == range.end || !range.numberIsInRange(lastPosition) ||
        !haveRequestedFirstNumber) {
         nextPosition = range.start;
@@ -48,11 +50,13 @@ void UniReverse::reset(int &nextPosition, const Range &range)
     nextPosition = range.end;
 }
 
-void UniReverse::setRange(int &nextPosition,
+void UniReverse::setRange(const int &lastPosition,
+                          int &nextPosition,
                           const Range &range,
                           const bool &haveRequestedFirstNumber)
 {
-    auto lastPosition = nextPosition + 1;
+    nextPosition = lastPosition - 1;
+
     if(!range.numberIsInRange(lastPosition) || lastPosition == range.start ||
        !haveRequestedFirstNumber) {
         nextPosition = range.end;
@@ -84,18 +88,19 @@ void Bidirectional::reset(int &nextPosition, const Range &range)
     nextPosition = m_reverse ? range.end : range.start;
 }
 
-void Bidirectional::setRange(int &nextPosition,
+void Bidirectional::setRange(const int &lastPosition,
+                             int &nextPosition,
                              const Range &range,
                              const bool &haveRequestedFirstNumber)
 {
-    auto lastPosition = m_reverse ? nextPosition + 1 : nextPosition - 1;
+    nextPosition = m_reverse ? lastPosition - 1 : lastPosition + 1;
 
-    if(lastPosition == range.end) {
+    if(haveRequestedFirstNumber && lastPosition == range.end) {
         nextPosition = range.end - 1;
         m_reverse = true;
     }
 
-    if(lastPosition == range.start) {
+    if(haveRequestedFirstNumber && lastPosition == range.start) {
         nextPosition = range.start + 1;
         m_reverse = false;
     }

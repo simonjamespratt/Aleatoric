@@ -4,6 +4,7 @@
 #include "IDiscreteGenerator.hpp"
 #include "IUniformGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 #include "Utilities.hpp"
 
@@ -12,6 +13,9 @@
 namespace aleatoric {
 class Subset : public NumberProtocol {
   public:
+    Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
+           std::unique_ptr<IDiscreteGenerator> discreteGenerator);
+
     Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
            std::unique_ptr<IDiscreteGenerator> discreteGenerator,
            Range range,
@@ -25,8 +29,9 @@ class Subset : public NumberProtocol {
 
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     std::unique_ptr<IUniformGenerator> m_uniformGenerator;
@@ -37,6 +42,10 @@ class Subset : public NumberProtocol {
     int m_subsetMax;
     std::vector<int> m_subset;
     void setSubset();
+    void checkSubsetValues(const int &subsetMin,
+                           const int &subsetMax,
+                           const Range &range);
+    void initialise();
 };
 } // namespace aleatoric
 #endif /* Subset_hpp */

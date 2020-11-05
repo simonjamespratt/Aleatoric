@@ -5,12 +5,59 @@
 #include <numeric> // std::accumulate
 
 namespace aleatoric {
+Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)), m_range(0, 1)
+{
+    m_generator->setDistributionVector(std::vector<double> {0.5, 0.5});
+}
+
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
                      Range range,
                      std::vector<double> distribution)
-: m_generator(std::move(generator)),
-  m_range(range),
-  m_haveRequestedFirstNumber(false)
+: m_generator(std::move(generator)), m_range(range)
+{
+    checkDistributionIsValid(distribution);
+    checkDistributionMatchesRange(distribution, m_range);
+    m_generator->setDistributionVector(distribution);
+}
+
+Precision::~Precision()
+{}
+
+int Precision::getIntegerNumber()
+{
+    return m_generator->getNumber() + m_range.offset;
+}
+
+double Precision::getDecimalNumber()
+{
+    return static_cast<double>(getIntegerNumber());
+}
+
+void Precision::reset()
+{}
+
+void Precision::setParams(NumberProtocolParameters newParams)
+{
+    auto newDistribution = newParams.protocols.getPrecision().getDistribution();
+    auto newRange = newParams.getRange();
+    checkDistributionIsValid(newDistribution);
+    checkDistributionMatchesRange(newDistribution, newRange);
+    m_generator->setDistributionVector(newDistribution);
+    m_range = newRange;
+}
+
+NumberProtocolParameters Precision::getParams()
+{
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(NumberProtocolParameters::Precision(
+            m_generator->getDistributionVector())));
+}
+
+// Private methods
+void Precision::checkDistributionIsValid(
+    const std::vector<double> &distribution)
 {
     double sumDistValues =
         std::accumulate(distribution.begin(), distribution.end(), 0.0);
@@ -32,67 +79,14 @@ Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator,
             "The sum of the values provided as the vector for the "
             "distribution must equal 1.0");
     }
+}
 
-    if(distribution.size() != m_range.size) {
+void Precision::checkDistributionMatchesRange(
+    const std::vector<double> &distribution, const Range &range)
+{
+    if(distribution.size() != range.size) {
         throw std::invalid_argument("The vector size for the distribution must "
                                     "match the size of the provided range");
     }
-
-    m_generator->setDistributionVector(distribution);
-}
-
-Precision::~Precision()
-{}
-
-int Precision::getIntegerNumber()
-{
-    m_haveRequestedFirstNumber = true;
-    return m_generator->getNumber() + m_range.offset;
-}
-
-double Precision::getDecimalNumber()
-{
-    return static_cast<double>(getIntegerNumber());
-}
-
-void Precision::reset()
-{
-    m_haveRequestedFirstNumber = false;
-}
-
-void Precision::setRange(Range newRange)
-{
-    auto oldRange = m_range;
-    m_range = newRange;
-
-    // TODO: DYNAMIC-PARAMS: this is an interim measure and should be
-    // updated when the solution for altering all params at the same
-    // time is implemented.
-    auto distribution = m_generator->getDistributionVector();
-
-    if(newRange.size > distribution.size()) {
-        auto difference = newRange.size - distribution.size();
-        for(int i = 0; i < difference; i++) {
-            distribution.push_back(0.0);
-        }
-        m_generator->setDistributionVector(distribution);
-    }
-
-    // NB: as it stands, this produces a set of dist values that doesn't add up
-    // to 1. Not putting it right because it's an interim measure. But if, for
-    // whatever reason, it ends up staying, then it'll need some maths to work
-    // out how the chopped off values should be redistributed.
-    if(newRange.size < distribution.size()) {
-        auto difference = distribution.size() - newRange.size;
-        for(int i = 0; i < difference; i++) {
-            distribution.pop_back();
-        }
-        m_generator->setDistributionVector(distribution);
-    }
-}
-
-Range Precision::getRange()
-{
-    return m_range;
 }
 } // namespace aleatoric

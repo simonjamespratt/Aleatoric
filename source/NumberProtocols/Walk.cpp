@@ -7,6 +7,14 @@
 #include <string>
 
 namespace aleatoric {
+Walk::Walk(std::unique_ptr<IUniformGenerator> generator)
+: m_generator(std::move(generator)),
+  m_range(0, 1),
+  m_maxStep(1),
+  m_haveRequestedFirstNumber(false)
+{
+    m_generator->setDistribution(m_range.start, m_range.end);
+}
 
 Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
            Range range,
@@ -16,11 +24,7 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
   m_maxStep(maxStep),
   m_haveRequestedFirstNumber(false)
 {
-    if(maxStep > m_range.size) {
-        throw std::invalid_argument("The value passed as argument for maxStep "
-                                    "must be less than or equal to " +
-                                    std::to_string(m_range.size));
-    }
+    checkMaxStepIsValid(maxStep, m_range);
 
     m_generator->setDistribution(m_range.start, m_range.end);
 }
@@ -50,25 +54,23 @@ void Walk::reset()
     m_haveRequestedFirstNumber = false;
 }
 
-void Walk::setRange(Range newRange)
+void Walk::setParams(NumberProtocolParameters newParams)
 {
-    m_range = newRange;
-    m_generator->setDistribution(m_range.start, m_range.end);
+    auto maxStep = newParams.protocols.getWalk().getMaxStep();
+    auto newRange = newParams.getRange();
 
-    if(m_haveRequestedFirstNumber &&
-       m_range.numberIsInRange(m_lastNumberSelected)) {
-        setForNextStep(m_lastNumberSelected);
-    }
+    checkMaxStepIsValid(maxStep, newRange);
 
-    // TODO: DYNAMIC-PARAMS: might want to make sure the maxStep is not >
-    // newRange.size when we start updating all params at once. It doesn't break
-    // the protocol but it might be something to throw execption about as per in
-    // the constructor? Or maybe not?
+    m_maxStep = maxStep;
+    setRange(newRange);
 }
 
-Range Walk::getRange()
+NumberProtocolParameters Walk::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::Walk(m_maxStep)));
 }
 
 // Private methods
@@ -81,6 +83,26 @@ void Walk::setForNextStep(int lastSelectedNumber)
 
     m_generator->setDistribution(std::get<0>(newSubRange),
                                  std::get<1>(newSubRange));
+}
+
+void Walk::checkMaxStepIsValid(int maxStep, Range range)
+{
+    if(maxStep < 1 || maxStep > range.size) {
+        throw std::invalid_argument("The value passed as argument for maxStep "
+                                    "must be less than or equal to " +
+                                    std::to_string(range.size));
+    }
+}
+
+void Walk::setRange(Range newRange)
+{
+    m_range = newRange;
+    m_generator->setDistribution(m_range.start, m_range.end);
+
+    if(m_haveRequestedFirstNumber &&
+       m_range.numberIsInRange(m_lastNumberSelected)) {
+        setForNextStep(m_lastNumberSelected);
+    }
 }
 
 } // namespace aleatoric

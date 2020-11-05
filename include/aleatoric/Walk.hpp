@@ -3,6 +3,7 @@
 
 #include "IUniformGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -63,6 +64,8 @@ namespace aleatoric {
  */
 class Walk : public NumberProtocol {
   public:
+    Walk(std::unique_ptr<IUniformGenerator> generator);
+
     /*!
      * @brief Construct a new Walk object
      *
@@ -71,10 +74,10 @@ class Walk : public NumberProtocol {
      *
      * @param range The range within which to produce numbers.
      *
-     * @param maxStep The maximum step value used for calculating the sub-range
-     * for the walk through the main range. For a detailed description of its
-     * use in the protocol, see above. Note that the value supplied must not
-     * exceed the size of the main range.
+     * @param maxStep The maximum step value used for calculating the
+     * sub-range for the walk through the main range. For a detailed
+     * description of its use in the protocol, see above. Note that the
+     * value supplied must not exceed the size of the main range.
      */
     Walk(std::unique_ptr<IUniformGenerator> generator,
          Range range,
@@ -104,8 +107,9 @@ class Walk : public NumberProtocol {
      */
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     Range m_range;
@@ -114,6 +118,8 @@ class Walk : public NumberProtocol {
     void setForNextStep(int lastSelectedNumber);
     bool m_haveRequestedFirstNumber;
     int m_lastNumberSelected;
+    void checkMaxStepIsValid(int maxStep, Range range);
+    void setRange(Range newRange);
 };
 } // namespace aleatoric
 

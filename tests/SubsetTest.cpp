@@ -8,143 +8,95 @@
 
 #include <catch2/catch.hpp>
 
+SCENARIO("Numbers::Subset: default constructor")
+{
+    using namespace aleatoric;
+
+    Subset instance(std::make_unique<UniformGenerator>(),
+                    std::make_unique<DiscreteGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        auto subsetParams = params.protocols.getSubset();
+
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+        REQUIRE(subsetParams.getMin() == 1);
+        REQUIRE(subsetParams.getMax() == 2);
+    }
+
+    THEN("Possible unique values in a set are as expected")
+    {
+        std::vector<std::vector<int>> possibleUniqueValues {{0}, {1}, {0, 1}};
+        std::vector<int> set(1000);
+        for(auto &&i : set) {
+            i = instance.getIntegerNumber();
+        }
+
+        auto uniqueValues = set;
+        std::sort(uniqueValues.begin(), uniqueValues.end());
+        auto last = std::unique(uniqueValues.begin(), uniqueValues.end());
+        uniqueValues.erase(last,
+                           uniqueValues.end()); // removes spaces previously
+                                                // taken up by duplicates
+        REQUIRE_THAT(uniqueValues,
+                     Catch::Equals(possibleUniqueValues[0]) ||
+                         Catch::Equals(possibleUniqueValues[1]) ||
+                         Catch::Equals(possibleUniqueValues[2]));
+    }
+}
+
 SCENARIO("Numbers::Subset")
 {
+    using namespace aleatoric;
+
     GIVEN("Construction: with invalid subset parameters")
     {
-        WHEN("The subset min is less than 1")
+        WHEN("Min is less than 1")
         {
-            THEN("A standard invalid_argument execption is thrown")
+            THEN("Throw execption")
             {
                 int invalidSubsetMin = 0;
 
-                REQUIRE_THROWS_AS(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        10),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        10),
-                    "The value passed as argument for subsetMin must be "
-                    "between 1 and the range size, inclusive");
+                REQUIRE_THROWS_AS(Subset(std::make_unique<UniformGenerator>(),
+                                         std::make_unique<DiscreteGenerator>(),
+                                         Range(0, 9),
+                                         invalidSubsetMin,
+                                         9),
+                                  std::invalid_argument);
             }
         }
 
-        WHEN("The subset min is greater than the range size")
+        WHEN("Min is greater than max")
         {
-            THEN("A standard invalid_argument execption is thrown")
+            THEN("Throw execption")
             {
-                int invalidSubsetMin = 11;
+                int invalidMin = 7;
+                int invalidMax = 6;
 
-                REQUIRE_THROWS_AS(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        10),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        10),
-                    "The value passed as argument for subsetMin must be "
-                    "between 1 and the range size, inclusive");
+                REQUIRE_THROWS_AS(Subset(std::make_unique<UniformGenerator>(),
+                                         std::make_unique<DiscreteGenerator>(),
+                                         Range(0, 9),
+                                         invalidMin,
+                                         invalidMax),
+                                  std::invalid_argument);
             }
         }
 
-        WHEN("The subset max is less than 1")
+        WHEN("Max is greater than the range size")
         {
-            THEN("A standard invalid_argument execption is thrown")
-            {
-                int invalidSubsetMax = 0;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        1,
-                        invalidSubsetMax),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        1,
-                        invalidSubsetMax),
-                    "The value passed as argument for subsetMax must be "
-                    "between 1 and the range size, inclusive");
-            }
-        }
-
-        WHEN("The subset max is greater than the range size")
-        {
-            THEN("A standard invalid_argument execption is thrown")
+            THEN("Throw execption")
             {
                 int invalidSubsetMax = 11;
 
-                REQUIRE_THROWS_AS(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        1,
-                        invalidSubsetMax),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        1,
-                        invalidSubsetMax),
-                    "The value passed as argument for subsetMax must be "
-                    "between 1 and the range size, inclusive");
-            }
-        }
-
-        WHEN("The subset min is greater than the subset max")
-        {
-            THEN("A standard invalid_argument execption is thrown")
-            {
-                int invalidSubsetMin = 2;
-                int invalidSubsetMax = 1;
-
-                REQUIRE_THROWS_AS(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        invalidSubsetMax),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    aleatoric::Subset(
-                        std::make_unique<aleatoric::UniformGenerator>(),
-                        std::make_unique<aleatoric::DiscreteGenerator>(),
-                        aleatoric::Range(0, 9),
-                        invalidSubsetMin,
-                        invalidSubsetMax),
-                    "The value passed for subsetMin may not be greater than "
-                    "that of subsetMax");
+                REQUIRE_THROWS_AS(Subset(std::make_unique<UniformGenerator>(),
+                                         std::make_unique<DiscreteGenerator>(),
+                                         Range(0, 9),
+                                         1,
+                                         invalidSubsetMax),
+                                  std::invalid_argument);
             }
         }
     }
@@ -165,19 +117,18 @@ SCENARIO("Numbers::Subset")
                 ALLOW_CALL(*uniformGeneratorPointer,
                            setDistribution(ANY(int), ANY(int)));
 
-                aleatoric::Range range(1, 10);
+                Range range(1, 10);
 
                 REQUIRE_CALL(*uniformGeneratorPointer,
                              setDistribution(subSetMin, subSetMax));
 
                 REQUIRE_CALL(*uniformGeneratorPointer, getNumber()).RETURN(1);
 
-                aleatoric::Subset(
-                    std::move(uniformGenerator),
-                    std::make_unique<aleatoric::DiscreteGenerator>(),
-                    range,
-                    subSetMin,
-                    subSetMax);
+                Subset(std::move(uniformGenerator),
+                       std::make_unique<DiscreteGenerator>(),
+                       range,
+                       subSetMin,
+                       subSetMax);
             }
 
             THEN("The subset collection should be filled with non-repeated "
@@ -190,7 +141,7 @@ SCENARIO("Numbers::Subset")
                 const int selectedSubsetSize = 5;
                 int numberSelectedByDiscreteGenerator = 1;
 
-                aleatoric::Range range(1, 10);
+                Range range(1, 10);
 
                 auto uniformGenerator =
                     std::make_unique<UniformGeneratorMock>();
@@ -219,11 +170,11 @@ SCENARIO("Numbers::Subset")
                                              0.0))
                     .TIMES(selectedSubsetSize);
 
-                aleatoric::Subset(std::move(uniformGenerator),
-                                  std::move(discreteGenerator),
-                                  range,
-                                  subSetMin,
-                                  subSetMax);
+                Subset(std::move(uniformGenerator),
+                       std::move(discreteGenerator),
+                       range,
+                       subSetMin,
+                       subSetMax);
             }
 
             THEN("The uniform generator should be set for selecting indices "
@@ -235,7 +186,7 @@ SCENARIO("Numbers::Subset")
                     std::make_unique<UniformGeneratorMock>();
                 auto uniformGeneratorPointer = uniformGenerator.get();
 
-                aleatoric::Range range(1, 10);
+                Range range(1, 10);
 
                 ALLOW_CALL(*uniformGeneratorPointer,
                            setDistribution(ANY(int), ANY(int)));
@@ -246,12 +197,11 @@ SCENARIO("Numbers::Subset")
                 REQUIRE_CALL(*uniformGeneratorPointer,
                              setDistribution(0, selectedSubsetSize - 1));
 
-                aleatoric::Subset(
-                    std::move(uniformGenerator),
-                    std::make_unique<aleatoric::DiscreteGenerator>(),
-                    range,
-                    subSetMin,
-                    subSetMax);
+                Subset(std::move(uniformGenerator),
+                       std::make_unique<DiscreteGenerator>(),
+                       range,
+                       subSetMin,
+                       subSetMax);
             }
         }
     }
@@ -265,7 +215,7 @@ SCENARIO("Numbers::Subset")
             const int selectedSubsetSize = 5;
             int numberSelectedByDiscreteGenerator = 1;
 
-            aleatoric::Range range(1, 10);
+            Range range(1, 10);
 
             auto uniformGenerator = std::make_unique<UniformGeneratorMock>();
             auto uniformGeneratorPointer = uniformGenerator.get();
@@ -290,11 +240,11 @@ SCENARIO("Numbers::Subset")
                 updateDistributionVector(numberSelectedByDiscreteGenerator,
                                          0.0));
 
-            aleatoric::Subset instance(std::move(uniformGenerator),
-                                       std::move(discreteGenerator),
-                                       range,
-                                       subSetMin,
-                                       subSetMax);
+            Subset instance(std::move(uniformGenerator),
+                            std::move(discreteGenerator),
+                            range,
+                            subSetMin,
+                            subSetMax);
 
             THEN("It should select an item from the subset collection "
                  "using a generated number as the index to select")
@@ -325,7 +275,7 @@ SCENARIO("Numbers::Subset")
             int subSetMin = 4;
             int subSetMax = 7;
 
-            aleatoric::Range range(1, 10);
+            Range range(1, 10);
 
             auto uniformGenerator = std::make_unique<UniformGeneratorMock>();
             auto uniformGeneratorPointer = uniformGenerator.get();
@@ -345,11 +295,11 @@ SCENARIO("Numbers::Subset")
             ALLOW_CALL(*discreteGeneratorPointer,
                        updateDistributionVector(ANY(int), ANY(double)));
 
-            aleatoric::Subset instance(std::move(uniformGenerator),
-                                       std::move(discreteGenerator),
-                                       range,
-                                       subSetMin,
-                                       subSetMax);
+            Subset instance(std::move(uniformGenerator),
+                            std::move(discreteGenerator),
+                            range,
+                            subSetMin,
+                            subSetMax);
 
             THEN("A subset size should have been chosen that is within the "
                  "subset min and max values received (inclusive)")
@@ -408,42 +358,140 @@ SCENARIO("Numbers::Subset")
             }
         }
     }
+}
 
-    GIVEN("The object is constructed (with real dependencies")
+SCENARIO("Numbers::subset: params")
+{
+    using namespace aleatoric;
+
+    int subsetMin = 2;
+    int subsetMax = 8;
+
+    Subset instance(std::make_unique<UniformGenerator>(),
+                    std::make_unique<DiscreteGenerator>(),
+                    Range(1, 10),
+                    subsetMin,
+                    subsetMax);
+
+    WHEN("Get params")
     {
-        aleatoric::Subset realInstance(
-            std::make_unique<aleatoric::UniformGenerator>(),
-            std::make_unique<aleatoric::DiscreteGenerator>(),
-            aleatoric::Range(1, 10),
-            3,
-            5);
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
 
-        WHEN("The range is changed")
+        THEN("Reflects object state")
         {
-            aleatoric::Range newRange(11, 22);
-            realInstance.setRange(newRange);
+            auto subsetParams = params.protocols.getSubset();
+            REQUIRE(returnedRange.start == 1);
+            REQUIRE(returnedRange.end == 10);
+            REQUIRE(subsetParams.getMin() == subsetMin);
+            REQUIRE(subsetParams.getMax() == subsetMax);
+            REQUIRE(
+                params.protocols.getActiveProtocol() ==
+                NumberProtocolParameters::Protocols::ActiveProtocol::subset);
+        }
+    }
 
-            THEN("The returned range should match the one received")
-            {
-                auto returnedRange = realInstance.getRange();
-                REQUIRE(returnedRange.start == newRange.start);
-                REQUIRE(returnedRange.end == newRange.end);
+    WHEN("Set params")
+    {
+        Range newRange(20, 30);
+        int newMin = 3;
+        int newMax = 5;
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::Subset(newMin, newMax)));
+        instance.setParams(newParams);
+
+        auto params = instance.getParams();
+        auto returnedRange = params.getRange();
+        auto subsetParams = params.protocols.getSubset();
+
+        THEN("Object state is updated")
+        {
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+            REQUIRE(subsetParams.getMin() == newMin);
+            REQUIRE(subsetParams.getMax() == newMax);
+        }
+
+        WHEN("Output")
+        {
+            std::vector<int> set(1000);
+            for(auto &&i : set) {
+                i = instance.getIntegerNumber();
             }
 
-            AND_WHEN("A set of numbers is requested")
+            THEN("All numbers should be in new range")
             {
-                std::vector<int> set(100);
                 for(auto &&i : set) {
-                    i = realInstance.getIntegerNumber();
+                    REQUIRE(newRange.numberIsInRange(i));
                 }
+            }
 
-                THEN("The set contains only numbers from the new range")
-                {
-                    for(auto &&i : set) {
-                        REQUIRE(i >= newRange.start);
-                        REQUIRE(i <= newRange.end);
-                    }
-                }
+            THEN("number of unique values is between subset min max")
+            {
+                auto uniqueValues = set;
+                std::sort(uniqueValues.begin(), uniqueValues.end());
+                auto last =
+                    std::unique(uniqueValues.begin(), uniqueValues.end());
+                uniqueValues.erase(
+                    last,
+                    uniqueValues.end()); // removes spaces previously taken up
+                                         // by duplicates
+                REQUIRE(uniqueValues.size() >= newMin);
+                REQUIRE(uniqueValues.size() <= newMax);
+            }
+        }
+    }
+
+    WHEN("Set params: invalid params")
+    {
+        WHEN("Min is less than 1")
+        {
+            int newMin = 0;
+            int newMax = 7;
+            NumberProtocolParameters newParams(
+                Range(20, 30),
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Subset(newMin, newMax)));
+
+            THEN("Throw execption")
+            {
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
+            }
+        }
+
+        WHEN("Min is greater than max")
+        {
+            int newMin = 8;
+            int newMax = 7;
+            NumberProtocolParameters newParams(
+                Range(20, 30),
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Subset(newMin, newMax)));
+
+            THEN("Throw execption")
+            {
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
+            }
+        }
+
+        WHEN("Max is greater than the range size")
+        {
+            Range newRange(20, 30);
+            int newMin = 8;
+            int newMax = newRange.size + 1;
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::Subset(newMin, newMax)));
+
+            THEN("Throw execption")
+            {
+                REQUIRE_THROWS_AS(instance.setParams(newParams),
+                                  std::invalid_argument);
             }
         }
     }

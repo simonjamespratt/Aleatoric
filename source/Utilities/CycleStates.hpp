@@ -9,7 +9,8 @@ class CycleState {
   public:
     virtual int getPosition(int &nextPosition, const Range &range) = 0;
     virtual void reset(int &nextPosition, const Range &range) = 0;
-    virtual void setRange(int &nextPosition,
+    virtual void setRange(const int &lastPosition,
+                          int &nextPosition,
                           const Range &range,
                           const bool &haveRequestedFirstNumber) = 0;
     virtual ~CycleState() = default;
@@ -21,7 +22,8 @@ class UniForward : public CycleState {
     UniForward();
     int getPosition(int &nextPosition, const Range &range) override;
     void reset(int &nextPosition, const Range &range) override;
-    void setRange(int &nextPosition,
+    void setRange(const int &lastPosition,
+                  int &nextPosition,
                   const Range &range,
                   const bool &haveRequestedFirstNumber) override;
 };
@@ -31,7 +33,8 @@ class UniReverse : public CycleState {
     UniReverse();
     int getPosition(int &nextPosition, const Range &range) override;
     void reset(int &nextPosition, const Range &range) override;
-    void setRange(int &nextPosition,
+    void setRange(const int &lastPosition,
+                  int &nextPosition,
                   const Range &range,
                   const bool &haveRequestedFirstNumber) override;
 };
@@ -41,7 +44,8 @@ class Bidirectional : public CycleState {
     Bidirectional(bool initialStateReverse);
     int getPosition(int &nextPosition, const Range &range) override;
     void reset(int &nextPosition, const Range &range) override;
-    void setRange(int &nextPosition,
+    void setRange(const int &lastPosition,
+                  int &nextPosition,
                   const Range &range,
                   const bool &haveRequestedFirstNumber) override;
 

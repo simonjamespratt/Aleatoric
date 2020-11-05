@@ -14,6 +14,7 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumbersProducer.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocol.hpp
+    ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocolParameters.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Serial.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Basic.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NoRepetition.hpp
@@ -25,7 +26,6 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Range.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocolFactory.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Cycle.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Ratio.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Subset.hpp
@@ -59,7 +59,8 @@ add_library(
     NumberProtocols/GranularWalk.cpp
     NumberProtocols/GroupedRepetition.cpp
     NumberProtocols/NoRepetition.cpp
-    NumberProtocols/NumberProtocolFactory.cpp
+    NumberProtocols/NumberProtocol.cpp
+    NumberProtocols/NumberProtocolParameters.cpp
     NumberProtocols/Periodic.cpp
     NumberProtocols/Precision.cpp
     NumberProtocols/Ratio.cpp

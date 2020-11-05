@@ -16,6 +16,17 @@ namespace aleatoric {
 // this away from the original should there be a desire to change it in the
 // future.
 Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
+               std::unique_ptr<IDiscreteGenerator> discreteGenerator)
+: m_uniformGenerator(std::move(uniformGenerator)),
+  m_discreteGenerator(std::move(discreteGenerator)),
+  m_range(0, 1),
+  m_subsetMin(1),
+  m_subsetMax(2)
+{
+    initialise();
+}
+
+Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
                std::unique_ptr<IDiscreteGenerator> discreteGenerator,
                Range range,
                int subsetMin,
@@ -24,28 +35,10 @@ Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
   m_discreteGenerator(std::move(discreteGenerator)),
   m_range(range),
   m_subsetMin(subsetMin),
-  m_subsetMax(subsetMax),
-  m_seriesPrinciple()
+  m_subsetMax(subsetMax)
 {
-    if(m_subsetMin < 1 || m_subsetMin > m_range.size) {
-        throw std::invalid_argument(
-            "The value passed as argument for subsetMin must be between 1 and "
-            "the range size, inclusive");
-    }
-
-    if(m_subsetMax < 1 || m_subsetMax > m_range.size) {
-        throw std::invalid_argument(
-            "The value passed as argument for subsetMax must be between 1 and "
-            "the range size, inclusive");
-    }
-
-    if(m_subsetMin > m_subsetMax) {
-        throw std::invalid_argument("The value passed for subsetMin may not be "
-                                    "greater than that of subsetMax");
-    }
-
-    m_discreteGenerator->setDistributionVector(m_range.size, 1.0);
-    setSubset();
+    checkSubsetValues(m_subsetMin, m_subsetMax, m_range);
+    initialise();
 }
 
 Subset::~Subset()
@@ -67,20 +60,28 @@ void Subset::reset()
     setSubset();
 }
 
-void Subset::setRange(Range newRange)
+void Subset::setParams(NumberProtocolParameters newParams)
 {
+    auto subsetParams = newParams.protocols.getSubset();
+    auto newMin = subsetParams.getMin();
+    auto newMax = subsetParams.getMax();
+    auto newRange = newParams.getRange();
+
+    checkSubsetValues(newMin, newMax, newRange);
+
+    m_subsetMin = newMin;
+    m_subsetMax = newMax;
     m_range = newRange;
     m_discreteGenerator->setDistributionVector(m_range.size, 1.0);
     setSubset();
-    // TODO: DYNAMIC-PARAMS: there is coupling here between range and subset
-    // min/max. have disregarded possibility of these two getting out of sync
-    // (as per exception checks above) as they should be addressed when params
-    // as a whole can be updated in next stage
 }
 
-Range Subset::getRange()
+NumberProtocolParameters Subset::getParams()
 {
-    return m_range;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::Subset(m_subsetMin, m_subsetMax)));
 }
 
 // Private methods
@@ -97,6 +98,29 @@ void Subset::setSubset()
 
     // now set the uniformGenerator to pick indices from the subset
     m_uniformGenerator->setDistribution(0, m_subset.size() - 1);
+}
+
+void Subset::checkSubsetValues(const int &subsetMin,
+                               const int &subsetMax,
+                               const Range &range)
+{
+    if(subsetMin < 1 || subsetMin > subsetMax) {
+        throw std::invalid_argument(
+            "The value passed as argument for subsetMin must be greater than 1 "
+            "and less than subsetMin");
+    }
+
+    if(subsetMax < subsetMin || subsetMax > range.size) {
+        throw std::invalid_argument(
+            "The value passed as argument for subsetMax must be greater than "
+            "subsetMin and no greater than the range size");
+    }
+}
+
+void Subset::initialise()
+{
+    m_discreteGenerator->setDistributionVector(m_range.size, 1.0);
+    setSubset();
 }
 
 } // namespace aleatoric

@@ -8,14 +8,46 @@
 #include <memory>
 #include <stdexcept> // std::invalid_argument
 
-SCENARIO("Numbers::AdjacentSteps")
+SCENARIO("Numbers::AdjacentSteps: default construction")
 {
+    using namespace aleatoric;
+
+    AdjacentSteps instance(std::make_unique<DiscreteGenerator>());
+
+    THEN("Params are set to defaults")
+    {
+        auto params = instance.getParams();
+        auto range = params.getRange();
+        REQUIRE(range.start == 0);
+        REQUIRE(range.end == 1);
+    }
+
+    THEN("A set of numbers should be as expected")
+    {
+        std::vector<std::vector<int>> possibleResults {{0, 1, 0, 1, 0, 1},
+                                                       {1, 0, 1, 0, 1, 0}};
+
+        std::vector<int> set(6);
+        for(auto &&i : set) {
+            i = instance.getIntegerNumber();
+        }
+
+        REQUIRE_THAT(set,
+                     Catch::Equals(possibleResults[0]) ||
+                         Catch::Equals(possibleResults[1]));
+    }
+}
+
+SCENARIO("Numbers::AdjacentSteps: constructed with params")
+{
+    using namespace aleatoric;
+
     GIVEN("Construction")
     {
         auto generator = std::make_unique<DiscreteGeneratorMock>();
         auto generatorPointer = generator.get();
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         WHEN("The object is constructed")
         {
@@ -23,7 +55,7 @@ SCENARIO("Numbers::AdjacentSteps")
             {
                 REQUIRE_CALL(*generatorPointer,
                              setDistributionVector(range.size, 1.0));
-                aleatoric::AdjacentSteps(std::move(generator), range);
+                AdjacentSteps(std::move(generator), range);
             }
         }
     }
@@ -36,10 +68,10 @@ SCENARIO("Numbers::AdjacentSteps")
         ALLOW_CALL(*generatorPointer, updateDistributionVector(ANY(int), 1.0));
         ALLOW_CALL(*generatorPointer, setDistributionVector(ANY(int), 1.0));
 
-        aleatoric::Range range(1, 3);
+        Range range(1, 3);
 
         int generatedNumber = 1;
-        aleatoric::AdjacentSteps instance(std::move(generator), range);
+        AdjacentSteps instance(std::move(generator), range);
 
         WHEN("A number is requested")
         {
@@ -148,126 +180,138 @@ SCENARIO("Numbers::AdjacentSteps")
                 }
             }
         }
+    }
+}
 
-        WHEN("The range is changed")
+SCENARIO("Numbers::AdjacentSteps: params")
+{
+    using namespace aleatoric;
+
+    Range range(1, 3);
+    auto generator = std::make_unique<DiscreteGenerator>();
+    auto generatorPointer = generator.get();
+    AdjacentSteps instance(std::move(generator), range);
+
+    WHEN("Get params")
+    {
+        THEN("should match state of the object")
         {
-            aleatoric::Range newRange(2, 10);
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == range.start);
+            REQUIRE(returnedRange.end == range.end);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocolParameters::Protocols::ActiveProtocol::
+                        adjacentSteps);
+        }
+    }
 
-            THEN("The returned range should match the new range")
+    WHEN("Set params")
+    {
+        Range newRange(20, 40);
+        NumberProtocolParameters newParams(
+            newRange,
+            NumberProtocolParameters::Protocols(
+                NumberProtocolParameters::AdjacentSteps()));
+        instance.setParams(newParams);
+
+        THEN("object state is updated")
+        {
+            auto params = instance.getParams();
+            auto returnedRange = params.getRange();
+            REQUIRE(returnedRange.start == newRange.start);
+            REQUIRE(returnedRange.end == newRange.end);
+        }
+    }
+
+    WHEN("Set params: Range")
+    {
+        GIVEN("No numbers have been returned yet")
+        {
+            Range newRange(4, 7);
+            NumberProtocolParameters newParams(
+                newRange,
+                NumberProtocolParameters::Protocols(
+                    NumberProtocolParameters::AdjacentSteps()));
+            instance.setParams(newParams);
+
+            THEN("Generator distribution has equal probability for whole range")
             {
-                instance.setRange(newRange);
-                auto returnedRange = instance.getRange();
-                REQUIRE(returnedRange.start == 2);
-                REQUIRE(returnedRange.end == 10);
+                std::vector<double> expectedDistribution {1, 1, 1, 1};
+                REQUIRE(generatorPointer->getDistributionVector() ==
+                        expectedDistribution);
             }
+        }
 
-            THEN("The generator should be reconfigured to equal probability")
+        GIVEN("There is a last number returned")
+        {
+            auto lastNumber = instance.getIntegerNumber();
+
+            WHEN("It is outside the new range")
             {
-                REQUIRE_CALL(*generatorPointer,
-                             setDistributionVector(newRange.size, 1.0));
-                instance.setRange(newRange);
-            }
+                Range newRange(lastNumber + 1, lastNumber + 5);
+                NumberProtocolParameters newParams(
+                    newRange,
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::AdjacentSteps()));
+                instance.setParams(newParams);
 
-            AND_WHEN(
-                "The last returned number is mid-range within the new range")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(range.size - 1);
-                auto lastReturnedNumber = instance.getIntegerNumber();
-                aleatoric::Range newRangeAround(lastReturnedNumber - 2,
-                                                lastReturnedNumber + 2);
-
-                THEN("Only the numbers either side of it are selectable")
+                THEN("Generator dist has equal prob for whole range")
                 {
-                    REQUIRE_CALL(*generatorPointer,
-                                 updateDistributionVector(0.0));
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAround.offset) - 1,
-                            1.0));
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAround.offset) + 1,
-                            1.0));
-                    instance.setRange(newRangeAround);
+                    std::vector<double> expectedDistribution {1, 1, 1, 1, 1};
+                    REQUIRE(generatorPointer->getDistributionVector() ==
+                            expectedDistribution);
                 }
             }
 
-            AND_WHEN("The last returned number is the start of the new range")
+            WHEN("It is mid-range within new range")
             {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(range.size - 1);
-                auto lastReturnedNumber = instance.getIntegerNumber();
-                aleatoric::Range newRangeAtStart(lastReturnedNumber,
-                                                 lastReturnedNumber + 2);
+                Range newRange(lastNumber - 2, lastNumber + 2);
+                NumberProtocolParameters newParams(
+                    newRange,
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::AdjacentSteps()));
+                instance.setParams(newParams);
 
-                THEN("Only the number above should be selectable")
+                THEN("Only numbers either side of it are selectable")
                 {
-                    REQUIRE_CALL(*generatorPointer,
-                                 updateDistributionVector(0.0));
-                    FORBID_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAtStart.offset) - 1,
-                            1.0));
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAtStart.offset) + 1,
-                            1.0));
-                    instance.setRange(newRangeAtStart);
+                    std::vector<double> expectedDist {0, 1, 0, 1, 0};
+                    REQUIRE(generatorPointer->getDistributionVector() ==
+                            expectedDist);
                 }
             }
 
-            AND_WHEN("The last returned number is the end of the new range")
+            WHEN("It is start of the new range")
             {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(range.size - 1);
-                auto lastReturnedNumber = instance.getIntegerNumber();
-                aleatoric::Range newRangeAtEnd(lastReturnedNumber - 2,
-                                               lastReturnedNumber);
+                Range newRange(lastNumber, lastNumber + 4);
+                NumberProtocolParameters newParams(
+                    newRange,
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::AdjacentSteps()));
+                instance.setParams(newParams);
 
-                THEN("Only the number below should be selectable")
+                THEN("Only the number above is selectable")
                 {
-                    REQUIRE_CALL(*generatorPointer,
-                                 updateDistributionVector(0.0));
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAtEnd.offset) - 1,
-                            1.0));
-                    FORBID_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(
-                            (lastReturnedNumber - newRangeAtEnd.offset) + 1,
-                            1.0));
-                    instance.setRange(newRangeAtEnd);
+                    std::vector<double> expectedDist {0, 1, 0, 0, 0};
+                    REQUIRE(generatorPointer->getDistributionVector() ==
+                            expectedDist);
                 }
             }
 
-            AND_WHEN("The last returned number is not within the new range")
+            WHEN("It is end of the new range")
             {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(range.size - 1);
-                auto lastReturnedNumber = instance.getIntegerNumber();
-                aleatoric::Range newRangeOutsideAndAbove(lastReturnedNumber + 1,
-                                                         lastReturnedNumber +
-                                                             3);
+                Range newRange(lastNumber - 4, lastNumber);
+                NumberProtocolParameters newParams(
+                    newRange,
+                    NumberProtocolParameters::Protocols(
+                        NumberProtocolParameters::AdjacentSteps()));
+                instance.setParams(newParams);
 
-                aleatoric::Range newRangeOutsideAndBelow(lastReturnedNumber - 5,
-                                                         lastReturnedNumber -
-                                                             1);
-                THEN("No further treatment is required")
+                THEN("Only the number below is selectable")
                 {
-                    FORBID_CALL(*generatorPointer,
-                                updateDistributionVector(0.0));
-                    FORBID_CALL(
-                        *generatorPointer,
-                        updateDistributionVector(ANY(int), ANY(double)));
-                    instance.setRange(newRangeOutsideAndAbove);
-                    instance.setRange(newRangeOutsideAndBelow);
+                    std::vector<double> expectedDist {0, 0, 0, 1, 0};
+                    REQUIRE(generatorPointer->getDistributionVector() ==
+                            expectedDist);
                 }
             }
         }

@@ -3,6 +3,7 @@
 
 #include "IDiscreteGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -53,8 +54,10 @@ namespace aleatoric {
  */
 class Periodic : public NumberProtocol {
   public:
-    /*! @brief Takes a DiscreteGenerator derived from IDiscreteGenerator and a
-     * Range
+    Periodic(std::unique_ptr<IDiscreteGenerator> generator);
+
+    /*! @brief Takes a DiscreteGenerator derived from IDiscreteGenerator and
+     * a Range
      *
      * @param generator Should be an instance of DiscreteGenerator. Default
      * construction is fine.
@@ -62,9 +65,9 @@ class Periodic : public NumberProtocol {
      * @param range The range within which to produce numbers.
      *
      * @param chanceOfRepetition is a double between 0 and 1, representing a
-     * fraction (or percentage) that determines the chance of the last selected
-     * number being selected again upon another call to getNumber(). See
-     * detailed description for more details.
+     * fraction (or percentage) that determines the chance of the last
+     * selected number being selected again upon another call to
+     * getNumber(). See detailed description for more details.
      */
     Periodic(std::unique_ptr<IDiscreteGenerator> generator,
              Range range,
@@ -93,9 +96,9 @@ class Periodic : public NumberProtocol {
      */
     void reset() override;
 
-    void setRange(Range newRange) override;
+    void setParams(NumberProtocolParameters newParams) override;
 
-    Range getRange() override;
+    NumberProtocolParameters getParams() override;
 
   private:
     Range m_range;
@@ -103,6 +106,7 @@ class Periodic : public NumberProtocol {
     double m_periodicity;
     void setPeriodicDistribution(int selectedIndex);
     double calculateRemainerAllocation();
+    void setRange(Range newRange);
     bool m_haveRequestedFirstNumber;
     int m_lastReturnedNumber;
 };

@@ -7,11 +7,20 @@
 #include <numeric> // std::accumulate
 
 namespace aleatoric {
+Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator)
+: m_generator(std::move(generator)),
+  m_range(0, 1),
+  m_periodicity(0.0),
+  m_haveRequestedFirstNumber(false)
+{
+    m_generator->setDistributionVector(m_range.size, 1.0);
+}
+
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator,
                    Range range,
                    double chanceOfRepetition)
-: m_range(range),
-  m_generator(std::move(generator)),
+: m_generator(std::move(generator)),
+  m_range(range),
   m_periodicity(chanceOfRepetition),
   m_haveRequestedFirstNumber(false)
 {
@@ -47,24 +56,33 @@ void Periodic::reset()
     m_haveRequestedFirstNumber = false;
 }
 
-void Periodic::setRange(Range newRange)
+NumberProtocolParameters Periodic::getParams()
 {
-    auto oldRange = m_range;
-    m_range = newRange;
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(
+            NumberProtocolParameters::Periodic(m_periodicity)));
+}
 
-    m_generator->setDistributionVector(newRange.size, 1.0);
+void Periodic::setParams(NumberProtocolParameters params)
+{
+    auto chanceOfRepetition =
+        params.protocols.getPeriodic().getChanceOfRepetition();
 
-    if(m_haveRequestedFirstNumber &&
-       newRange.numberIsInRange(m_lastReturnedNumber)) {
-        setPeriodicDistribution(m_lastReturnedNumber - newRange.offset);
+    if(chanceOfRepetition < 0.0 || chanceOfRepetition > 1.0) {
+        throw std::invalid_argument(
+            "The value passed as argument for chanceOfRepetition must be "
+            "within the range of 0.0 - 1.0");
     }
+
+    // NB: order is important here. Periodicity must be set before range in
+    // order for recalculation of distibution to be done using the new
+    // periodicity
+    m_periodicity = chanceOfRepetition;
+    setRange(params.getRange());
 }
 
-Range Periodic::getRange()
-{
-    return m_range;
-}
-
+// Private methods
 double Periodic::calculateRemainerAllocation()
 {
     auto vectorSize = m_generator->getDistributionVector().size();
@@ -100,4 +118,17 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
 
     m_generator->setDistributionVector(distributionVector);
 }
+
+void Periodic::setRange(Range newRange)
+{
+    m_range = newRange;
+
+    m_generator->setDistributionVector(m_range.size, 1.0);
+
+    if(m_haveRequestedFirstNumber &&
+       m_range.numberIsInRange(m_lastReturnedNumber)) {
+        setPeriodicDistribution(m_lastReturnedNumber - m_range.offset);
+    }
+}
+
 } // namespace aleatoric

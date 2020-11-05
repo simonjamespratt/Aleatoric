@@ -3,12 +3,15 @@
 
 #include "IDiscreteGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 #include "Utilities.hpp"
 
 namespace aleatoric {
 class Ratio : public NumberProtocol {
   public:
+    Ratio(std::unique_ptr<IDiscreteGenerator> generator);
+
     Ratio(std::unique_ptr<IDiscreteGenerator> generator,
           Range range,
           std::vector<int> ratios);
@@ -21,8 +24,9 @@ class Ratio : public NumberProtocol {
 
     void reset() override;
 
-    void setRange(Range newRange) override;
-    Range getRange() override;
+    void setParams(NumberProtocolParameters newParams) override;
+
+    NumberProtocolParameters getParams() override;
 
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;
@@ -31,6 +35,9 @@ class Ratio : public NumberProtocol {
     std::vector<int> m_selectables;
     Utilities::SeriesPrinciple m_seriesPrinciple;
     void setSelectables();
+    void checkRangeAndRatiosMatch(const Range &range,
+                                  const std::vector<int> &ratios);
+    void initialise();
 };
 } // namespace aleatoric
 

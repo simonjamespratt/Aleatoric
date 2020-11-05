@@ -1,8 +1,14 @@
 #include "Basic.hpp"
 
 namespace aleatoric {
+Basic::Basic(std::unique_ptr<IUniformGenerator> generator)
+: m_generator(std::move(generator)), m_range(0, 1)
+{
+    m_generator->setDistribution(m_range.start, m_range.end);
+}
+
 Basic::Basic(std::unique_ptr<IUniformGenerator> generator, Range range)
-: m_range(range), m_generator(std::move(generator))
+: m_generator(std::move(generator)), m_range(range)
 {
     m_generator->setDistribution(m_range.start, m_range.end);
 }
@@ -26,14 +32,16 @@ void Basic::reset()
     // reset to do anything.
 }
 
-void Basic::setRange(Range newRange)
+NumberProtocolParameters Basic::getParams()
 {
-    m_range = newRange;
-    m_generator->setDistribution(m_range.start, m_range.end);
+    return NumberProtocolParameters(
+        m_range,
+        NumberProtocolParameters::Protocols(NumberProtocolParameters::Basic()));
 }
 
-Range Basic::getRange()
+void Basic::setParams(NumberProtocolParameters newParams)
 {
-    return m_range;
+    m_range = newParams.getRange();
+    m_generator->setDistribution(m_range.start, m_range.end);
 }
 } // namespace aleatoric

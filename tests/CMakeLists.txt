@@ -31,15 +31,11 @@ add_executable(Tests
     NumbersProducerTest.cpp
     CollectionsProducerTest.cpp
     DurationsProducerTest.cpp
-    NumbersTest.cpp
-    NumbersIntegrationTests.cpp
     CycleTest.cpp
     PrecisionTest.cpp
-    CollectionsIntegrationTests.cpp
     PrescribedTest.cpp
     MultiplesTest.cpp
     GeometricTest.cpp
-    DurationsIntegrationTests.cpp
     RatioTest.cpp
     GroupedRepetitionTest.cpp
     SubsetTest.cpp

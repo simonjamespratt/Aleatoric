@@ -3,6 +3,7 @@
 
 #include "CycleStates.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
@@ -10,6 +11,8 @@
 namespace aleatoric {
 class Cycle : public NumberProtocol {
   public:
+    Cycle();
+
     Cycle(Range range,
           bool bidirectional = false,
           bool reverseDirection = false);
@@ -22,15 +25,20 @@ class Cycle : public NumberProtocol {
 
     void reset() override;
 
-    void setRange(Range newRange) override;
+    void setParams(NumberProtocolParameters newParams) override;
 
-    Range getRange() override;
+    NumberProtocolParameters getParams() override;
 
   private:
     Range m_range;
+    bool m_bidirectional;
+    bool m_reverseDirection;
     std::unique_ptr<CycleState> m_state;
-    void setState(bool bidirectional, bool reverseDirection);
+    void setState();
+    void setRange(Range newRange);
+    void initialise();
     int m_nextPosition;
+    int m_lastPosition;
     bool m_haveRequestedFirstNumber;
 };
 } // namespace aleatoric

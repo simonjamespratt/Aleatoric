@@ -3,6 +3,7 @@
 
 #include "IDiscreteGenerator.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 namespace aleatoric {
@@ -41,6 +42,8 @@ namespace aleatoric {
  */
 class AdjacentSteps : public NumberProtocol {
   public:
+    AdjacentSteps(std::unique_ptr<IDiscreteGenerator> generator);
+
     /*! @brief Takes a DiscreteGenerator derived from the IDiscreteGenerator,
      * and a Range
      *
@@ -61,9 +64,9 @@ class AdjacentSteps : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    void setRange(Range newRange) override;
+    void setParams(NumberProtocolParameters newParams) override;
 
-    Range getRange() override;
+    NumberProtocolParameters getParams() override;
 
     /*! @brief Resets the state of the class to the state upon instantiation
      *
