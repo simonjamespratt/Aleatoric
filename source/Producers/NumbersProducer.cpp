@@ -1,5 +1,7 @@
 #include "NumbersProducer.hpp"
 
+#include <stdexcept>
+
 namespace aleatoric {
 NumbersProducer::NumbersProducer(std::unique_ptr<NumberProtocol> protocol)
 : m_protocol(std::move(protocol))

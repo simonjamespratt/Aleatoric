@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <math.h>  // round
 #include <numeric> // std::accumulate
+#include <stdexcept>
 
 namespace aleatoric {
 Periodic::Periodic(std::unique_ptr<IDiscreteGenerator> generator)

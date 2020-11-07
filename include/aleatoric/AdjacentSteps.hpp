@@ -6,6 +6,8 @@
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace aleatoric {
 
 /*!

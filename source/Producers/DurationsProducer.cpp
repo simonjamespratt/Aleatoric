@@ -1,5 +1,7 @@
 #include "DurationsProducer.hpp"
 
+#include <stdexcept>
+
 namespace aleatoric {
 DurationsProducer::DurationsProducer(
     std::unique_ptr<DurationProtocol> durationProtocol,

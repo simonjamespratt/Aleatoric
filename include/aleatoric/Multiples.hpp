@@ -5,6 +5,8 @@
 #include "IUniformGenerator.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace aleatoric {
 class Multiples : public DurationProtocol {
   public:

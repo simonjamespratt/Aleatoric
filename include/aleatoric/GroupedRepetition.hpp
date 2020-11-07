@@ -7,6 +7,8 @@
 #include "Range.hpp"
 #include "Utilities.hpp"
 
+#include <memory>
+
 namespace aleatoric {
 class GroupedRepetition : public NumberProtocol {
   public:

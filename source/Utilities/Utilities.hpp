@@ -3,6 +3,7 @@
 
 #include "IDiscreteGenerator.hpp"
 
+#include <memory>
 #include <tuple>
 
 namespace aleatoric { namespace Utilities {
