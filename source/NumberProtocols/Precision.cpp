@@ -3,6 +3,7 @@
 #include "ErrorChecker.hpp"
 
 #include <numeric> // std::accumulate
+#include <stdexcept>
 
 namespace aleatoric {
 Precision::Precision(std::unique_ptr<IDiscreteGenerator> generator)

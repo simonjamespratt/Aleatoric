@@ -3,6 +3,8 @@
 
 #include "NumberProtocol.hpp"
 
+#include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace aleatoric {

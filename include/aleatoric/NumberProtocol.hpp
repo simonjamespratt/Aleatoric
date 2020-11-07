@@ -4,6 +4,8 @@
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
+#include <memory>
+
 namespace aleatoric {
 
 /*! @brief Interface to which concrete protocol classes that produce random
