@@ -4,9 +4,11 @@
 
 SCENARIO("UniformGenerator")
 {
+    using namespace aleatoric;
+
     GIVEN("The class is instantiated with a default constructor")
     {
-        aleatoric::UniformGenerator instance;
+        UniformGenerator instance;
 
         WHEN("A number is requested")
         {
@@ -29,7 +31,7 @@ SCENARIO("UniformGenerator")
 
     GIVEN("The class is instantiated with a defined range")
     {
-        aleatoric::UniformGenerator instance(1, 2);
+        UniformGenerator instance(1, 2);
 
         WHEN("A number is requested")
         {
