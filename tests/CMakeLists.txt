@@ -21,6 +21,7 @@ add_executable(Tests
     main.cpp
     DiscreteGeneratorTest.cpp
     UniformGeneratorTest.cpp
+    UniformRealGeneratorTest.cpp
     SerialTest.cpp
     BasicTest.cpp
     NoRepetitionTest.cpp

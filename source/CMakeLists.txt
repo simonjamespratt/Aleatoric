@@ -11,7 +11,11 @@ FetchContent_MakeAvailable(pcg_cpp)
 # Also note that is can be globbed, but is potentially a bit flakey
 set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/IDiscreteGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformRealGenerator.hpp
+    ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformRealGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumbersProducer.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocol.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocolParameters.hpp
@@ -23,8 +27,6 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Periodic.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Walk.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/GranularWalk.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Range.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Cycle.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Ratio.hpp
@@ -52,6 +54,7 @@ add_library(
 
     Generators/DiscreteGenerator.cpp
     Generators/UniformGenerator.cpp
+    Generators/UniformRealGenerator.cpp
 
     NumberProtocols/AdjacentSteps.cpp
     NumberProtocols/Basic.cpp
