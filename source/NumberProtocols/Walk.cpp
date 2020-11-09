@@ -1,7 +1,6 @@
 #include "Walk.hpp"
 
 #include "ErrorChecker.hpp"
-#include "Utilities.hpp"
 
 #include <stdexcept> // std::invalid_argument
 #include <string>
@@ -76,13 +75,17 @@ NumberProtocolParameters Walk::getParams()
 // Private methods
 void Walk::setForNextStep(int lastSelectedNumber)
 {
-    auto newSubRange = Utilities::getMaxStepSubRange(lastSelectedNumber,
-                                                     m_maxStep,
-                                                     m_range.start,
-                                                     m_range.end);
+    auto newRangeStart = lastSelectedNumber - m_maxStep;
+    if(!m_range.numberIsInRange(newRangeStart)) {
+        newRangeStart = m_range.start;
+    }
 
-    m_generator->setDistribution(std::get<0>(newSubRange),
-                                 std::get<1>(newSubRange));
+    auto newRangeEnd = lastSelectedNumber + m_maxStep;
+    if(!m_range.numberIsInRange(newRangeEnd)) {
+        newRangeEnd = m_range.end;
+    }
+
+    m_generator->setDistribution(newRangeStart, newRangeEnd);
 }
 
 void Walk::checkMaxStepIsValid(int maxStep, Range range)

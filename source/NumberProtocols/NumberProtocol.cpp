@@ -13,6 +13,7 @@
 #include "Serial.hpp"
 #include "Subset.hpp"
 #include "UniformGenerator.hpp"
+#include "UniformRealGenerator.hpp"
 #include "Walk.hpp"
 
 namespace aleatoric {
@@ -28,7 +29,7 @@ std::unique_ptr<NumberProtocol> NumberProtocol::create(Type type)
         return std::make_unique<Cycle>();
     case Type::granularWalk:
         return std::make_unique<GranularWalk>(
-            std::make_unique<UniformGenerator>());
+            std::make_unique<UniformRealGenerator>());
     case Type::groupedRepetition:
         return std::make_unique<GroupedRepetition>(
             std::make_unique<DiscreteGenerator>(),
