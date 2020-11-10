@@ -1,21 +1,19 @@
 #ifndef UniformRealGenerator_hpp
 #define UniformRealGenerator_hpp
 
-#include "IUniformRealGenerator.hpp"
-
 #include <pcg_random.hpp>
 #include <random>
 
 namespace aleatoric {
-class UniformRealGenerator : public IUniformRealGenerator {
+class UniformRealGenerator {
   public:
     UniformRealGenerator();
     UniformRealGenerator(double rangeStart, double rangeEnd);
     ~UniformRealGenerator();
 
-    double getNumber() override;
-    void setDistribution(double rangeStart, double rangeEnd) override;
-    std::pair<double, double> getDistribution() override;
+    double getNumber();
+    void setDistribution(double rangeStart, double rangeEnd);
+    std::pair<double, double> getDistribution();
 
   private:
     pcg_extras::seed_seq_from<std::random_device> m_seedSource;

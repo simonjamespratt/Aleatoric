@@ -14,7 +14,6 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformRealGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformRealGenerator.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumbersProducer.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocol.hpp
