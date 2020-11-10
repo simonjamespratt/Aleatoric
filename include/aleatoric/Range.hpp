@@ -25,6 +25,7 @@ struct Range {
     int size;
 
     bool numberIsInRange(int number) const;
+    bool floatingPointIsInRange(double number) const;
 }; // namespace Range
 } // namespace aleatoric
 

@@ -2,17 +2,15 @@
 
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
-#include "UniformGenerator.hpp"
-#include "UniformGeneratorMock.hpp"
+#include "UniformRealGenerator.hpp"
 
 #include <catch2/catch.hpp>
-#include <catch2/trompeloeil.hpp>
 
 SCENARIO("Numbers::GranularWalk: default constructor")
 {
     using namespace aleatoric;
 
-    GranularWalk instance(std::make_unique<UniformGenerator>());
+    GranularWalk instance(std::make_unique<UniformRealGenerator>());
 
     THEN("Params are set to defaults")
     {
@@ -36,12 +34,9 @@ SCENARIO("Numbers::GranularWalk: default constructor")
     }
 }
 
-SCENARIO("Numbers::GranularWalk")
+SCENARIO("Numbers::GranularWalk: argument validity")
 {
     using namespace aleatoric;
-
-    int internalRangeMin = 0;
-    int internalRangeMax = 65000;
 
     GIVEN("Construction: with an invalid deviation factor")
     {
@@ -52,13 +47,13 @@ SCENARIO("Numbers::GranularWalk")
                 double invalidDeviation = -0.01;
 
                 REQUIRE_THROWS_AS(
-                    GranularWalk(std::make_unique<UniformGenerator>(),
+                    GranularWalk(std::make_unique<UniformRealGenerator>(),
                                  Range(10, 20),
                                  invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    GranularWalk(std::make_unique<UniformGenerator>(),
+                    GranularWalk(std::make_unique<UniformRealGenerator>(),
                                  Range(10, 20),
                                  invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
@@ -72,13 +67,13 @@ SCENARIO("Numbers::GranularWalk")
             {
                 double invalidDeviation = 1.01;
                 REQUIRE_THROWS_AS(
-                    GranularWalk(std::make_unique<UniformGenerator>(),
+                    GranularWalk(std::make_unique<UniformRealGenerator>(),
                                  Range(10, 20),
                                  invalidDeviation),
                     std::invalid_argument);
 
                 REQUIRE_THROWS_WITH(
-                    GranularWalk(std::make_unique<UniformGenerator>(),
+                    GranularWalk(std::make_unique<UniformRealGenerator>(),
                                  Range(10, 20),
                                  invalidDeviation),
                     "The value passed as argument for deviationFactor must be "
@@ -86,190 +81,107 @@ SCENARIO("Numbers::GranularWalk")
             }
         }
     }
+}
 
-    GIVEN("Construction")
+SCENARIO("Numbers::GranularWalk: basic functionality")
+{
+    using namespace aleatoric;
+
+    auto generator = std::make_unique<UniformRealGenerator>();
+    auto generatorPointer = generator.get();
+    Range range(10, 20);
+    double deviationFactor = 0.1;
+    double maxStep = (range.end - range.start) * deviationFactor; // 1
+
+    GranularWalk instance(std::move(generator), range, deviationFactor);
+
+    THEN("Generator distribution is set to full range on construction")
     {
-        double deviationFactor = 0.25;
+        auto distribution = generatorPointer->getDistribution();
+        REQUIRE(distribution.first == range.start);
+        REQUIRE(distribution.second == range.end);
+    }
 
-        auto generator = std::make_unique<UniformGeneratorMock>();
-        auto generatorPointer = generator.get();
-        auto range = Range(10, 20);
+    WHEN("Test number production")
+    {
+        std::vector<double> set(10000);
+        for(auto &&i : set) {
+            i = instance.getDecimalNumber();
 
-        WHEN("The object is constructed")
+            std::vector<std::pair<double, double>> possibleResults {
+                std::make_pair(range.start, (i + maxStep)),
+                std::make_pair((i - maxStep), range.end),
+                std::make_pair((i - maxStep), (i + maxStep))};
+
+            // NB: check that the generator is being set for next step correctly
+            REQUIRE_THAT(
+                possibleResults,
+                Catch::VectorContains(generatorPointer->getDistribution()));
+        }
+
+        THEN("Numbers are within given range")
         {
-            THEN("It sets the generator range to that of the internal range")
-            {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistribution(internalRangeMin, internalRangeMax));
-
-                GranularWalk(std::move(generator), range, deviationFactor);
+            for(auto &&i : set) {
+                REQUIRE(i >= range.start);
+                REQUIRE(i <= range.end);
             }
+        }
+
+        THEN("Numbers are within the max step of the last number")
+        {
+            std::vector<double> differences(set.size());
+            std::adjacent_difference(set.begin(),
+                                     set.end(),
+                                     differences.begin());
+
+            //  remove the first element as it is the value of the first
+            //  element in the set (and not a difference between two
+            //  numbers in the set)
+            differences.erase(differences.begin());
+
+            for(auto &&i : differences) {
+                REQUIRE(i <= maxStep);
+            }
+        }
+
+        THEN("A walk from the starting point should take place")
+        {
+            // A coarse approach to testing that in large part, there are
+            // changes of number (thus creating a sense of a walk) within the
+            // number set
+
+            // Can't think of a more refined (nor accurate) way of testing this
+
+            int numberChangeCount = 0;
+            for(auto i = set.begin(); i != set.end(); ++i) {
+                // Don't consider first number in collection as
+                // there is no previous number to compare with
+                if(i != set.begin()) {
+                    auto current = *i;
+                    auto prev = *std::prev(i);
+                    if(current != prev) {
+                        numberChangeCount++;
+                    }
+                }
+            }
+            // for set of 10000 numbers this should be approx 5, so 10 is
+            // generous
+            REQUIRE_THAT(numberChangeCount, Catch::WithinAbs(10000, 10));
         }
     }
 
-    GIVEN("The object is constructed")
+    WHEN("resetting")
     {
-        auto generator = std::make_unique<UniformGeneratorMock>();
-        auto generatorPointer = generator.get();
+        auto number = instance.getDecimalNumber();
+        auto dist = generatorPointer->getDistribution();
+        REQUIRE((dist.first != range.start || dist.second != range.end));
 
-        ALLOW_CALL(*generatorPointer, setDistribution(ANY(int), ANY(int)));
-
-        auto range = Range(10, 20);
-
-        double deviationFactor = 0.25;
-        auto expectedMaxStep = deviationFactor * internalRangeMax;
-        int internalRangeMidValue = 32500;
-
-        GranularWalk instance(std::move(generator), range, deviationFactor);
-
-        WHEN("A number is requested")
+        THEN("generator should be set to full range")
         {
-            THEN("A random number from within the internal range is generated")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMidValue);
-                instance.getDecimalNumber();
-            }
-
-            THEN("That generated number is normalised and returned, scaled to "
-                 "the range provided by the calling client")
-            {
-                REQUIRE_CALL(*generatorPointer, getNumber())
-                    .RETURN(internalRangeMidValue);
-                auto returnedNumber = instance.getDecimalNumber();
-                REQUIRE(returnedNumber == 15.0); // ((20 - 10) / 2) + 10
-            }
-
-            AND_WHEN("That generated number is mid range")
-            {
-                // mid-range here meaning that the new distribution range
-                // won't exceed the main range
-                THEN("It sets the generator to the maxStep sub range in "
-                     "readiness for the next call to get a number")
-                {
-                    // The sub range should be the maxStep in both directions
-                    // with the last selected number in the middle. Range is
-                    // inclusive. i.e:
-
-                    // rangeStart = lastSelected - maxStep,
-                    // rangeEnd = lastSelected + maxStep
-
-                    // The maxStep is calculated from the deviationFactor
-                    // provided upon instantiation. The calculation is
-                    // essentially:
-
-                    // dF * internalRange - rounded if necessary
-                    // so here, it should be 0.25 * 65000 = 16250
-
-                    REQUIRE_CALL(*generatorPointer, getNumber())
-                        .RETURN(internalRangeMidValue);
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution(
-                            (internalRangeMidValue - expectedMaxStep),
-                            (internalRangeMidValue + expectedMaxStep)));
-
-                    instance.getDecimalNumber();
-                }
-            }
-
-            AND_WHEN("That generated number is at the start of the range")
-            {
-                // start-of-range here meaning that the new distribution range
-                // set will exceed the main range start
-                THEN("It sets the generator to the maxStep sub range in "
-                     "readiness for the next call to get a number")
-                {
-                    // The logic does not account for wrapping and maxStep range
-                    // is curtailed if it hits either end of the main range
-                    int startOfRangeNumber = internalRangeMin + 1;
-                    REQUIRE_CALL(*generatorPointer, getNumber())
-                        .RETURN(startOfRangeNumber);
-                    REQUIRE_CALL(*generatorPointer,
-                                 setDistribution(
-                                     internalRangeMin,
-                                     (startOfRangeNumber + expectedMaxStep)));
-
-                    instance.getDecimalNumber();
-                }
-            }
-
-            AND_WHEN("That generated number is end of range")
-            {
-                // end-of-range here meaning that the new distribution range
-                // set will exceed the main range end
-                THEN("It sets the generator to the maxStep sub range in "
-                     "readiness for the next call to get a number")
-                {
-                    // The logic does not account for wrapping and maxStep range
-                    // is curtailed if it hits either end of the main range
-                    int endOfRangeNumber = internalRangeMax - 1;
-                    REQUIRE_CALL(*generatorPointer, getNumber())
-                        .RETURN(endOfRangeNumber);
-                    REQUIRE_CALL(
-                        *generatorPointer,
-                        setDistribution((endOfRangeNumber - expectedMaxStep),
-                                        internalRangeMax));
-
-                    instance.getDecimalNumber();
-                }
-            }
-
-            AND_WHEN(
-                "The maxStep has been calculated where rounding was required")
-            {
-                THEN("The generator is set with the rounded maxStep being used "
-                     "to create the sub range")
-                {
-                    double devFactorThatCausesRounding = 0.12345;
-
-                    auto roundingGenerator =
-                        std::make_unique<UniformGeneratorMock>();
-                    auto roundingGeneratorPointer = roundingGenerator.get();
-
-                    ALLOW_CALL(*roundingGeneratorPointer,
-                               setDistribution(ANY(int), ANY(int)));
-
-                    auto roundingRange = Range(10, 20);
-
-                    GranularWalk instanceNeedingStepRounding(
-                        std::move(roundingGenerator),
-                        roundingRange,
-                        devFactorThatCausesRounding);
-
-                    // With this set up, the scaling of the deviationFactor will
-                    // result in a maxStep number with a fractional part:
-
-                    // 0.12345 * 65000 = 8024.25
-                    // which will be rounded down to 8024
-                    // which will be the maxStep used for creating the sub
-                    // range, so, setDistribution should be called with:
-                    // (generatedNumber - 8024) and (generatedNumber + 8024)
-
-                    int expectedMaxStepRounded = 8024;
-                    REQUIRE_CALL(*roundingGeneratorPointer, getNumber())
-                        .RETURN(internalRangeMidValue);
-                    REQUIRE_CALL(
-                        *roundingGeneratorPointer,
-                        setDistribution(
-                            (internalRangeMidValue - expectedMaxStepRounded),
-                            (internalRangeMidValue + expectedMaxStepRounded)));
-
-                    instanceNeedingStepRounding.getDecimalNumber();
-                }
-            }
-        }
-
-        WHEN("A reset is performed")
-        {
-            THEN("The generator distribution is set to the full internal range")
-            {
-                REQUIRE_CALL(
-                    *generatorPointer,
-                    setDistribution(internalRangeMin, internalRangeMax));
-                instance.reset();
-            }
+            instance.reset();
+            auto dist = generatorPointer->getDistribution();
+            REQUIRE(dist.first == range.start);
+            REQUIRE(dist.second == range.end);
         }
     }
 }
@@ -278,7 +190,7 @@ SCENARIO("Numbers::GranularWalk: params")
 {
     using namespace aleatoric;
 
-    GranularWalk instance(std::make_unique<UniformGenerator>(),
+    GranularWalk instance(std::make_unique<UniformRealGenerator>(),
                           Range(10, 20),
                           0.5);
 

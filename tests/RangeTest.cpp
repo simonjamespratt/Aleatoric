@@ -38,18 +38,45 @@ SCENARIO("Range")
             {
                 THEN("It returns true")
                 {
-                    REQUIRE(range.numberIsInRange(4) == true);
+                    REQUIRE(range.numberIsInRange(4));
                 }
             }
 
             WHEN("The number is below the range")
             {
-                REQUIRE(range.numberIsInRange(1) == false);
+                REQUIRE_FALSE(range.numberIsInRange(1));
             }
 
             WHEN("The number is above the range")
             {
-                REQUIRE(range.numberIsInRange(9) == false);
+                REQUIRE_FALSE(range.numberIsInRange(9));
+            }
+        }
+
+        AND_GIVEN("A floating point number is checked for being in range")
+        {
+            WHEN("Is in range")
+            {
+                THEN("Returns true")
+                {
+                    REQUIRE(range.floatingPointIsInRange(5.12));
+                }
+            }
+
+            WHEN("Below range")
+            {
+                THEN("Returns false")
+                {
+                    REQUIRE_FALSE(range.floatingPointIsInRange(1.999999));
+                }
+            }
+
+            WHEN("Above range")
+            {
+                THEN("Returns false")
+                {
+                    REQUIRE_FALSE(range.floatingPointIsInRange(8.0000001));
+                }
             }
         }
     }

@@ -1,10 +1,10 @@
 #ifndef GranularWalk_hpp
 #define GranularWalk_hpp
 
-#include "IUniformGenerator.hpp"
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
+#include "UniformRealGenerator.hpp"
 
 #include <memory>
 
@@ -73,7 +73,7 @@ namespace aleatoric {
  */
 class GranularWalk : public NumberProtocol {
   public:
-    GranularWalk(std::unique_ptr<IUniformGenerator> generator);
+    GranularWalk(std::unique_ptr<UniformRealGenerator> generator);
 
     /*!
      * @brief Construct a new GranularWalk object
@@ -90,7 +90,7 @@ class GranularWalk : public NumberProtocol {
      * use of the maximum step and sub-ranges, see above. Note that the
      * value provided must be between 0.0 and 1.0 (inclusive).
      */
-    GranularWalk(std::unique_ptr<IUniformGenerator> generator,
+    GranularWalk(std::unique_ptr<UniformRealGenerator> generator,
                  Range range,
                  double deviationFactor);
 
@@ -123,15 +123,11 @@ class GranularWalk : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    std::unique_ptr<IUniformGenerator> m_generator;
-    Range m_externalRange;
-    Range m_internalRange;
+    std::unique_ptr<UniformRealGenerator> m_generator;
+    Range m_range;
     double m_deviationFactor;
-    int m_maxStep;
-    double scaleToRange(double normalizedValue, int rangeMin, int rangeMax);
-    double normalize(int value, int rangeMin, int rangeMax);
-    double mapToNewRange(double value, Range fromRange, Range toRange);
-    void setForNextStep(int lastSelectedNumber);
+    double m_maxStep;
+    void setForNextStep();
     void setMaxStep();
     void setRange(Range newRange);
     void initialise();
