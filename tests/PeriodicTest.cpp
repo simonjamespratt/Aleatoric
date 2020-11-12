@@ -167,6 +167,11 @@ SCENARIO("Numbers::Periodic")
                 // value of the periodicity (chanceOfRepetition). The remainder
                 // of 1.0 - periodicity is shared equally amongst the remaining
                 // vector indices.
+
+                // NB: Due to floating-point representation of some numbers, we
+                // have to be careful what numbers to choose here to demonstrate
+                // that this logic is fundamentally correct. See note in
+                // setPeriodicDistribution()
                 REQUIRE_CALL(
                     *generatorPointer,
                     setDistributionVector(

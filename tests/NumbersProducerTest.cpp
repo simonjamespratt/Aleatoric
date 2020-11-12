@@ -516,11 +516,7 @@ SCENARIO("Numbers: Using Precision")
 {
     using namespace aleatoric;
 
-    // TODO: DOUBLE-SUMMING-PRECISION: Have to use a different range for this
-    // set of tests due to an issue with the argument checking in Precision for
-    // summing the values in the distribution. It should be set back to a range
-    // of (0, 9) when this is fixed.
-    Range referenceRange(0, 3);
+    Range referenceRange(0, 9);
 
     GIVEN("The Producer has been instantiated")
     {
@@ -558,7 +554,7 @@ SCENARIO("Numbers: Using Precision")
         WHEN("The distribution favours one number in the range")
         {
             // Biased distribution in favour of a certain number (0)
-            std::vector<double> distribution {1.0, 0.0, 0.0, 0.0};
+            std::vector<double> distribution {1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::precision));

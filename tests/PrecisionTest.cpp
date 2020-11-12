@@ -40,44 +40,6 @@ SCENARIO("Numbers::Precision")
 
     GIVEN("Construction: with an invalid distribution")
     {
-        WHEN("The sum of the values in the distribution is less than 1")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                REQUIRE_THROWS_AS(
-                    Precision(std::make_unique<DiscreteGenerator>(),
-                              Range(1, 4),
-                              std::vector<double> {0.99}),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    Precision(std::make_unique<DiscreteGenerator>(),
-                              Range(1, 4),
-                              std::vector<double> {0.99}),
-                    "The sum of the values provided as the vector for the "
-                    "distribution must equal 1.0");
-            }
-        }
-
-        WHEN("The sum of the values in the distribution is more than 1")
-        {
-            THEN("A standard invalid_argument exception is thrown")
-            {
-                REQUIRE_THROWS_AS(
-                    Precision(std::make_unique<DiscreteGenerator>(),
-                              Range(1, 4),
-                              std::vector<double> {1.01}),
-                    std::invalid_argument);
-
-                REQUIRE_THROWS_WITH(
-                    Precision(std::make_unique<DiscreteGenerator>(),
-                              Range(1, 4),
-                              std::vector<double> {1.01}),
-                    "The sum of the values provided as the vector for the "
-                    "distribution must equal 1.0");
-            }
-        }
-
         WHEN("The size of the distribution vector does not match the size of "
              "the range")
         {
@@ -207,33 +169,6 @@ SCENARIO("Numbers:Precision: params")
             for(auto &&i : set) {
                 REQUIRE(newRange.numberIsInRange(i));
             }
-        }
-    }
-
-    WHEN("Set params: new distribution does not sum to 1")
-    {
-        Range newRange(1, 2);
-
-        THEN("Throw exception")
-        {
-            std::vector<double> newDistribution {0.5, 0.6}; // > 1
-            NumberProtocolParameters newParams(
-                newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Precision(newDistribution)));
-            REQUIRE_THROWS_AS(instance.setParams(newParams),
-                              std::invalid_argument);
-        }
-
-        THEN("Throw exception")
-        {
-            std::vector<double> newDistribution {0.5, 0.4}; // < 1
-            NumberProtocolParameters newParams(
-                newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Precision(newDistribution)));
-            REQUIRE_THROWS_AS(instance.setParams(newParams),
-                              std::invalid_argument);
         }
     }
 

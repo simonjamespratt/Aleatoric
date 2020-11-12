@@ -29,7 +29,6 @@ class Precision : public NumberProtocol {
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;
     Range m_range;
-    void checkDistributionIsValid(const std::vector<double> &distribution);
     void checkDistributionMatchesRange(const std::vector<double> &distribution,
                                        const Range &range);
 };
