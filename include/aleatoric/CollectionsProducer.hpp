@@ -17,7 +17,6 @@ class CollectionsProducer {
 
     const T &getItem();
     std::vector<T> getCollection(int size);
-    void reset();
     NumberProtocolParameters::Protocols getParams();
     void setParams(NumberProtocolParameters::Protocols newParams);
     void setProtocol(std::unique_ptr<NumberProtocol> protocol);
@@ -60,12 +59,6 @@ std::vector<T> CollectionsProducer<T>::getCollection(int size)
     }
 
     return collection;
-}
-
-template<typename T>
-void CollectionsProducer<T>::reset()
-{
-    m_protocol->reset();
 }
 
 template<typename T>

@@ -174,16 +174,6 @@ SCENARIO("Numbers::Walk")
                 }
             }
         }
-
-        WHEN("A reset is performed")
-        {
-            THEN("The generator distribution is set to the full range")
-            {
-                REQUIRE_CALL(*generatorPointer,
-                             setDistribution(range.start, range.end));
-                instance.reset();
-            }
-        }
     }
 }
 

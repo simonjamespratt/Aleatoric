@@ -46,12 +46,6 @@ double Periodic::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Periodic::reset()
-{
-    m_generator->updateDistributionVector(1.0);
-    m_haveRequestedFirstNumber = false;
-}
-
 NumberProtocolParameters Periodic::getParams()
 {
     return NumberProtocolParameters(

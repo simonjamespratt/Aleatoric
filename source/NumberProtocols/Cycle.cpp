@@ -36,11 +36,6 @@ double Cycle::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Cycle::reset()
-{
-    m_state->reset(m_nextPosition, m_range);
-}
-
 void Cycle::setParams(NumberProtocolParameters newParams)
 {
     auto cycleParams = newParams.protocols.getCycle();

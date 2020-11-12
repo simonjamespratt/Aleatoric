@@ -24,9 +24,6 @@ class NumberProtocol {
 
     virtual double getDecimalNumber() = 0;
 
-    /*! Pure virtual method for resetting a protocol to its initial state */
-    virtual void reset() = 0;
-
     virtual void setParams(NumberProtocolParameters newParams) = 0;
 
     virtual NumberProtocolParameters getParams() = 0;

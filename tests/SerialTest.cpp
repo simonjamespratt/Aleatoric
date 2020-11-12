@@ -79,9 +79,6 @@ SCENARIO("Numbers::Serial")
         ALLOW_CALL(*generatorPointer,
                    updateDistributionVector(generatedNumber, 0.0));
 
-        // this is for reset()
-        ALLOW_CALL(*generatorPointer, updateDistributionVector(1.0));
-
         // ensures that seriesIsComplete returns true
         ALLOW_CALL(*generatorPointer, getDistributionVector())
             .RETURN(std::vector<double> {1.0});
@@ -148,15 +145,6 @@ SCENARIO("Numbers::Serial")
                                 updateDistributionVector(1.0));
                     instance.getIntegerNumber();
                 }
-            }
-        }
-
-        WHEN("A reset is requested")
-        {
-            THEN("It resets the generator distribution")
-            {
-                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
-                instance.reset();
             }
         }
     }

@@ -47,12 +47,6 @@ double Walk::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Walk::reset()
-{
-    m_generator->setDistribution(m_range.start, m_range.end);
-    m_haveRequestedFirstNumber = false;
-}
-
 void Walk::setParams(NumberProtocolParameters newParams)
 {
     auto maxStep = newParams.protocols.getWalk().getMaxStep();

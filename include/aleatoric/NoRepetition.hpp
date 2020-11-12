@@ -51,14 +51,8 @@ class NoRepetition : public NumberProtocol {
      * range have an equal probability of being selected.
      */
     int getIntegerNumber() override;
-    double getDecimalNumber() override;
 
-    /*! @brief will reset the distibution to the initial state of a uniform
-     * distribution
-     *
-     * Where each number in the range has equal probability of being selected
-     * upon the next call to @ref getNumber */
-    void reset() override;
+    double getDecimalNumber() override;
 
     void setParams(NumberProtocolParameters newParams) override;
 

@@ -15,8 +15,6 @@ class DurationsProducer {
 
     std::vector<int> getCollection(int size);
 
-    void reset();
-
     NumberProtocolParameters::Protocols getParams();
 
     void setParams(NumberProtocolParameters::Protocols newParams);

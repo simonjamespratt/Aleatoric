@@ -31,11 +31,6 @@ double Serial::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Serial::reset()
-{
-    m_seriesPrinciple.resetSeries(m_generator);
-}
-
 void Serial::setParams(NumberProtocolParameters newParams)
 {
     m_range = newParams.getRange();

@@ -157,29 +157,6 @@ SCENARIO("Numbers::AdjacentSteps: constructed with params")
                 }
             }
         }
-
-        WHEN("A reset is made")
-        {
-            THEN("The generator distribution is set to uniform (equal "
-                 "probability")
-            {
-                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
-                instance.reset();
-            }
-
-            AND_WHEN("The next number is requested")
-            {
-                THEN("It calls the generator to get one and returns it with "
-                     "the range offset added")
-                {
-                    REQUIRE_CALL(*generatorPointer, getNumber())
-                        .RETURN(generatedNumber);
-                    instance.reset();
-                    auto returnedNumber = instance.getIntegerNumber();
-                    REQUIRE(returnedNumber == generatedNumber + range.offset);
-                }
-            }
-        }
     }
 }
 

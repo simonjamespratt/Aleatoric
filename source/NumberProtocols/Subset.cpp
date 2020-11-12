@@ -55,11 +55,6 @@ double Subset::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Subset::reset()
-{
-    setSubset();
-}
-
 void Subset::setParams(NumberProtocolParameters newParams)
 {
     auto subsetParams = newParams.protocols.getSubset();

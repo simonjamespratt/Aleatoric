@@ -42,11 +42,6 @@ std::vector<double> NumbersProducer::getDecimalCollection(int size)
     return collection;
 }
 
-void NumbersProducer::reset()
-{
-    m_protocol->reset();
-}
-
 NumberProtocolParameters NumbersProducer::getParams()
 {
     return m_protocol->getParams();
