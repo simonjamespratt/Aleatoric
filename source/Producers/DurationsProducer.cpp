@@ -33,11 +33,6 @@ std::vector<int> DurationsProducer::getCollection(int size)
     return collection;
 }
 
-void DurationsProducer::reset()
-{
-    m_numberProtocol->reset();
-}
-
 NumberProtocolParameters::Protocols DurationsProducer::getParams()
 {
     return m_numberProtocol->getParams().protocols;

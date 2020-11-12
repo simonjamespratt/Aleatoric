@@ -14,11 +14,6 @@ int UniForward::getPosition(int &nextPosition, const Range &range)
     return nextPosition++;
 }
 
-void UniForward::reset(int &nextPosition, const Range &range)
-{
-    nextPosition = range.start;
-}
-
 void UniForward::setRange(const int &lastPosition,
                           int &nextPosition,
                           const Range &range,
@@ -43,11 +38,6 @@ int UniReverse::getPosition(int &nextPosition, const Range &range)
     }
 
     return nextPosition--;
-}
-
-void UniReverse::reset(int &nextPosition, const Range &range)
-{
-    nextPosition = range.end;
 }
 
 void UniReverse::setRange(const int &lastPosition,
@@ -80,12 +70,6 @@ int Bidirectional::getPosition(int &nextPosition, const Range &range)
     }
 
     return m_reverse ? nextPosition-- : nextPosition++;
-}
-
-void Bidirectional::reset(int &nextPosition, const Range &range)
-{
-    m_reverse = m_initialStateReverse;
-    nextPosition = m_reverse ? range.end : range.start;
 }
 
 void Bidirectional::setRange(const int &lastPosition,

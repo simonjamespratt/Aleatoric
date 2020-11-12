@@ -41,12 +41,6 @@ double AdjacentSteps::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void AdjacentSteps::reset()
-{
-    m_generator->updateDistributionVector(1.0);
-    m_haveRequestedFirstNumber = false;
-}
-
 void AdjacentSteps::setParams(NumberProtocolParameters newParams)
 {
     m_range = newParams.getRange();

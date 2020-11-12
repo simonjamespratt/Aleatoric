@@ -23,8 +23,6 @@ class Cycle : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    void reset() override;
-
     void setParams(NumberProtocolParameters newParams) override;
 
     NumberProtocolParameters getParams() override;

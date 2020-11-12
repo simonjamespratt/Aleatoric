@@ -48,12 +48,6 @@ double GranularWalk::getDecimalNumber()
     return m_lastReturnedNumber;
 }
 
-void GranularWalk::reset()
-{
-    m_generator->setDistribution(m_range.start, m_range.end);
-    m_haveRequestedFirstNumber = false;
-}
-
 void GranularWalk::setParams(NumberProtocolParameters newParams)
 {
     auto granWalkParams = newParams.protocols.getGranularWalk();

@@ -193,15 +193,6 @@ SCENARIO("Numbers::Ratio")
                 }
             }
         }
-
-        WHEN("A reset is requested")
-        {
-            THEN("It resets the generator distribution")
-            {
-                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
-                instance.reset();
-            }
-        }
     }
 }
 

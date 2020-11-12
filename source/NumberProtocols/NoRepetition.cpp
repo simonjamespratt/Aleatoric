@@ -38,11 +38,6 @@ double NoRepetition::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void NoRepetition::reset()
-{
-    m_generator->updateDistributionVector(1.0);
-}
-
 void NoRepetition::setParams(NumberProtocolParameters newParams)
 {
     auto newRange = newParams.getRange();

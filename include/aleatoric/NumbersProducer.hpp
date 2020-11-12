@@ -50,11 +50,6 @@ class NumbersProducer {
 
     void setProtocol(std::unique_ptr<NumberProtocol> protocol);
 
-    /*!
-     * @brief Resets the protocol being used
-     */
-    void reset();
-
   private:
     std::unique_ptr<NumberProtocol> m_protocol;
 };

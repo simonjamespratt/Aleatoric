@@ -80,28 +80,6 @@ SCENARIO("Numbers::Cycle")
                 REQUIRE(set == expectedSet);
             }
         }
-
-        WHEN("A reset is requested")
-        {
-            // get the first number
-            instance.getIntegerNumber();
-
-            instance.reset();
-
-            std::vector<int> set(range.size);
-
-            for(auto &&i : set) {
-                i = instance.getIntegerNumber();
-            }
-
-            THEN("It should behave as it would upon instantiation")
-            {
-                // next number without reset should be 2
-                std::vector<int> expectedSet {1, 2, 3};
-
-                REQUIRE(set == expectedSet);
-            }
-        }
     }
 
     GIVEN("The object is constructed: unidirectional, reverse direction")
@@ -139,28 +117,6 @@ SCENARIO("Numbers::Cycle")
                  "descending aspect should hve been obtained")
             {
                 std::vector<int> expectedSet {3, 2, 1, 3, 2, 1};
-
-                REQUIRE(set == expectedSet);
-            }
-        }
-
-        WHEN("A reset is requested")
-        {
-            // get the first number
-            instance.getIntegerNumber();
-
-            instance.reset();
-
-            std::vector<int> set(range.size);
-
-            for(auto &&i : set) {
-                i = instance.getIntegerNumber();
-            }
-
-            THEN("It should behave as it would upon instantiation")
-            {
-                // next number without reset should be 2
-                std::vector<int> expectedSet {3, 2, 1};
 
                 REQUIRE(set == expectedSet);
             }
@@ -210,30 +166,6 @@ SCENARIO("Numbers::Cycle")
                 REQUIRE(set == expectedSet);
             }
         }
-
-        WHEN("A reset is requested")
-        {
-            // get the first number
-            instance.getIntegerNumber();
-
-            instance.reset();
-
-            // minus one because there should be no repetition of the
-            // numbers at the range ends
-            std::vector<int> set(range.size * 2 - 1);
-
-            for(auto &&i : set) {
-                i = instance.getIntegerNumber();
-            }
-
-            THEN("It should behave as it would upon instantiation")
-            {
-                // next number without reset should be 2
-                std::vector<int> expectedSet {1, 2, 3, 2, 1};
-
-                REQUIRE(set == expectedSet);
-            }
-        }
     }
 
     GIVEN("The object is constructed: bidirectional, reverse direction")
@@ -275,30 +207,6 @@ SCENARIO("Numbers::Cycle")
                  "have been obtained")
             {
                 std::vector<int> expectedSet {3, 2, 1, 2, 3, 2, 1, 2, 3};
-
-                REQUIRE(set == expectedSet);
-            }
-        }
-
-        WHEN("A reset is requested")
-        {
-            // get the first number
-            instance.getIntegerNumber();
-
-            instance.reset();
-
-            // minus one because there should be no repetition of the
-            // numbers at the range ends
-            std::vector<int> set(range.size * 2 - 1);
-
-            for(auto &&i : set) {
-                i = instance.getIntegerNumber();
-            }
-
-            THEN("It should behave as it would upon instantiation")
-            {
-                // next number without reset should be 2
-                std::vector<int> expectedSet {3, 2, 1, 2, 3};
 
                 REQUIRE(set == expectedSet);
             }

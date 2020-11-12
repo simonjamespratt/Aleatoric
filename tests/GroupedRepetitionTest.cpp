@@ -285,21 +285,6 @@ SCENARIO("Numbers::GroupedRepetition")
                 }
             }
         }
-
-        WHEN("A reset is requested")
-        {
-            // NB: reset() also sets the count back to 0. The effect of the
-            // count being at 0 is tested above, so will not be repeated here.
-
-            THEN("It resets the generators' distributions")
-            {
-                REQUIRE_CALL(*groupingGeneratorPointer,
-                             updateDistributionVector(1.0));
-                REQUIRE_CALL(*numberGeneratorPointer,
-                             updateDistributionVector(1.0));
-                instance.reset();
-            }
-        }
     }
 }
 

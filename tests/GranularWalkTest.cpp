@@ -169,21 +169,6 @@ SCENARIO("Numbers::GranularWalk: basic functionality")
             REQUIRE_THAT(numberChangeCount, Catch::WithinAbs(10000, 10));
         }
     }
-
-    WHEN("resetting")
-    {
-        auto number = instance.getDecimalNumber();
-        auto dist = generatorPointer->getDistribution();
-        REQUIRE((dist.first != range.start || dist.second != range.end));
-
-        THEN("generator should be set to full range")
-        {
-            instance.reset();
-            auto dist = generatorPointer->getDistribution();
-            REQUIRE(dist.first == range.start);
-            REQUIRE(dist.second == range.end);
-        }
-    }
 }
 
 SCENARIO("Numbers::GranularWalk: params")

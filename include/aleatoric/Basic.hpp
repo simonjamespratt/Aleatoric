@@ -39,9 +39,6 @@ class Basic : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    /*! @brief resets the instance to initial settings */
-    void reset() override;
-
     NumberProtocolParameters getParams() override;
 
     void setParams(NumberProtocolParameters newParams) override;

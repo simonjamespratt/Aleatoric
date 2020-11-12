@@ -104,20 +104,6 @@ class GranularWalk : public NumberProtocol {
      */
     double getDecimalNumber() override;
 
-    /*!
-     * @brief Resets the state of the class to the state upon instantiation
-     *
-     * This means that if the class was instantiated with no initial number
-     * selection, upon the next call to getNumber(), a number will be selected
-     * at random, with equal probability of selection, from which to start the
-     * walk through the range.
-     *
-     * If the class was instantiated with an initial number selection, this will
-     * be the number returned from the next call to getNumber(), and will form
-     * the starting point for the walk through the range from thereon.
-     */
-    void reset() override;
-
     void setParams(NumberProtocolParameters newParams) override;
 
     NumberProtocolParameters getParams() override;

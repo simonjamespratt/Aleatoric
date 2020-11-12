@@ -114,16 +114,6 @@ SCENARIO("Numbers::NoRepetition")
                 instance.getIntegerNumber();
             }
         }
-
-        WHEN("A reset is requested")
-        {
-            THEN("The generator should be set to uniform distribution - equal "
-                 "probability")
-            {
-                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
-                instance.reset();
-            }
-        }
     }
 }
 

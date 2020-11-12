@@ -58,13 +58,6 @@ double GroupedRepetition::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void GroupedRepetition::reset()
-{
-    m_groupingCount = 0;
-    m_seriesPrinciple.resetSeries(m_numberGenerator);
-    m_seriesPrinciple.resetSeries(m_groupingGenerator);
-}
-
 void GroupedRepetition::setParams(NumberProtocolParameters newParams)
 {
     m_groupings = newParams.protocols.getGroupedRepetition().getGroupings();

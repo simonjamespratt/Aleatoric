@@ -42,11 +42,6 @@ double Ratio::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Ratio::reset()
-{
-    m_seriesPrinciple.resetSeries(m_generator);
-}
-
 void Ratio::setParams(NumberProtocolParameters newParams)
 {
     auto newRatios = newParams.protocols.getRatio().getRatios();

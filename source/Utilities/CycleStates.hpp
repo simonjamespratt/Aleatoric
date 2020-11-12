@@ -8,7 +8,6 @@ namespace aleatoric {
 class CycleState {
   public:
     virtual int getPosition(int &nextPosition, const Range &range) = 0;
-    virtual void reset(int &nextPosition, const Range &range) = 0;
     virtual void setRange(const int &lastPosition,
                           int &nextPosition,
                           const Range &range,
@@ -21,7 +20,6 @@ class UniForward : public CycleState {
   public:
     UniForward();
     int getPosition(int &nextPosition, const Range &range) override;
-    void reset(int &nextPosition, const Range &range) override;
     void setRange(const int &lastPosition,
                   int &nextPosition,
                   const Range &range,
@@ -32,7 +30,6 @@ class UniReverse : public CycleState {
   public:
     UniReverse();
     int getPosition(int &nextPosition, const Range &range) override;
-    void reset(int &nextPosition, const Range &range) override;
     void setRange(const int &lastPosition,
                   int &nextPosition,
                   const Range &range,
@@ -43,7 +40,6 @@ class Bidirectional : public CycleState {
   public:
     Bidirectional(bool initialStateReverse);
     int getPosition(int &nextPosition, const Range &range) override;
-    void reset(int &nextPosition, const Range &range) override;
     void setRange(const int &lastPosition,
                   int &nextPosition,
                   const Range &range,

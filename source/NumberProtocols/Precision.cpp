@@ -31,9 +31,6 @@ double Precision::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Precision::reset()
-{}
-
 void Precision::setParams(NumberProtocolParameters newParams)
 {
     auto newDistribution = newParams.protocols.getPrecision().getDistribution();

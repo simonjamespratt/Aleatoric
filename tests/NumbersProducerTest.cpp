@@ -68,9 +68,6 @@ SCENARIO("Numbers: Using Cycle")
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
-        // NB: Not testing reset as it would just be a repeat of the unit tests.
-        // Just testing the basics of the protocol functionality here
-
         WHEN("It is configured in the default state")
         {
             NumbersProducer instance(
@@ -220,42 +217,6 @@ SCENARIO("Numbers: Using Serial")
                 }
             }
         }
-
-        WHEN("A partial series sample set is gathered")
-        {
-            auto partialSample = instance.getIntegerCollection(3);
-
-            AND_WHEN("A reset is made followed by the gathering of a full "
-                     "series sample set")
-            {
-                instance.reset();
-
-                auto fullSample = instance.getIntegerCollection(10);
-
-                THEN("The full post-reset sample should include every number "
-                     "from the range and only once")
-                {
-                    for(int i = 0; i < referenceRange.size; i++) {
-                        int count =
-                            std::count(fullSample.begin(), fullSample.end(), i);
-                        REQUIRE(count == 1);
-                    }
-                }
-
-                THEN("The numbers from the partial pre-reset sample set should "
-                     "appear in the full post-reset sample set")
-                {
-                    for(auto &&psItem : partialSample) {
-                        auto numberAppears = std::any_of(
-                            fullSample.begin(),
-                            fullSample.end(),
-                            [psItem](int fsItem) { return psItem == fsItem; });
-
-                        REQUIRE(numberAppears);
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -327,12 +288,6 @@ SCENARIO("Numbers: Using GroupedRepetition")
     // these tests are set up, it would result in sporadic failing tests, were
     // the serial nature of the selection of either range numbers or groupings
     // broken.
-
-    // Testing reset() is not possible without going through a number of test
-    // set ups where possible selections are constrained. Not going to bother
-    // with that now, but could be done if desired. It would look similar to
-    // Series tests above, but taking into consideration both range selection
-    // and grouping selection.
 
     Range referenceRange(1, 2);
     std::vector<int> groupings {1, 2};
@@ -472,43 +427,6 @@ SCENARIO("Numbers: Using Ratio")
                 }
             }
         }
-
-        WHEN("A partial series sample set is gathered")
-        {
-            auto partialSample = instance.getIntegerCollection(3);
-
-            AND_WHEN("A reset is made followed by the gathering of a full "
-                     "series sample set")
-            {
-                instance.reset();
-
-                auto fullSample =
-                    instance.getIntegerCollection(referenceRange.size);
-
-                THEN("The full post-reset sample should include every number "
-                     "from the range and only once")
-                {
-                    for(int i = 0; i < referenceRange.size; i++) {
-                        int count =
-                            std::count(fullSample.begin(), fullSample.end(), i);
-                        REQUIRE(count == 1);
-                    }
-                }
-
-                THEN("The numbers from the partial pre-reset sample set should "
-                     "appear in the full post-reset sample set")
-                {
-                    for(auto &&psItem : partialSample) {
-                        auto numberAppears = std::any_of(
-                            fullSample.begin(),
-                            fullSample.end(),
-                            [psItem](int fsItem) { return psItem == fsItem; });
-
-                        REQUIRE(numberAppears);
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -583,9 +501,6 @@ SCENARIO("Numbers: Using NoRepetition")
 {
     using namespace aleatoric;
 
-    // NB: No tests for reset() as this is hard to test. What would you test
-    // for, seeing as all the numbers (except the last selected) have equal
-    // proability of selection?
     Range referenceRange(0, 9);
 
     NumbersProducer instance(
@@ -633,9 +548,6 @@ SCENARIO("Numbers: Using Periodic")
 
     GIVEN("The Producer has been instantiated with no initial selection")
     {
-        // NB: reset() is not testable as you cannot gaurantee that the next
-        // number will be either the same as, or different from, the last
-
         AND_GIVEN("The chance of repetition is mid range")
         {
             NumbersProducer instance(
@@ -736,13 +648,6 @@ SCENARIO("Numbers: Using AdjacentSteps")
 
     GIVEN("The Producer has been instantiated")
     {
-        // NB: No tests for reset() where an initial number selection has not
-        // been made because it could lead to sporadic test failures. There is
-        // no sure way to test that the next number after reset is not following
-        // the adjacent steps functionality. For example, if the last number
-        // before a reset is 5, there is nothing to say that the first number
-        // after reset won't be either a 4 or a 6.
-
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::adjacentSteps));
 
@@ -790,13 +695,6 @@ SCENARIO("Numbers: Using Walk")
 
     GIVEN("The Producer has been instantiated")
     {
-        // NB: No tests for reset() where an initial number selection has not
-        // been made because it could lead to sporadic test failures. There is
-        // no sure way to test that the next number after reset is not following
-        // the walk functionality. For example, if the last number
-        // before a reset is 5, there is nothing to say that the first number
-        // after reset won't be within the max step range.
-
         int maxStep = 3;
 
         NumbersProducer instance(
@@ -846,13 +744,6 @@ SCENARIO("Numbers: Using GranularWalk")
 
     GIVEN("The Producer has been instantiated")
     {
-        // NB: No tests for reset() where an initial number selection has not
-        // been made because it could lead to sporadic test failures. There is
-        // no sure way to test that the next number after reset is not following
-        // the GranularWalk functionality. For example, if the last number
-        // before a reset is 5, there is nothing to say that the first number
-        // after reset won't be within the deviation factor range.
-
         double deviationFactor = 0.3;
         double dfRange = 3.0;
 

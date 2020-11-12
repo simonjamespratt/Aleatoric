@@ -52,13 +52,6 @@ class Serial : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    /*! @brief will reset the distibution to the initial state of a uniform
-     * distribution
-     *
-     * Where each number in the range has equal probability of being selected
-     * upon the next call to @ref getNumber */
-    void reset() override;
-
     void setParams(NumberProtocolParameters newParams) override;
 
     NumberProtocolParameters getParams() override;

@@ -179,17 +179,6 @@ SCENARIO("Numbers::Periodic")
                 instance.getIntegerNumber();
             }
         }
-
-        WHEN("A reset is performed")
-        {
-            THEN("The generator distribution is set to uniform - equal "
-                 "probability of selection for each number in the range upon "
-                 "next call to getNumber()")
-            {
-                REQUIRE_CALL(*generatorPointer, updateDistributionVector(1.0));
-                instance.reset();
-            }
-        }
     }
 }
 

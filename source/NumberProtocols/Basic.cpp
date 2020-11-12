@@ -26,12 +26,6 @@ double Basic::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Basic::reset()
-{
-    // NB: Basic's implementation of the Protocol interface doesn't require
-    // reset to do anything.
-}
-
 NumberProtocolParameters Basic::getParams()
 {
     return NumberProtocolParameters(
