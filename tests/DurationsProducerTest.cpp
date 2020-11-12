@@ -12,6 +12,7 @@
 
 #include "DurationsProducer.hpp"
 
+#include "DurationProtocol.hpp"
 #include "Geometric.hpp"
 #include "Multiples.hpp"
 #include "Prescribed.hpp"
@@ -27,7 +28,7 @@ SCENARIO("TimeDomain: Using Prescribed and Cycle")
     std::vector<int> sourceDurations {1, 2, 3, 4, 5};
 
     DurationsProducer instance(
-        std::make_unique<Prescribed>(sourceDurations),
+        DurationProtocol::createPrescribed(sourceDurations),
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     WHEN("A sample has been gathered that matches the size of the duration "
@@ -53,7 +54,7 @@ SCENARIO("TimeDomain: Using Multiples and Cycle")
         Range range(11, 13);
 
         DurationsProducer instance(
-            std::make_unique<Multiples>(baseIncrement, range),
+            DurationProtocol::createMultiples(baseIncrement, range),
             NumberProtocol::create(NumberProtocol::Type::cycle));
 
         WHEN("A sample has been gathered that matches the size of the range")
@@ -75,15 +76,10 @@ SCENARIO("TimeDomain: Using Multiples and Cycle")
         double deviationFactor = 0.1;
         Range range(10, 20);
 
-        // TODO: TIME DOMAIN: this is a lot for a caller to have to set up. Is
-        // there a need for a factory here? Don't think a caller should have to
-        // worry about sending in a Uniform Generator in order to create an
-        // instance of a duration protocol.
         DurationsProducer instance(
-            std::make_unique<Multiples>(baseIncrement,
-                                        range,
-                                        deviationFactor,
-                                        std::make_unique<UniformGenerator>()),
+            DurationProtocol::createMultiples(baseIncrement,
+                                              range,
+                                              deviationFactor),
             NumberProtocol::create(NumberProtocol::Type::cycle));
 
         WHEN("A sample has been gathered that matches the size of the range")
@@ -129,7 +125,7 @@ SCENARIO("TimeDomain: Using Multiples and Cycle")
         std::vector<int> multipliers {10, 11, 12};
 
         DurationsProducer instance(
-            std::make_unique<Multiples>(baseIncrement, multipliers),
+            DurationProtocol::createMultiples(baseIncrement, multipliers),
             NumberProtocol::create(NumberProtocol::Type::cycle));
 
         WHEN("A sample has been gathered that matches the size of the "
@@ -155,12 +151,10 @@ SCENARIO("TimeDomain: Using Multiples and Cycle")
             multipliers {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
         double deviationFactor = 0.1;
 
-        // TODO: TIME DOMAIN: same issue as above
         DurationsProducer instance(
-            std::make_unique<Multiples>(baseIncrement,
-                                        multipliers,
-                                        deviationFactor,
-                                        std::make_unique<UniformGenerator>()),
+            DurationProtocol::createMultiples(baseIncrement,
+                                              multipliers,
+                                              deviationFactor),
             NumberProtocol::create(NumberProtocol::Type::cycle));
 
         WHEN("A sample has been gathered that matches the size of the "
@@ -212,7 +206,7 @@ SCENARIO("TimeDomain: Using Geometric and Cycle")
         int collectionSize = 5;
 
         DurationsProducer instance(
-            std::make_unique<Geometric>(range, collectionSize),
+            DurationProtocol::createGeometric(range, collectionSize),
             NumberProtocol::create(NumberProtocol::Type::cycle));
 
         WHEN("A sample is gathered that is the size of the collection size "
@@ -258,7 +252,7 @@ SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
     std::vector<int> sourceDurations {1, 2, 3, 4, 5};
 
     DurationsProducer instance(
-        std::make_unique<Prescribed>(sourceDurations),
+        DurationProtocol::createPrescribed(sourceDurations),
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     GIVEN("Params have not been updated")
@@ -336,7 +330,7 @@ SCENARIO("Timedomain: Change number protocol")
     std::vector<int> sourceDurations {1, 2, 3};
 
     DurationsProducer instance(
-        std::make_unique<Prescribed>(sourceDurations),
+        DurationProtocol::createPrescribed(sourceDurations),
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     WHEN("Before number protocol change")
@@ -395,7 +389,7 @@ SCENARIO("Timedomain: Change duration protocol")
     std::vector<int> sourceDurations {1, 2, 3};
 
     DurationsProducer instance(
-        std::make_unique<Prescribed>(sourceDurations),
+        DurationProtocol::createPrescribed(sourceDurations),
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     // NB: set to reverse bidirectional
@@ -415,7 +409,7 @@ SCENARIO("Timedomain: Change duration protocol")
     WHEN("After duration protocol change: no collection size change")
     {
         instance.setDurationProtocol(
-            std::make_unique<Multiples>(10, Range(1, 3)));
+            DurationProtocol::createMultiples(10, Range(1, 3)));
 
         THEN("Output is changed")
         {
@@ -436,7 +430,7 @@ SCENARIO("Timedomain: Change duration protocol")
          "change")
     {
         instance.setDurationProtocol(
-            std::make_unique<Multiples>(10, Range(1, 5)));
+            DurationProtocol::createMultiples(10, Range(1, 5)));
 
         THEN("Output is changed: number protocol is set to default params (due "
              "to range change)")
