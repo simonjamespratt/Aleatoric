@@ -1,10 +1,5 @@
 #include "Periodic.hpp"
 
-#include "ErrorChecker.hpp"
-
-#include <assert.h>
-#include <math.h>  // round
-#include <numeric> // std::accumulate
 #include <stdexcept>
 
 namespace aleatoric {
@@ -92,11 +87,22 @@ double Periodic::calculateRemainerAllocation()
 
 void Periodic::setPeriodicDistribution(int selectedIndex)
 {
-    // The total of all values in the vector must equal 1.0.
+    // The sum of all values in the vector must equal 1.0 (see caveat below).
     // The value at the index of the last selected number
     // must have the value of the periodicity (chanceOfRepetition).
     // The remainder of 1.0 - periodicity is shared equally amongst
     // the remaining vector indices.
+
+    // NB: The sum of all values may not always be precisely 1.0. This is due to
+    // how floating point calculations work. It doesn't mean the calculation is
+    // broken. Carefully chosen numbers in the tests demonstrate that the
+    // calculation is fundamentally correct, i.e. selection of numbers that do
+    // not have imprecise floating-point representations.
+    // See:https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+    // and
+    // https://blog.reverberate.org/2014/09/what-every-computer-programmer-should.html
+    // and
+    // https://www.boost.org/doc/libs/1_63_0/libs/math/doc/html/math_toolkit/float_comparison.html
 
     auto distributionVector = m_generator->getDistributionVector();
     auto remainderAllocation = calculateRemainerAllocation();
@@ -106,16 +112,6 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
             i == selectedIndex ? m_periodicity : remainderAllocation;
         distributionVector[i] = newVectorValue;
     }
-
-    auto vectorValuesTotal = std::accumulate(distributionVector.begin(),
-                                             distributionVector.end(),
-                                             0.0);
-
-    // TODO: DOUBLE-SUMMING-PRECISION: Have needed to use round here because the
-    // resulting value of vectorValuesTotal from std::accumulate SPORADICALLY
-    // (!??) evaluates to not exactly 1.0. At time of writing I don't know why
-    // that is!
-    assert(round(vectorValuesTotal) == 1.0);
 
     m_generator->setDistributionVector(distributionVector);
 }
