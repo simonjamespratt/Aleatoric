@@ -45,6 +45,7 @@ set(HEADER_LIST
 add_library(
     AleatoricCompositionTools
 
+    DurationProtocols/DurationProtocol.cpp
     DurationProtocols/Geometric.cpp
     DurationProtocols/Multiples.cpp
     DurationProtocols/Prescribed.cpp
