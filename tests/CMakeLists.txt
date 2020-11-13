@@ -45,7 +45,7 @@ add_executable(Tests
 
 target_link_libraries(Tests
     PRIVATE
-    AleatoricCompositionTools
+    Aleatoric
     Catch2::Catch2
     trompeloeil
 )

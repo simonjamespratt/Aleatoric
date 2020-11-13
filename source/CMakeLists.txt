@@ -43,7 +43,7 @@ set(HEADER_LIST
 )
 
 add_library(
-    AleatoricCompositionTools
+    Aleatoric
 
     DurationProtocols/DurationProtocol.cpp
     DurationProtocols/Geometric.cpp
@@ -82,7 +82,7 @@ add_library(
     ${HEADER_LIST}
 )
 
-target_include_directories(AleatoricCompositionTools
+target_include_directories(Aleatoric
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include/aleatoric
         ${pcg_cpp_SOURCE_DIR}/include # TODO: BUILDS-CMAKE: had to make this public in order for thr tests to build. Need to find out why
