@@ -3,10 +3,11 @@
 
 #include "IDiscreteGenerator.hpp"
 
-#include <pcg_random.hpp>
+#include <memory>
 #include <random>
 
 namespace aleatoric {
+class Engine;
 /*!
 @brief Implementation class for generating numbers from a discrete distribution
 
@@ -91,8 +92,7 @@ class DiscreteGenerator : public IDiscreteGenerator {
     std::vector<double> getDistributionVector() override;
 
   private:
-    pcg_extras::seed_seq_from<std::random_device> m_seedSource;
-    pcg32 m_engine;
+    std::unique_ptr<Engine> m_engine;
     std::vector<double> m_distributionVector;
     std::discrete_distribution<int> m_distribution;
     void setDistribution();

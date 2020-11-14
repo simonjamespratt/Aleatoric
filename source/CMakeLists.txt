@@ -1,5 +1,3 @@
-# TODO: BUILDS-CMAKE: could add the target sources from within the subdirectories if desired
-
 FetchContent_Declare(
     pcg_cpp
     GIT_REPOSITORY  https://github.com/imneme/pcg-cpp.git
@@ -37,8 +35,12 @@ set(HEADER_LIST
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Multiples.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/Geometric.hpp
     ${CMAKE_SOURCE_DIR}/include/aleatoric/DurationsProducer.hpp
-    Utilities/Utilities.hpp
-    Utilities/CycleStates.hpp
+
+    NumberProtocols/Helpers/CycleStates.hpp
+    NumberProtocols/Helpers/SeriesPrinciple.hpp
+
+    Generators/Engine.hpp
+
     Errors/ErrorChecker.hpp
 )
 
@@ -52,6 +54,7 @@ add_library(
 
     Errors/ErrorChecker.cpp
 
+    Generators/Engine.cpp
     Generators/DiscreteGenerator.cpp
     Generators/UniformGenerator.cpp
     Generators/UniformRealGenerator.cpp
@@ -74,8 +77,8 @@ add_library(
     Producers/DurationsProducer.cpp
     Producers/NumbersProducer.cpp
 
-    Utilities/Utilities.cpp
-    Utilities/CycleStates.cpp
+    NumberProtocols/Helpers/CycleStates.cpp
+    NumberProtocols/Helpers/SeriesPrinciple.cpp
 
     Range.cpp
 
@@ -85,8 +88,9 @@ add_library(
 target_include_directories(Aleatoric
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include/aleatoric
-        ${pcg_cpp_SOURCE_DIR}/include # TODO: BUILDS-CMAKE: had to make this public in order for thr tests to build. Need to find out why
-        Utilities # TODO: BUILDS-CMAKE: again, had to make this public to allow Utilities.hpp to be included in Serial.hpp et al files
     PRIVATE
+        ${pcg_cpp_SOURCE_DIR}/include
         Errors
+        NumberProtocols/Helpers
+        Generators
 )

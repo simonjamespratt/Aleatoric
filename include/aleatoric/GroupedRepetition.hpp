@@ -5,11 +5,12 @@
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
-#include "Utilities.hpp"
 
 #include <memory>
 
 namespace aleatoric {
+class SeriesPrinciple;
+
 class GroupedRepetition : public NumberProtocol {
   public:
     GroupedRepetition(std::unique_ptr<IDiscreteGenerator> numberGenerator,
@@ -35,7 +36,7 @@ class GroupedRepetition : public NumberProtocol {
     std::unique_ptr<IDiscreteGenerator> m_groupingGenerator;
     Range m_range;
     std::vector<int> m_groupings;
-    Utilities::SeriesPrinciple m_seriesPrinciple;
+    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
     int m_groupingCount;
     int m_currentReturnableNumber;
     void initialise();

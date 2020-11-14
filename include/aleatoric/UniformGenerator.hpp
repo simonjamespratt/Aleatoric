@@ -3,10 +3,11 @@
 
 #include "IUniformGenerator.hpp"
 
-#include <pcg_random.hpp>
+#include <memory>
 #include <random>
 
 namespace aleatoric {
+class Engine;
 /*!
 @brief Implementation class for generating numbers from a uniform
 distribution
@@ -59,8 +60,7 @@ class UniformGenerator : public IUniformGenerator {
     void setDistribution(int rangeStart, int rangeEnd) override;
 
   private:
-    pcg_extras::seed_seq_from<std::random_device> m_seedSource;
-    pcg32 m_engine;
+    std::unique_ptr<Engine> m_engine;
     std::uniform_int_distribution<int> m_distribution;
 };
 } // namespace aleatoric

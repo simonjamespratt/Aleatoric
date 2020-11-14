@@ -1,5 +1,7 @@
 #include "Ratio.hpp"
 
+#include "SeriesPrinciple.hpp"
+
 #include <stdexcept>
 
 namespace aleatoric {
@@ -7,7 +9,7 @@ Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator)
 : m_generator(std::move(generator)),
   m_range(0, 1),
   m_ratios(std::vector<int> {1, 1}),
-  m_seriesPrinciple()
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     initialise();
 }
@@ -18,7 +20,7 @@ Ratio::Ratio(std::unique_ptr<IDiscreteGenerator> generator,
 : m_generator(std::move(generator)),
   m_range(range),
   m_ratios(ratios),
-  m_seriesPrinciple()
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     checkRangeAndRatiosMatch(m_range, m_ratios);
     initialise();
@@ -29,11 +31,11 @@ Ratio::~Ratio()
 
 int Ratio::getIntegerNumber()
 {
-    if(m_seriesPrinciple.seriesIsComplete(m_generator)) {
-        m_seriesPrinciple.resetSeries(m_generator);
+    if(m_seriesPrinciple->seriesIsComplete(m_generator)) {
+        m_seriesPrinciple->resetSeries(m_generator);
     }
 
-    auto index = m_seriesPrinciple.getNumber(m_generator);
+    auto index = m_seriesPrinciple->getNumber(m_generator);
     return m_selectables[index];
 }
 

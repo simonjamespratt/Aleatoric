@@ -1,7 +1,6 @@
 #include "GranularWalk.hpp"
 
 #include "ErrorChecker.hpp"
-#include "Utilities.hpp"
 
 #include <math.h>
 
