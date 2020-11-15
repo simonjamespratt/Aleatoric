@@ -1,7 +1,3 @@
-# TODO: BUILDS-CMAKE: Further improvements can be made to this build.
-# See: https://gitlab.com/CLIUtils/modern-cmake/tree/master/examples/extended-project for a full project
-# which is based the principles here: https://cliutils.gitlab.io/modern-cmake/
-
 # Basic settings
 cmake_minimum_required(VERSION 3.14)
 project(

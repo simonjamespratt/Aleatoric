@@ -5,9 +5,12 @@
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
-#include "Utilities.hpp"
+
+#include <memory>
 
 namespace aleatoric {
+class SeriesPrinciple;
+
 class Ratio : public NumberProtocol {
   public:
     Ratio(std::unique_ptr<IDiscreteGenerator> generator);
@@ -31,7 +34,7 @@ class Ratio : public NumberProtocol {
     Range m_range;
     std::vector<int> m_ratios;
     std::vector<int> m_selectables;
-    Utilities::SeriesPrinciple m_seriesPrinciple;
+    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
     void setSelectables();
     void checkRangeAndRatiosMatch(const Range &range,
                                   const std::vector<int> &ratios);

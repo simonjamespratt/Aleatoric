@@ -1,16 +1,11 @@
-#ifndef Utilities_hpp
-#define Utilities_hpp
+#ifndef SeriesPrinciple_hpp
+#define SeriesPrinciple_hpp
 
 #include "IDiscreteGenerator.hpp"
 
 #include <memory>
-#include <tuple>
 
-namespace aleatoric { namespace Utilities {
-
-// Range is inclusive
-bool numberIsOutOfRange(int number, int rangeStart, int rangeEnd);
-
+namespace aleatoric {
 class SeriesPrinciple {
   public:
     SeriesPrinciple();
@@ -22,7 +17,6 @@ class SeriesPrinciple {
 
     void resetSeries(std::unique_ptr<IDiscreteGenerator> &generator);
 };
+} // namespace aleatoric
 
-}} // namespace aleatoric::Utilities
-
-#endif /* Utilities_hpp */
+#endif /* SeriesPrinciple_hpp */

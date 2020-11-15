@@ -1,12 +1,14 @@
 #include "UniformGenerator.hpp"
 
+#include "Engine.hpp"
+
 namespace aleatoric {
 UniformGenerator::UniformGenerator()
-: m_distribution(0, 1), m_engine(m_seedSource)
+: m_distribution(0, 1), m_engine(std::make_unique<Engine>())
 {}
 
 UniformGenerator::UniformGenerator(int rangeStart, int rangeEnd)
-: m_distribution(rangeStart, rangeEnd), m_engine(m_seedSource)
+: m_distribution(rangeStart, rangeEnd), m_engine(std::make_unique<Engine>())
 {}
 
 UniformGenerator::~UniformGenerator()
@@ -14,7 +16,7 @@ UniformGenerator::~UniformGenerator()
 
 int UniformGenerator::getNumber()
 {
-    return m_distribution(m_engine);
+    return m_distribution(m_engine->getEngine());
 }
 
 void UniformGenerator::setDistribution(int startRange, int endRange)

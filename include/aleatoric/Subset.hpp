@@ -6,11 +6,12 @@
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
-#include "Utilities.hpp"
 
 #include <memory>
 
 namespace aleatoric {
+class SeriesPrinciple;
+
 class Subset : public NumberProtocol {
   public:
     Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
@@ -35,7 +36,7 @@ class Subset : public NumberProtocol {
     std::unique_ptr<IUniformGenerator> m_uniformGenerator;
     std::unique_ptr<IDiscreteGenerator> m_discreteGenerator;
     Range m_range;
-    Utilities::SeriesPrinciple m_seriesPrinciple;
+    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
     int m_subsetMin;
     int m_subsetMax;
     std::vector<int> m_subset;

@@ -5,10 +5,11 @@
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
-#include "Utilities.hpp"
+
+#include <memory>
 
 namespace aleatoric {
-
+class SeriesPrinciple;
 /*!
  * @brief A protocol for producing random numbers
  *
@@ -17,13 +18,13 @@ namespace aleatoric {
  * (see Protocol for more information).
  *
  * This protocol follows the
- * [Serialism](https://en.wikipedia.org/wiki/Serialism) approach, allowing the
- * production of sets of numbers.
+ * [Serialism](https://en.wikipedia.org/wiki/Serialism) approach, allowing
+ * the production of sets of numbers.
  *
- * __Further Detail__: An initial call to get a number will select a number from
- * within the range with equal probability. Subsequent calls to get a number
- * will prevent previously selected numbers from being selected again until all
- * other possible numbers in the range have been selected.
+ * __Further Detail__: An initial call to get a number will select a number
+ * from within the range with equal probability. Subsequent calls to get a
+ * number will prevent previously selected numbers from being selected again
+ * until all other possible numbers in the range have been selected.
  */
 class Serial : public NumberProtocol {
   public:
@@ -59,7 +60,7 @@ class Serial : public NumberProtocol {
   private:
     Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
-    Utilities::SeriesPrinciple m_seriesPrinciple;
+    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
 };
 } // namespace aleatoric
 

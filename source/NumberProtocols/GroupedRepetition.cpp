@@ -1,5 +1,7 @@
 #include "GroupedRepetition.hpp"
 
+#include "SeriesPrinciple.hpp"
+
 namespace aleatoric {
 GroupedRepetition::GroupedRepetition(
     std::unique_ptr<IDiscreteGenerator> numberGenerator,
@@ -8,7 +10,7 @@ GroupedRepetition::GroupedRepetition(
   m_groupingGenerator(std::move(groupingGenerator)),
   m_range(0, 1),
   m_groupings({1}),
-  m_seriesPrinciple()
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     initialise();
 }
@@ -22,7 +24,7 @@ GroupedRepetition::GroupedRepetition(
   m_groupingGenerator(std::move(groupingGenerator)),
   m_range(range),
   m_groupings(groupings),
-  m_seriesPrinciple()
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     initialise();
 }
@@ -32,20 +34,20 @@ GroupedRepetition::~GroupedRepetition()
 
 int GroupedRepetition::getIntegerNumber()
 {
-    if(m_seriesPrinciple.seriesIsComplete(m_groupingGenerator)) {
-        m_seriesPrinciple.resetSeries(m_groupingGenerator);
+    if(m_seriesPrinciple->seriesIsComplete(m_groupingGenerator)) {
+        m_seriesPrinciple->resetSeries(m_groupingGenerator);
     }
 
-    if(m_seriesPrinciple.seriesIsComplete(m_numberGenerator)) {
-        m_seriesPrinciple.resetSeries(m_numberGenerator);
+    if(m_seriesPrinciple->seriesIsComplete(m_numberGenerator)) {
+        m_seriesPrinciple->resetSeries(m_numberGenerator);
     }
 
     if(m_groupingCount == 0) {
-        auto groupingIndex = m_seriesPrinciple.getNumber(m_groupingGenerator);
+        auto groupingIndex = m_seriesPrinciple->getNumber(m_groupingGenerator);
         m_groupingCount = m_groupings[groupingIndex];
 
         m_currentReturnableNumber =
-            m_seriesPrinciple.getNumber(m_numberGenerator) + m_range.offset;
+            m_seriesPrinciple->getNumber(m_numberGenerator) + m_range.offset;
     }
 
     m_groupingCount--;

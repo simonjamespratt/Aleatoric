@@ -1,5 +1,6 @@
 #include "Cycle.hpp"
 
+#include "CycleStates.hpp"
 #include "ErrorChecker.hpp"
 
 namespace aleatoric {

@@ -1,13 +1,17 @@
 #include "UniformRealGenerator.hpp"
 
+#include "Engine.hpp"
+
 namespace aleatoric {
 UniformRealGenerator::UniformRealGenerator()
-: m_distribution(0.0, 1.0), m_engine(m_seedSource), m_range(0.0, 1.0)
+: m_distribution(0.0, 1.0),
+  m_engine(std::make_unique<Engine>()),
+  m_range(0.0, 1.0)
 {}
 
 UniformRealGenerator::UniformRealGenerator(double rangeStart, double rangeEnd)
 : m_distribution(rangeStart, rangeEnd),
-  m_engine(m_seedSource),
+  m_engine(std::make_unique<Engine>()),
   m_range(rangeStart, rangeEnd)
 {}
 
@@ -16,7 +20,7 @@ UniformRealGenerator::~UniformRealGenerator()
 
 double UniformRealGenerator::getNumber()
 {
-    return m_distribution(m_engine);
+    return m_distribution(m_engine->getEngine());
 }
 
 void UniformRealGenerator::setDistribution(double rangeStart, double rangeEnd)

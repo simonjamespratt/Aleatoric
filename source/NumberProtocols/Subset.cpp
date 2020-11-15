@@ -1,5 +1,7 @@
 #include "Subset.hpp"
 
+#include "SeriesPrinciple.hpp"
+
 #include <stdexcept>
 
 namespace aleatoric {
@@ -21,7 +23,8 @@ Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
   m_discreteGenerator(std::move(discreteGenerator)),
   m_range(0, 1),
   m_subsetMin(1),
-  m_subsetMax(2)
+  m_subsetMax(2),
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     initialise();
 }
@@ -35,7 +38,8 @@ Subset::Subset(std::unique_ptr<IUniformGenerator> uniformGenerator,
   m_discreteGenerator(std::move(discreteGenerator)),
   m_range(range),
   m_subsetMin(subsetMin),
-  m_subsetMax(subsetMax)
+  m_subsetMax(subsetMax),
+  m_seriesPrinciple(std::make_unique<SeriesPrinciple>())
 {
     checkSubsetValues(m_subsetMin, m_subsetMax, m_range);
     initialise();
@@ -88,7 +92,7 @@ void Subset::setSubset()
     m_subset.resize(m_uniformGenerator->getNumber());
 
     for(auto &&i : m_subset) {
-        i = m_seriesPrinciple.getNumber(m_discreteGenerator) + m_range.offset;
+        i = m_seriesPrinciple->getNumber(m_discreteGenerator) + m_range.offset;
     }
 
     // now set the uniformGenerator to pick indices from the subset

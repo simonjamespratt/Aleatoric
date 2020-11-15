@@ -1,7 +1,6 @@
 #ifndef Cycle_hpp
 #define Cycle_hpp
 
-#include "CycleStates.hpp"
 #include "NumberProtocol.hpp"
 #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
@@ -9,6 +8,8 @@
 #include <memory>
 
 namespace aleatoric {
+class CycleState;
+
 class Cycle : public NumberProtocol {
   public:
     Cycle();

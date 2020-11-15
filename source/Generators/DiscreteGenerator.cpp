@@ -1,19 +1,21 @@
 #include "DiscreteGenerator.hpp"
 
+#include "Engine.hpp"
+
 namespace aleatoric {
-DiscreteGenerator::DiscreteGenerator() : m_engine(m_seedSource)
+DiscreteGenerator::DiscreteGenerator() : m_engine(std::make_unique<Engine>())
 {
     setDistributionVector(std::vector<double> {1.0, 1.0});
 }
 
 DiscreteGenerator::DiscreteGenerator(std::vector<double> distributionVector)
-: m_engine(m_seedSource)
+: m_engine(std::make_unique<Engine>())
 {
     setDistributionVector(distributionVector);
 }
 
 DiscreteGenerator::DiscreteGenerator(int vectorSize, double uniformValue)
-: m_engine(m_seedSource)
+: m_engine(std::make_unique<Engine>())
 {
     setDistributionVector(vectorSize, uniformValue);
 }
@@ -23,7 +25,7 @@ DiscreteGenerator::~DiscreteGenerator()
 
 int DiscreteGenerator::getNumber()
 {
-    return m_distribution(m_engine);
+    return m_distribution(m_engine->getEngine());
 }
 
 void DiscreteGenerator::setDistributionVector(

@@ -1,13 +1,6 @@
-#include "Utilities.hpp"
+#include "SeriesPrinciple.hpp"
 
-namespace aleatoric { namespace Utilities {
-
-bool numberIsOutOfRange(int number, int rangeStart, int rangeEnd)
-{
-    return number < rangeStart || number > rangeEnd;
-};
-
-// Series Principle Class Definitions
+namespace aleatoric {
 SeriesPrinciple::SeriesPrinciple()
 {}
 
@@ -38,5 +31,4 @@ void SeriesPrinciple::resetSeries(
 {
     generator->updateDistributionVector(1.0);
 }
-
-}} // namespace aleatoric::Utilities
+}
