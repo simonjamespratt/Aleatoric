@@ -1,40 +1,40 @@
 FetchContent_Declare(
-    pcg_cpp
+    pcg-cpp
     GIT_REPOSITORY  https://github.com/imneme/pcg-cpp.git
-    GIT_TAG         origin/master
+    GIT_TAG         5b5cac8d61339e810c5dbb4692d868a1d7ca1b2d #latest master commit on 04-02-2020
 )
-FetchContent_MakeAvailable(pcg_cpp)
+FetchContent_MakeAvailable(pcg-cpp)
 
 # NB: HEADER_LIST is only used for IDE reference purposes and is not a build requirement.
 # Also note that is can be globbed, but is potentially a bit flakey
 set(HEADER_LIST
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/IDiscreteGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/IUniformGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/UniformRealGenerator.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/NumbersProducer.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocol.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/NumberProtocolParameters.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Serial.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Basic.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/NoRepetition.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/GroupedRepetition.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/AdjacentSteps.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Periodic.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Walk.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/GranularWalk.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Range.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Cycle.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Ratio.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Subset.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Precision.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/CollectionsProducer.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/DurationProtocol.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Prescribed.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Multiples.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/Geometric.hpp
-    ${CMAKE_SOURCE_DIR}/include/aleatoric/DurationsProducer.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/IDiscreteGenerator.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/DiscreteGenerator.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/IUniformGenerator.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/UniformGenerator.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/UniformRealGenerator.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/NumbersProducer.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/NumberProtocol.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/NumberProtocolParameters.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Serial.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Basic.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/NoRepetition.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/GroupedRepetition.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/AdjacentSteps.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Periodic.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Walk.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/GranularWalk.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Range.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Cycle.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Ratio.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Subset.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Precision.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/CollectionsProducer.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/DurationProtocol.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Prescribed.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Multiples.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/Geometric.hpp
+    ${aleatoric_SOURCE_DIR}/include/aleatoric/DurationsProducer.hpp
 
     NumberProtocols/Helpers/CycleStates.hpp
     NumberProtocols/Helpers/SeriesPrinciple.hpp
@@ -87,9 +87,9 @@ add_library(
 
 target_include_directories(Aleatoric
     PUBLIC
-        ${CMAKE_SOURCE_DIR}/include/aleatoric
+        ${aleatoric_SOURCE_DIR}/include/aleatoric
     PRIVATE
-        ${pcg_cpp_SOURCE_DIR}/include
+        ${pcg-cpp_SOURCE_DIR}/include
         Errors
         NumberProtocols/Helpers
         Generators
