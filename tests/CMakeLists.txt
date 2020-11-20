@@ -1,19 +1,20 @@
 FetchContent_Declare(
-    catch2
+    Catch2
     GIT_REPOSITORY  https://github.com/catchorg/Catch2.git
-    GIT_TAG         v2.11.0
+    GIT_TAG         ff349a50bfc6214b4081f4ca63c7de35e2162f60 #v2.13.3
 )
-FetchContent_MakeAvailable(catch2)
+# TODO: CMAKE: this method can take a list so call it once with both catch2 and tromp...)
+FetchContent_MakeAvailable(Catch2)
 
 # NB: Having run FetchContent for catch, the CMAKE_MODULE_PATH is not populated with the helper scripts
-# Have to add them manually. Not sure why this is not beinig done automatically
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/_deps/catch2-src/contrib)
+# Add them here
+list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 include(Catch)
 
 FetchContent_Declare(
     trompeloeil
     GIT_REPOSITORY  https://github.com/rollbear/trompeloeil.git
-    GIT_TAG         v35
+    GIT_TAG         0b8b66cfdb0d0a10fbd0d9268917eb1bf858aaf6 #v39
 )
 FetchContent_MakeAvailable(trompeloeil)
 
@@ -51,7 +52,7 @@ target_link_libraries(Tests
 )
 
 target_include_directories(Tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Mocks
+    ${CMAKE_CURRENT_LIST_DIR}/Mocks
 )
 
 catch_discover_tests(Tests)

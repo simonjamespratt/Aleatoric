@@ -3,20 +3,23 @@ cmake_minimum_required(VERSION 3.14)
 project(
     aleatoric
     VERSION 0.1.0
-    DESCRIPTION "Static C++ library providing aleatoric composition tools"
+    DESCRIPTION "C++ library providing aleatoric composition tools"
     LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-# target_compile_features(calclib PUBLIC cxx_std_11)
-# this is another way to do this, but specifically for a particular target
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 include(CTest)
 
-find_package(Doxygen
-             REQUIRED dot
-             OPTIONAL_COMPONENTS mscgen dia)
+add_subdirectory(source)
+add_subdirectory(tests)
+
+# docs
+find_package(Doxygen REQUIRED
+    COMPONENTS dot
+    OPTIONAL_COMPONENTS mscgen dia)
 
 if (DOXYGEN_FOUND)
     add_subdirectory(docs)
@@ -25,11 +28,8 @@ else()
 endif (DOXYGEN_FOUND)
 
 
-add_subdirectory(source)
-add_subdirectory(tests)
 
-# Misc
-# TODO: BUILDS-CMAKE: what is the purpose of this?
+# Installing and packaging
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
