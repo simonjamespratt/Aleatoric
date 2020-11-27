@@ -35,8 +35,6 @@ target_include_directories(Tests PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Mocks
 )
 
-include(CTest)
-
 # Populate CMAKE_MODULE_PATH with Catch helper scripts
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 include(Catch)

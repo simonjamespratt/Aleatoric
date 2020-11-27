@@ -4,7 +4,5 @@ target_sources(Aleatoric_Aleatoric
         Range.cpp
 )
 
-target_include_directories(Aleatoric_Aleatoric
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
-)
+include(AleatoricHelpers)
+manage_headers_for_aleatoric_library()
