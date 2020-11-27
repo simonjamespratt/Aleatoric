@@ -1,4 +1,4 @@
-# Basic settings
+# Project-wide settings
 cmake_minimum_required(VERSION 3.14)
 project(
     aleatoric
@@ -10,26 +10,16 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(FetchContent)
-include(CTest)
+# Dependencies (external content)
+add_subdirectory(dependencies)
 
+# Main targets
 add_subdirectory(source)
-add_subdirectory(tests)
+add_subdirectory(docs)
 
-# docs
-find_package(Doxygen REQUIRED
-    COMPONENTS dot
-    OPTIONAL_COMPONENTS mscgen dia)
-
-if (DOXYGEN_FOUND)
-    add_subdirectory(docs)
-else()
-    message(STATUS "Doxygen not found, not building docs")
-endif (DOXYGEN_FOUND)
-
-
-
-# Installing and packaging
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+# Tests and Packaging
+# Add these targets only if top level project
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_subdirectory(tests)
+    add_subdirectory(packaging)
+endif()

@@ -1,0 +1,36 @@
+target_sources(Aleatoric_Aleatoric
+    PRIVATE
+        AdjacentSteps.hpp
+        AdjacentSteps.cpp
+        Basic.hpp
+        Basic.cpp
+        Cycle.hpp
+        Cycle.cpp
+        GranularWalk.hpp
+        GranularWalk.cpp
+        GroupedRepetition.hpp
+        GroupedRepetition.cpp
+        NoRepetition.hpp
+        NoRepetition.cpp
+        NumberProtocol.hpp
+        NumberProtocol.cpp
+        NumberProtocolParameters.hpp
+        NumberProtocolParameters.cpp
+        Periodic.hpp
+        Periodic.cpp
+        Precision.hpp
+        Precision.cpp
+        Ratio.hpp
+        Ratio.cpp
+        Serial.hpp
+        Serial.cpp
+        Subset.hpp
+        Subset.cpp
+        Walk.hpp
+        Walk.cpp
+)
+
+target_include_directories(Aleatoric_Aleatoric
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+)
