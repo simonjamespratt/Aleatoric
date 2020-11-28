@@ -18,8 +18,8 @@ Walk::Walk(std::unique_ptr<IUniformGenerator> generator)
 Walk::Walk(std::unique_ptr<IUniformGenerator> generator,
            Range range,
            int maxStep)
-: m_range(range),
-  m_generator(std::move(generator)),
+: m_generator(std::move(generator)),
+  m_range(range),
   m_maxStep(maxStep),
   m_haveRequestedFirstNumber(false)
 {

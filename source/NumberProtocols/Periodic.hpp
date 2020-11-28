@@ -88,8 +88,8 @@ class Periodic : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
+    Range m_range;
     double m_periodicity;
     void setPeriodicDistribution(int selectedIndex);
     double calculateRemainerAllocation();

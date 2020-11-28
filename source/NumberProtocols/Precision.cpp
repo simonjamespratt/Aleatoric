@@ -52,7 +52,7 @@ NumberProtocolParameters Precision::getParams()
 void Precision::checkDistributionMatchesRange(
     const std::vector<double> &distribution, const Range &range)
 {
-    if(distribution.size() != range.size) {
+    if(static_cast<int>(distribution.size()) != range.size) {
         throw std::invalid_argument("The vector size for the distribution must "
                                     "match the size of the provided range");
     }

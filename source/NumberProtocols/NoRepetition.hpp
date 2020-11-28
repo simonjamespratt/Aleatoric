@@ -59,8 +59,8 @@ class NoRepetition : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
+    Range m_range;
     int m_lastNumberReturned;
     bool m_haveRequestedFirstNumber;
 };

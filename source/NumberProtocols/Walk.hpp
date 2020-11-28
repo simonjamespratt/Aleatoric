@@ -97,8 +97,8 @@ class Walk : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    Range m_range;
     std::unique_ptr<IUniformGenerator> m_generator;
+    Range m_range;
     int m_maxStep;
     void setForNextStep(int lastSelectedNumber);
     bool m_haveRequestedFirstNumber;

@@ -36,9 +36,9 @@ class Subset : public NumberProtocol {
     std::unique_ptr<IUniformGenerator> m_uniformGenerator;
     std::unique_ptr<IDiscreteGenerator> m_discreteGenerator;
     Range m_range;
-    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
     int m_subsetMin;
     int m_subsetMax;
+    std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
     std::vector<int> m_subset;
     void setSubset();
     void checkSubsetValues(const int &subsetMin,

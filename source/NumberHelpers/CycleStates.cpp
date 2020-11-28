@@ -54,7 +54,7 @@ void UniReverse::setRange(const int &lastPosition,
 }
 
 Bidirectional::Bidirectional(bool initialStateReverse)
-: m_initialStateReverse(initialStateReverse), m_reverse(initialStateReverse)
+: m_reverse(initialStateReverse)
 {}
 
 int Bidirectional::getPosition(int &nextPosition, const Range &range)

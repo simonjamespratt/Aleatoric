@@ -4,14 +4,14 @@
 
 namespace aleatoric {
 UniformRealGenerator::UniformRealGenerator()
-: m_distribution(0.0, 1.0),
-  m_engine(std::make_unique<Engine>()),
+: m_engine(std::make_unique<Engine>()),
+  m_distribution(0.0, 1.0),
   m_range(0.0, 1.0)
 {}
 
 UniformRealGenerator::UniformRealGenerator(double rangeStart, double rangeEnd)
-: m_distribution(rangeStart, rangeEnd),
-  m_engine(std::make_unique<Engine>()),
+: m_engine(std::make_unique<Engine>()),
+  m_distribution(rangeStart, rangeEnd),
   m_range(rangeStart, rangeEnd)
 {}
 

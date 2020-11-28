@@ -16,7 +16,7 @@ struct NumberProtocolParameters {
 
     struct Cycle {
         Cycle(bool bidirectional, bool reverseDirection);
-        friend class Protocols;
+        friend struct Protocols;
         bool getBidirectional();
         bool getReverseDirection();
 
@@ -28,7 +28,7 @@ struct NumberProtocolParameters {
 
     struct GranularWalk {
         GranularWalk(double deviationFactor);
-        friend class Protocols;
+        friend struct Protocols;
         double getDeviationFactor();
 
       private:
@@ -38,7 +38,7 @@ struct NumberProtocolParameters {
 
     struct GroupedRepetition {
         GroupedRepetition(std::vector<int> groupings);
-        friend class Protocols;
+        friend struct Protocols;
         std::vector<int> getGroupings();
 
       private:
@@ -50,7 +50,7 @@ struct NumberProtocolParameters {
 
     struct Periodic {
         Periodic(double chanceOfRepetition);
-        friend class Protocols;
+        friend struct Protocols;
         double getChanceOfRepetition();
 
       private:
@@ -60,7 +60,7 @@ struct NumberProtocolParameters {
 
     struct Precision {
         Precision(std::vector<double> distribution);
-        friend class Protocols;
+        friend struct Protocols;
         std::vector<double> getDistribution();
 
       private:
@@ -70,7 +70,7 @@ struct NumberProtocolParameters {
 
     struct Ratio {
         Ratio(std::vector<int> ratios);
-        friend class Protocols;
+        friend struct Protocols;
         std::vector<int> getRatios();
 
       private:
@@ -82,7 +82,7 @@ struct NumberProtocolParameters {
 
     struct Subset {
         Subset(int min, int max);
-        friend class Protocols;
+        friend struct Protocols;
         int getMin();
         int getMax();
 
@@ -94,7 +94,7 @@ struct NumberProtocolParameters {
 
     struct Walk {
         Walk(int maxStep);
-        friend class Protocols;
+        friend struct Protocols;
         int getMaxStep();
 
       private:
@@ -119,7 +119,7 @@ struct NumberProtocolParameters {
             none
         };
 
-        friend class NumberProtocolParameters;
+        friend struct NumberProtocolParameters;
 
         Protocols(AdjacentSteps protocolParams);
         Protocols(Basic protocolParams);

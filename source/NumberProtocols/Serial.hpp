@@ -58,8 +58,8 @@ class Serial : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
+    Range m_range;
     std::unique_ptr<SeriesPrinciple> m_seriesPrinciple;
 };
 } // namespace aleatoric

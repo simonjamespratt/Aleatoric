@@ -67,7 +67,7 @@ NumberProtocolParameters Ratio::getParams()
 // Private methods
 void Ratio::setSelectables()
 {
-    for(int i = 0; i < m_ratios.size(); i++) {
+    for(size_t i = 0; i < m_ratios.size(); i++) {
         for(int ii = 0; ii < m_ratios[i]; ii++) {
             m_selectables.push_back(m_range.offset + i);
         }
@@ -77,7 +77,7 @@ void Ratio::setSelectables()
 void Ratio::checkRangeAndRatiosMatch(const Range &range,
                                      const std::vector<int> &ratios)
 {
-    if(range.size != ratios.size()) {
+    if(range.size != static_cast<int>(ratios.size())) {
         throw std::invalid_argument(
             "The size of ratios collection must match the size of the range");
     }
