@@ -4,11 +4,11 @@
 
 namespace aleatoric {
 UniformGenerator::UniformGenerator()
-: m_distribution(0, 1), m_engine(std::make_unique<Engine>())
+: m_engine(std::make_unique<Engine>()), m_distribution(0, 1)
 {}
 
 UniformGenerator::UniformGenerator(int rangeStart, int rangeEnd)
-: m_distribution(rangeStart, rangeEnd), m_engine(std::make_unique<Engine>())
+: m_engine(std::make_unique<Engine>()), m_distribution(rangeStart, rangeEnd)
 {}
 
 UniformGenerator::~UniformGenerator()

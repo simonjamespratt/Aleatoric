@@ -101,9 +101,10 @@ void Periodic::setPeriodicDistribution(int selectedIndex)
     auto distributionVector = m_generator->getDistributionVector();
     auto remainderAllocation = calculateRemainerAllocation();
 
-    for(int i = 0; i < distributionVector.size(); i++) {
-        auto newVectorValue =
-            i == selectedIndex ? m_periodicity : remainderAllocation;
+    for(size_t i = 0; i < distributionVector.size(); i++) {
+        auto newVectorValue = static_cast<int>(i) == selectedIndex
+                                  ? m_periodicity
+                                  : remainderAllocation;
         distributionVector[i] = newVectorValue;
     }
 

@@ -71,8 +71,8 @@ class AdjacentSteps : public NumberProtocol {
     NumberProtocolParameters getParams() override;
 
   private:
-    Range m_range;
     std::unique_ptr<IDiscreteGenerator> m_generator;
+    Range m_range;
     void prepareStepBasedDistribution(int number);
     bool m_haveRequestedFirstNumber;
     int m_lastReturnedNumber;

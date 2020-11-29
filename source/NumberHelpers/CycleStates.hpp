@@ -47,7 +47,6 @@ class Bidirectional : public CycleState {
 
   private:
     bool m_reverse;
-    bool m_initialStateReverse;
 };
 
 } // namespace aleatoric

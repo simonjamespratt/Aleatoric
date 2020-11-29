@@ -12,6 +12,8 @@ set_target_properties(Aleatoric_Aleatoric
 # used to copy the headers during install
 set_property(TARGET Aleatoric_Aleatoric PROPERTY ALEATORIC_PUBLIC_HEADER_DIRS)
 
+target_compile_options(Aleatoric_Aleatoric PRIVATE -Wall -Wextra)
+
 add_subdirectory(DurationProtocols)
 add_subdirectory(Engine)
 add_subdirectory(Errors)

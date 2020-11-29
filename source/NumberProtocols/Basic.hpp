@@ -44,8 +44,8 @@ class Basic : public NumberProtocol {
     void setParams(NumberProtocolParameters newParams) override;
 
   private:
-    Range m_range;
     std::unique_ptr<IUniformGenerator> m_generator;
+    Range m_range;
 };
 } // namespace aleatoric
 

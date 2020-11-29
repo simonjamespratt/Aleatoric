@@ -27,7 +27,7 @@ Geometric::Geometric(const Range &range, int collectionSize)
     // the result is then scaled to the range by multiplying it by the range
     // start/offset (called the scale factor). For further details,
     // see https://en.wikipedia.org/wiki/Geometric_progression
-    for(int i = 0; i < m_durations.size(); i++) {
+    for(size_t i = 0; i < m_durations.size(); i++) {
         m_durations[i] =
             static_cast<int>(round(m_range.offset * pow(commonRatio, i)));
     }
