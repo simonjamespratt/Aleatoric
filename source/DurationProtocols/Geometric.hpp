@@ -7,14 +7,14 @@
 namespace aleatoric {
 class Geometric : public DurationProtocol {
   public:
-    Geometric(const Range &range, int collectionSize);
+    Geometric(Range range, int collectionSize);
     ~Geometric();
     int getCollectionSize() override;
     int getDuration(int index) override;
 
   private:
     std::vector<int> m_durations;
-    const Range &m_range;
+    Range m_range;
 };
 } // namespace aleatoric
 #endif /* Geometric_hpp */

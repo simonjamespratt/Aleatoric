@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 namespace aleatoric {
-Multiples::Multiples(int baseIncrement, const Range &range)
+Multiples::Multiples(int baseIncrement, Range range)
 {
     if(baseIncrement < 1) {
         throw std::invalid_argument(
@@ -27,7 +27,7 @@ Multiples::Multiples(int baseIncrement, const Range &range)
 }
 
 Multiples::Multiples(int baseIncrement,
-                     const Range &range,
+                     Range range,
                      double deviationFactor,
                      std::unique_ptr<IUniformGenerator> generator)
 : Multiples(baseIncrement, range)
@@ -40,7 +40,7 @@ Multiples::Multiples(int baseIncrement,
     m_generator = std::move(generator);
 }
 
-Multiples::Multiples(int baseIncrement, const std::vector<int> &multipliers)
+Multiples::Multiples(int baseIncrement, std::vector<int> multipliers)
 {
     if(baseIncrement < 1) {
         throw std::invalid_argument(
@@ -62,7 +62,7 @@ Multiples::Multiples(int baseIncrement, const std::vector<int> &multipliers)
 }
 
 Multiples::Multiples(int baseIncrement,
-                     const std::vector<int> &multipliers,
+                     std::vector<int> multipliers,
                      double deviationFactor,
                      std::unique_ptr<IUniformGenerator> generator)
 : Multiples(baseIncrement, multipliers)

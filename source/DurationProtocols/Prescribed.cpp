@@ -3,8 +3,7 @@
 #include <stdexcept>
 
 namespace aleatoric {
-Prescribed::Prescribed(const std::vector<int> &durations)
-: m_durations(durations)
+Prescribed::Prescribed(std::vector<int> durations) : m_durations(durations)
 {
     for(auto &&i : m_durations) {
         if(i < 1) {
