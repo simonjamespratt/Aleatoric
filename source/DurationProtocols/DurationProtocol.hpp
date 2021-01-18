@@ -17,24 +17,24 @@ class DurationProtocol {
     virtual ~DurationProtocol() = default;
 
     static std::unique_ptr<DurationProtocol>
-    createPrescribed(const std::vector<int> &durations);
+    createPrescribed(std::vector<int> durations);
+
+    static std::unique_ptr<DurationProtocol> createMultiples(int baseIncrement,
+                                                             Range range);
 
     static std::unique_ptr<DurationProtocol>
-    createMultiples(int baseIncrement, const Range &range);
-
-    static std::unique_ptr<DurationProtocol> createMultiples(
-        int baseIncrement, const Range &range, double deviationFactor);
+    createMultiples(int baseIncrement, Range range, double deviationFactor);
 
     static std::unique_ptr<DurationProtocol>
-    createMultiples(int baseIncrement, const std::vector<int> &multipliers);
+    createMultiples(int baseIncrement, std::vector<int> multipliers);
 
     static std::unique_ptr<DurationProtocol>
     createMultiples(int baseIncrement,
-                    const std::vector<int> &multipliers,
+                    std::vector<int> multipliers,
                     double deviationFactor);
 
     static std::unique_ptr<DurationProtocol>
-    createGeometric(const Range &range, int collectionSize);
+    createGeometric(Range range, int collectionSize);
 };
 } // namespace aleatoric
 

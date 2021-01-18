@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 namespace aleatoric {
-Geometric::Geometric(const Range &range, int collectionSize)
+Geometric::Geometric(Range range, int collectionSize)
 : m_durations(collectionSize), m_range(range)
 {
     if(m_range.start < 1) {

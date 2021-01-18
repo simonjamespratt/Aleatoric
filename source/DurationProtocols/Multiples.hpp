@@ -10,17 +10,17 @@
 namespace aleatoric {
 class Multiples : public DurationProtocol {
   public:
-    Multiples(int baseIncrement, const Range &range);
+    Multiples(int baseIncrement, Range range);
 
     Multiples(int baseIncrement,
-              const Range &range,
+              Range range,
               double deviationFactor,
               std::unique_ptr<IUniformGenerator> generator);
 
-    Multiples(int baseIncrement, const std::vector<int> &multipliers);
+    Multiples(int baseIncrement, std::vector<int> multipliers);
 
     Multiples(int baseIncrement,
-              const std::vector<int> &multipliers,
+              std::vector<int> multipliers,
               double deviationFactor,
               std::unique_ptr<IUniformGenerator> generator);
 

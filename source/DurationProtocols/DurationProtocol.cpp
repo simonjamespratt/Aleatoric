@@ -7,19 +7,19 @@
 
 namespace aleatoric {
 std::unique_ptr<DurationProtocol>
-DurationProtocol::createPrescribed(const std::vector<int> &durations)
+DurationProtocol::createPrescribed(std::vector<int> durations)
 {
     return std::make_unique<Prescribed>(durations);
 }
 
 std::unique_ptr<DurationProtocol>
-DurationProtocol::createMultiples(int baseIncrement, const Range &range)
+DurationProtocol::createMultiples(int baseIncrement, Range range)
 {
     return std::make_unique<Multiples>(baseIncrement, range);
 }
 
 std::unique_ptr<DurationProtocol> DurationProtocol::createMultiples(
-    int baseIncrement, const Range &range, double deviationFactor)
+    int baseIncrement, Range range, double deviationFactor)
 {
     return std::make_unique<Multiples>(baseIncrement,
                                        range,
@@ -29,15 +29,13 @@ std::unique_ptr<DurationProtocol> DurationProtocol::createMultiples(
 
 std::unique_ptr<DurationProtocol>
 DurationProtocol::createMultiples(int baseIncrement,
-                                  const std::vector<int> &multipliers)
+                                  std::vector<int> multipliers)
 {
     return std::make_unique<Multiples>(baseIncrement, multipliers);
 }
 
-std::unique_ptr<DurationProtocol>
-DurationProtocol::createMultiples(int baseIncrement,
-                                  const std::vector<int> &multipliers,
-                                  double deviationFactor)
+std::unique_ptr<DurationProtocol> DurationProtocol::createMultiples(
+    int baseIncrement, std::vector<int> multipliers, double deviationFactor)
 {
     return std::make_unique<Multiples>(baseIncrement,
                                        multipliers,
@@ -46,7 +44,7 @@ DurationProtocol::createMultiples(int baseIncrement,
 }
 
 std::unique_ptr<DurationProtocol>
-DurationProtocol::createGeometric(const Range &range, int collectionSize)
+DurationProtocol::createGeometric(Range range, int collectionSize)
 {
     return std::make_unique<Geometric>(range, collectionSize);
 }
