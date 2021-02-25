@@ -27,6 +27,7 @@ class Multiples : public DurationProtocol {
     ~Multiples();
     int getCollectionSize() override;
     int getDuration(int index) override;
+    std::vector<int> getSelectableDurations() override;
 
   private:
     std::vector<int> m_durations;

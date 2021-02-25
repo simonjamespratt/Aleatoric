@@ -10,6 +10,7 @@ class Prescribed : public DurationProtocol {
     ~Prescribed();
     int getCollectionSize() override;
     int getDuration(int index) override;
+    std::vector<int> getSelectableDurations() override;
 
   private:
     std::vector<int> m_durations;

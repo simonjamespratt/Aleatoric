@@ -11,6 +11,7 @@ class Geometric : public DurationProtocol {
     ~Geometric();
     int getCollectionSize() override;
     int getDuration(int index) override;
+    std::vector<int> getSelectableDurations() override;
 
   private:
     std::vector<int> m_durations;

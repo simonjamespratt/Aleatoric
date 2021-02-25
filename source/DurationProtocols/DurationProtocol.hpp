@@ -14,6 +14,8 @@ class DurationProtocol {
 
     virtual int getDuration(int index) = 0;
 
+    virtual std::vector<int> getSelectableDurations() = 0;
+
     virtual ~DurationProtocol() = default;
 
     static std::unique_ptr<DurationProtocol>
