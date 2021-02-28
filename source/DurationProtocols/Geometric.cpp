@@ -48,4 +48,10 @@ int Geometric::getDuration(int index)
 
     return m_durations.at(index);
 }
+
+std::vector<int> Geometric::getSelectableDurations()
+{
+    return m_durations;
+}
+
 } // namespace aleatoric

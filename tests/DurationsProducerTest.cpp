@@ -250,10 +250,14 @@ SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
     using namespace aleatoric;
 
     std::vector<int> sourceDurations {1, 2, 3, 4, 5};
+    bool callbackHasBeenCalled = false;
 
     DurationsProducer instance(
         DurationProtocol::createPrescribed(sourceDurations),
         NumberProtocol::create(NumberProtocol::Type::cycle));
+
+    instance.addListenerForParamsChange(
+        [&callbackHasBeenCalled]() { callbackHasBeenCalled = true; });
 
     GIVEN("Params have not been updated")
     {
@@ -268,6 +272,11 @@ SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
                     NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
                 REQUIRE_FALSE(cycleParams.getReverseDirection());
                 REQUIRE_FALSE(cycleParams.getBidirectional());
+            }
+
+            THEN("Params change listener is not called")
+            {
+                REQUIRE_FALSE(callbackHasBeenCalled);
             }
         }
 
@@ -296,6 +305,11 @@ SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
             auto cycleParams = params.getCycle();
             REQUIRE(cycleParams.getReverseDirection());
             REQUIRE_FALSE(cycleParams.getBidirectional());
+        }
+
+        THEN("Params change listener is called")
+        {
+            REQUIRE(callbackHasBeenCalled);
         }
 
         WHEN("A pair of cycles is requested")
@@ -387,6 +401,7 @@ SCENARIO("Timedomain: Change duration protocol")
     using namespace aleatoric;
 
     std::vector<int> sourceDurations {1, 2, 3};
+    bool callbackHasBeenCalled = false;
 
     DurationsProducer instance(
         DurationProtocol::createPrescribed(sourceDurations),
@@ -395,6 +410,11 @@ SCENARIO("Timedomain: Change duration protocol")
     // NB: set to reverse bidirectional
     instance.setParams(NumberProtocolParameters::Protocols(
         NumberProtocolParameters::Cycle(true, true)));
+
+    // register after initial params setting directly above to avoid listener
+    // getting called prematurely
+    instance.addListenerForParamsChange(
+        [&callbackHasBeenCalled]() { callbackHasBeenCalled = true; });
 
     WHEN("Before duration protocol change")
     {
@@ -424,6 +444,11 @@ SCENARIO("Timedomain: Change duration protocol")
             REQUIRE(cycleParams.getBidirectional() == true);
             REQUIRE(cycleParams.getReverseDirection() == true);
         }
+
+        THEN("Params change listener is not called")
+        {
+            REQUIRE_FALSE(callbackHasBeenCalled);
+        }
     }
 
     WHEN("After duration protocol change: collection size (and thus range) "
@@ -448,6 +473,144 @@ SCENARIO("Timedomain: Change duration protocol")
             auto cycleParams = instance.getParams().getCycle();
             REQUIRE_FALSE(cycleParams.getBidirectional());
             REQUIRE_FALSE(cycleParams.getReverseDirection());
+        }
+
+        THEN("Params change listener is called")
+        {
+            REQUIRE(callbackHasBeenCalled);
+        }
+    }
+}
+
+SCENARIO("Timedomain: Get selectable durations from protocol")
+{
+    using namespace aleatoric;
+
+    WHEN("Protocol is Prescribed")
+    {
+        std::vector<int> sourceDurations {1, 2, 3};
+
+        // NB: doesn't matter what number protocol is
+        DurationsProducer instance(
+            DurationProtocol::createPrescribed(sourceDurations),
+            NumberProtocol::create(NumberProtocol::Type::basic));
+
+        THEN("Returns possible durations that are selectable")
+        {
+            REQUIRE(instance.getSelectableDurations() == sourceDurations);
+        }
+    }
+
+    WHEN("Protocol is Multiples")
+    {
+        // NB: doesn't matter about deviation factor here: this is just the
+        // basic durations. Deviation factor is only used when outputting
+        // specific duration selections via DurationProtocol.getDuration()
+
+        // NB: doesn't matter what number protocol is
+        DurationsProducer instanceWithRange(
+            DurationProtocol::createMultiples(10, Range(1, 3)),
+            NumberProtocol::create(NumberProtocol::Type::basic));
+
+        // NB: doesn't matter what number protocol is
+        DurationsProducer instanceWithMultiples(
+            DurationProtocol::createMultiples(10, std::vector<int> {1, 2, 3}),
+            NumberProtocol::create(NumberProtocol::Type::basic));
+
+        THEN("Returns possible durations that are selectable")
+        {
+            REQUIRE(instanceWithRange.getSelectableDurations() ==
+                    std::vector<int> {10, 20, 30});
+            REQUIRE(instanceWithMultiples.getSelectableDurations() ==
+                    std::vector<int> {10, 20, 30});
+        }
+    }
+
+    WHEN("Protocol is Geometric")
+    {
+        Range range(256, 4096);
+        int collectionSize = 5;
+
+        // NB: doesn't matter what number protocol is
+        DurationsProducer instance(
+            DurationProtocol::createGeometric(range, collectionSize),
+            NumberProtocol::create(NumberProtocol::Type::cycle));
+
+        THEN("Returns possible durations that are selectable")
+        {
+            // NB: see tests above for how these values are calculated
+            std::vector<int> expectedSequence {256, 512, 1024, 2048, 4096};
+            REQUIRE(instance.getSelectableDurations() == expectedSequence);
+        }
+    }
+}
+
+SCENARIO("Observing changes to params (registering, deregistering, errors)")
+{
+    using namespace aleatoric;
+
+    DurationsProducer instance(
+        DurationProtocol::createPrescribed({1, 2, 3}),
+        NumberProtocol::create(NumberProtocol::Type::cycle));
+
+    WHEN("A listener callback is registered that is empty")
+    {
+        // NB: can only check that the function is valid. Cannot check that the
+        // function held in std::function still exists. That is the
+        // responsibility of the calling client
+        std::function<void()> emptyCallback;
+
+        THEN("An error is thrown")
+        {
+            REQUIRE_THROWS_AS(
+                instance.addListenerForParamsChange(emptyCallback),
+                std::invalid_argument);
+        }
+    }
+
+    WHEN("Listener callbacks are registered and the params change")
+    {
+        bool callbackOneHasBeenCalled = false;
+        bool callbackTwoHasBeenCalled = false;
+
+        auto callbackOneId = instance.addListenerForParamsChange(
+            [&callbackOneHasBeenCalled]() { callbackOneHasBeenCalled = true; });
+
+        auto callbackTwoId = instance.addListenerForParamsChange(
+            [&callbackTwoHasBeenCalled]() { callbackTwoHasBeenCalled = true; });
+
+        NumberProtocolParameters::Protocols newParams(
+            NumberProtocolParameters::Cycle(true, true));
+
+        // setting params triggers params change listeners
+        instance.setParams(newParams);
+
+        THEN("the callbacks are called")
+        {
+            REQUIRE(callbackOneHasBeenCalled);
+            REQUIRE(callbackTwoHasBeenCalled);
+        }
+
+        AND_WHEN("One of the listener callbacks is removed")
+        {
+            // reset callback states
+            callbackOneHasBeenCalled = false;
+            callbackTwoHasBeenCalled = false;
+
+            instance.removeListenerForParamsChange(callbackTwoId);
+
+            // setting params triggers params change listeners
+            instance.setParams(newParams);
+
+            THEN("the remaining registered callback is called")
+            {
+                REQUIRE(callbackOneHasBeenCalled);
+            }
+
+            THEN("the deregistered callback is not called")
+            {
+                REQUIRE_FALSE(callbackTwoHasBeenCalled);
+            }
         }
     }
 }

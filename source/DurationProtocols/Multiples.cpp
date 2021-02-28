@@ -112,4 +112,9 @@ int Multiples::getDuration(int index)
     return m_durations.at(index);
 }
 
+std::vector<int> Multiples::getSelectableDurations()
+{
+    return m_durations;
+}
+
 } // namespace aleatoric

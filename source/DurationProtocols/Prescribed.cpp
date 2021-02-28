@@ -28,4 +28,9 @@ int Prescribed::getDuration(int index)
     return m_durations.at(index);
 }
 
+std::vector<int> Prescribed::getSelectableDurations()
+{
+    return m_durations;
+}
+
 } // namespace aleatoric

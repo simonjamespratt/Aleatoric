@@ -33,6 +33,11 @@ std::vector<int> DurationsProducer::getCollection(int size)
     return collection;
 }
 
+std::vector<int> DurationsProducer::getSelectableDurations()
+{
+    return m_durationProtocol->getSelectableDurations();
+}
+
 NumberProtocolParameters::Protocols DurationsProducer::getParams()
 {
     return m_numberProtocol->getParams().protocols;
@@ -50,6 +55,25 @@ void DurationsProducer::setParams(NumberProtocolParameters::Protocols newParams)
     m_numberProtocol->setParams(
         NumberProtocolParameters(Range(0, m_durationCollectionSize - 1),
                                  newParams));
+
+    notifyParamsChangeListeners();
+}
+
+int DurationsProducer::addListenerForParamsChange(
+    std::function<void()> callback)
+{
+    if(!callback) {
+        throw std::invalid_argument("Callback must not be empty");
+    }
+
+    auto id = getNewId();
+    m_paramsChangeListeners.emplace(id, callback);
+    return id;
+}
+
+void DurationsProducer::removeListenerForParamsChange(int callbackId)
+{
+    m_paramsChangeListeners.erase(callbackId);
 }
 
 void DurationsProducer::setNumberProtocol(
@@ -68,7 +92,24 @@ void DurationsProducer::setDurationProtocol(
     if(newCollectionSize != m_durationCollectionSize) {
         m_durationCollectionSize = newCollectionSize;
         m_numberProtocol->setParams(Range(0, m_durationCollectionSize - 1));
+        notifyParamsChangeListeners();
     }
+}
+
+// Private methods
+void DurationsProducer::notifyParamsChangeListeners()
+{
+    for(const auto &item : m_paramsChangeListeners) {
+        auto callback = item.second;
+        if(callback) {
+            callback();
+        }
+    }
+}
+
+int DurationsProducer::getNewId()
+{
+    return ++m_listenersIdCounter;
 }
 
 } // namespace aleatoric
