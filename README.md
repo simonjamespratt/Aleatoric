@@ -8,7 +8,7 @@ Note that use of the library has only been tested on macOS.
 
 ## Basic usage
 
-Download the library (see releases here on github). The download has a `libAleatoric.a` file (`Aleatoric-<version>/lib`) and the required headers (`Aleatoric-<version>/include/aleatoric`).
+Download the library (see releases here on github). The download has a `libAleatoric.a` file (`Aleatoric-<version>/lib`) and the required headers (`Aleatoric-<version>/include/aleatoric`). Please note that the downloadable version of the library may not be kept up to date as the CMake method is the preferred way of working with the library.
 
 ## Use within CMake projects
 
