@@ -21,7 +21,48 @@
 
 #include <catch2/catch.hpp>
 
-SCENARIO("TimeDomain: Using Prescribed and Cycle")
+SCENARIO("DurationsProducer: Constructor")
+{
+    using namespace aleatoric;
+
+    WHEN("The Duration Protocol collection size is too small")
+    {
+        THEN("Throws exception")
+        {
+            REQUIRE_THROWS_AS(
+                DurationsProducer(
+                    DurationProtocol::createPrescribed(std::vector<int> {}),
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                DurationsProducer(
+                    DurationProtocol::createPrescribed(std::vector<int> {}),
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                "The selectable durations collection size of the provided "
+                "Duration Protocol is too small. It must be two or greater");
+
+            REQUIRE_THROWS_AS(
+                DurationsProducer(
+                    DurationProtocol::createPrescribed(std::vector<int> {1}),
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                DurationsProducer(
+                    DurationProtocol::createPrescribed(std::vector<int> {}),
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                "The selectable durations collection size of the provided "
+                "Duration Protocol is too small. It must be two or greater");
+
+            REQUIRE_NOTHROW(DurationsProducer(
+                DurationProtocol::createPrescribed(std::vector<int> {1, 2}),
+                NumberProtocol::create(NumberProtocol::Type::basic)));
+        }
+    }
+}
+
+SCENARIO("DurationsProducer: Using Prescribed and Cycle")
 {
     using namespace aleatoric;
 
@@ -43,7 +84,7 @@ SCENARIO("TimeDomain: Using Prescribed and Cycle")
     }
 }
 
-SCENARIO("TimeDomain: Using Multiples and Cycle")
+SCENARIO("DurationsProducer: Using Multiples and Cycle")
 {
     using namespace aleatoric;
 
@@ -195,7 +236,7 @@ SCENARIO("TimeDomain: Using Multiples and Cycle")
     }
 }
 
-SCENARIO("TimeDomain: Using Geometric and Cycle")
+SCENARIO("DurationsProducer: Using Geometric and Cycle")
 {
     using namespace aleatoric;
 
@@ -245,7 +286,8 @@ SCENARIO("TimeDomain: Using Geometric and Cycle")
     }
 }
 
-SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
+SCENARIO("DurationsProducer: Get and set params (using Prescribed and Cycle "
+         "for test)")
 {
     using namespace aleatoric;
 
@@ -337,7 +379,7 @@ SCENARIO("TimeDomain: Get and set params (using Prescribed and Cycle for test)")
     }
 }
 
-SCENARIO("Timedomain: Change number protocol")
+SCENARIO("DurationsProducer: Change number protocol")
 {
     using namespace aleatoric;
 
@@ -396,7 +438,7 @@ SCENARIO("Timedomain: Change number protocol")
     }
 }
 
-SCENARIO("Timedomain: Change duration protocol")
+SCENARIO("DurationsProducer: Change duration protocol")
 {
     using namespace aleatoric;
 
@@ -415,6 +457,63 @@ SCENARIO("Timedomain: Change duration protocol")
     // getting called prematurely
     instance.addListenerForParamsChange(
         [&callbackHasBeenCalled]() { callbackHasBeenCalled = true; });
+
+    WHEN("The Duration Protocol collection size is too small")
+    {
+        // Note that in order to have a valid object in the first place, it must
+        // have a Duration Protocol with a valid selectables collection size.
+        // Therefore when attempting to set the Duration Protocol to one with an
+        // invalid selectables collection size, it must mean a change in
+        // collection size.
+
+        THEN("Throws exception")
+        {
+            REQUIRE_THROWS_AS(
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {})),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {})),
+                "The selectable durations collection size of the provided "
+                "Duration Protocol is too small. It must be two or greater");
+
+            REQUIRE_THROWS_AS(
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {1})),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {})),
+                "The selectable durations collection size of the provided "
+                "Duration Protocol is too small. It must be two or greater");
+
+            REQUIRE_NOTHROW(instance.setDurationProtocol(
+                DurationProtocol::createPrescribed(std::vector<int> {1, 2})));
+        }
+
+        THEN("Duration Protocol is not changed")
+        {
+            try {
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {}));
+            } catch(const std::invalid_argument &e) {
+                REQUIRE_FALSE(callbackHasBeenCalled);
+            }
+        }
+
+        THEN("Params change listener is not called")
+        {
+            try {
+                instance.setDurationProtocol(
+                    DurationProtocol::createPrescribed(std::vector<int> {}));
+            } catch(const std::invalid_argument &e) {
+                REQUIRE(instance.getSelectableDurations() == sourceDurations);
+            }
+        }
+    }
 
     WHEN("Before duration protocol change")
     {
@@ -482,7 +581,7 @@ SCENARIO("Timedomain: Change duration protocol")
     }
 }
 
-SCENARIO("Timedomain: Get selectable durations from protocol")
+SCENARIO("DurationsProducer: Get selectable durations from protocol")
 {
     using namespace aleatoric;
 
@@ -545,7 +644,8 @@ SCENARIO("Timedomain: Get selectable durations from protocol")
     }
 }
 
-SCENARIO("Observing changes to params (registering, deregistering, errors)")
+SCENARIO("DurationsProducer: Observing changes to params (registering, "
+         "deregistering, errors)")
 {
     using namespace aleatoric;
 

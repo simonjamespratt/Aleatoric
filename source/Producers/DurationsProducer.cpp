@@ -10,7 +10,13 @@ DurationsProducer::DurationsProducer(
   m_numberProtocol(std::move(numberProtocol))
 {
     m_durationCollectionSize = m_durationProtocol->getCollectionSize();
-    m_numberProtocol->setParams(Range(0, m_durationCollectionSize - 1));
+    try {
+        m_numberProtocol->setParams(Range(0, m_durationCollectionSize - 1));
+    } catch(const std::invalid_argument &e) {
+        throw std::invalid_argument(
+            "The selectable durations collection size of the provided Duration "
+            "Protocol is too small. It must be two or greater");
+    }
 }
 
 DurationsProducer::~DurationsProducer()
@@ -85,15 +91,22 @@ void DurationsProducer::setNumberProtocol(
 void DurationsProducer::setDurationProtocol(
     std::unique_ptr<DurationProtocol> durationProtocol)
 {
-    m_durationProtocol = std::move(durationProtocol);
-
-    auto newCollectionSize = m_durationProtocol->getCollectionSize();
+    auto newCollectionSize = durationProtocol->getCollectionSize();
 
     if(newCollectionSize != m_durationCollectionSize) {
+        try {
+            m_numberProtocol->setParams(Range(0, newCollectionSize - 1));
+        } catch(const std::invalid_argument &e) {
+            throw std::invalid_argument(
+                "The selectable durations collection size of the provided "
+                "Duration Protocol is too small. It must be two or greater");
+        }
+
         m_durationCollectionSize = newCollectionSize;
-        m_numberProtocol->setParams(Range(0, m_durationCollectionSize - 1));
         notifyParamsChangeListeners();
     }
+
+    m_durationProtocol = std::move(durationProtocol);
 }
 
 // Private methods
