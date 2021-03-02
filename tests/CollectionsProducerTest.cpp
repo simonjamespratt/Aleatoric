@@ -8,7 +8,48 @@
 
 #include <catch2/catch.hpp>
 
-SCENARIO("Collections: using Basic")
+SCENARIO("CollectionsProducer: Constructor")
+{
+    using namespace aleatoric;
+
+    WHEN("The source size provided is too small")
+    {
+        THEN("Throws exception")
+        {
+            REQUIRE_THROWS_AS(
+                CollectionsProducer<char>(
+                    {},
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                CollectionsProducer<char>(
+                    {},
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                "The size of the source collection provided is too small. It "
+                "must be two or greater");
+
+            REQUIRE_THROWS_AS(
+                CollectionsProducer<char>(
+                    {'a'},
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                std::invalid_argument);
+
+            REQUIRE_THROWS_WITH(
+                CollectionsProducer<char>(
+                    {'a'},
+                    NumberProtocol::create(NumberProtocol::Type::basic)),
+                "The size of the source collection provided is too small. It "
+                "must be two or greater");
+
+            REQUIRE_NOTHROW(CollectionsProducer<char>(
+                {'a', 'b'},
+                NumberProtocol::create(NumberProtocol::Type::basic)));
+        }
+    }
+}
+
+SCENARIO("CollectionsProducer: using Basic")
 {
     using namespace aleatoric;
 
@@ -37,7 +78,7 @@ SCENARIO("Collections: using Basic")
     }
 }
 
-SCENARIO("Collections: using Cycle")
+SCENARIO("CollectionsProducer: using Cycle")
 {
     using namespace aleatoric;
 
@@ -62,7 +103,7 @@ SCENARIO("Collections: using Cycle")
     }
 }
 
-SCENARIO("Collections: using Serial")
+SCENARIO("CollectionsProducer: using Serial")
 {
     using namespace aleatoric;
 
@@ -107,7 +148,7 @@ SCENARIO("Collections: using Serial")
     }
 }
 
-SCENARIO("Collections: using Subset")
+SCENARIO("CollectionsProducer: using Subset")
 {
     using namespace aleatoric;
 
@@ -164,7 +205,7 @@ SCENARIO("Collections: using Subset")
     }
 }
 
-SCENARIO("Collections: using GroupedRepetition")
+SCENARIO("CollectionsProducer: using GroupedRepetition")
 {
     using namespace aleatoric;
 
@@ -217,7 +258,7 @@ SCENARIO("Collections: using GroupedRepetition")
     }
 }
 
-SCENARIO("Collections: using Ratio")
+SCENARIO("CollectionsProducer: using Ratio")
 {
     using namespace aleatoric;
 
@@ -253,7 +294,7 @@ SCENARIO("Collections: using Ratio")
     }
 }
 
-SCENARIO("Collections: using Precision")
+SCENARIO("CollectionsProducer: using Precision")
 {
     using namespace aleatoric;
 
@@ -293,7 +334,7 @@ SCENARIO("Collections: using Precision")
     }
 }
 
-SCENARIO("Collections: using NoRepetition")
+SCENARIO("CollectionsProducer: using NoRepetition")
 {
     using namespace aleatoric;
 
@@ -330,7 +371,7 @@ SCENARIO("Collections: using NoRepetition")
     }
 }
 
-SCENARIO("Collections: using Periodic")
+SCENARIO("CollectionsProducer: using Periodic")
 {
     using namespace aleatoric;
 
@@ -373,7 +414,7 @@ SCENARIO("Collections: using Periodic")
     }
 }
 
-SCENARIO("Collections: using AdjacentSteps")
+SCENARIO("CollectionsProducer: using AdjacentSteps")
 {
     using namespace aleatoric;
 
@@ -399,7 +440,7 @@ SCENARIO("Collections: using AdjacentSteps")
     }
 }
 
-SCENARIO("Collections: using Walk")
+SCENARIO("CollectionsProducer: using Walk")
 {
     using namespace aleatoric;
 
@@ -430,7 +471,7 @@ SCENARIO("Collections: using Walk")
     }
 }
 
-SCENARIO("Collections: Get and set params (using cycle for test)")
+SCENARIO("CollectionsProducer: Get and set params (using cycle for test)")
 {
     using namespace aleatoric;
 
@@ -508,7 +549,7 @@ SCENARIO("Collections: Get and set params (using cycle for test)")
     }
 }
 
-SCENARIO("Collections: Change protocol")
+SCENARIO("CollectionsProducer: Change protocol")
 {
     using namespace aleatoric;
 
@@ -567,12 +608,8 @@ SCENARIO("Collections: Change protocol")
     }
 }
 
-SCENARIO("Collections: Change source collection")
+SCENARIO("CollectionsProducer: Change source collection")
 {
-    // test output
-    // test protocol params
-    // test when source size changes or not
-
     using namespace aleatoric;
 
     std::vector<char> source {'a', 'b', 'c'};
@@ -584,6 +621,39 @@ SCENARIO("Collections: Change source collection")
     // NB: set to reverse bidirectional
     instance.setParams(NumberProtocolParameters::Protocols(
         NumberProtocolParameters::Cycle(true, true)));
+
+    WHEN("New source collection size is too small")
+    {
+        // Note that in order to have a valid object in the first place, it must
+        // have a source with a valid collection size.
+        // Therefore when attempting to set the source to one with an
+        // invalid collection size, it must mean a change in
+        //  size.
+
+        THEN("Throws exception")
+        {
+            REQUIRE_THROWS_AS(instance.setSource({}), std::invalid_argument);
+            REQUIRE_THROWS_WITH(instance.setSource({}),
+                                "The size of the source collection provided is "
+                                "too small. It must be two or greater");
+
+            REQUIRE_THROWS_AS(instance.setSource({'a'}), std::invalid_argument);
+            REQUIRE_THROWS_WITH(instance.setSource({'a'}),
+                                "The size of the source collection provided is "
+                                "too small. It must be two or greater");
+
+            REQUIRE_NOTHROW(instance.setSource({'a', 'b', 'c'}));
+        }
+
+        THEN("The source for the producer should not be updated")
+        {
+            try {
+                instance.setSource({});
+            } catch(const std::exception &e) {
+                REQUIRE(instance.getSource() == source);
+            }
+        }
+    }
 
     WHEN("Before source change")
     {

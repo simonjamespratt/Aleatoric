@@ -21,6 +21,7 @@ class CollectionsProducer {
     void setParams(NumberProtocolParameters::Protocols newParams);
     void setProtocol(std::unique_ptr<NumberProtocol> protocol);
     void setSource(std::vector<T> newSource);
+    std::vector<T> getSource();
 
   private:
     std::vector<T> m_source;
@@ -34,7 +35,13 @@ CollectionsProducer<T>::CollectionsProducer(
     std::vector<T> source, std::unique_ptr<NumberProtocol> protocol)
 : m_source(source), m_protocol(std::move(protocol))
 {
-    m_protocol->setParams(Range(0, m_source.size() - 1));
+    try {
+        m_protocol->setParams(Range(0, m_source.size() - 1));
+    } catch(const std::exception &e) {
+        throw std::invalid_argument(
+            "The size of the source collection provided is too small. It must "
+            "be two or greater");
+    }
 }
 
 template<typename T>
@@ -93,10 +100,22 @@ template<typename T>
 void CollectionsProducer<T>::setSource(std::vector<T> newSource)
 {
     if(newSource.size() != m_source.size()) {
-        m_protocol->setParams(Range(0, newSource.size() - 1));
+        try {
+            m_protocol->setParams(Range(0, newSource.size() - 1));
+        } catch(const std::exception &e) {
+            throw std::invalid_argument(
+                "The size of the source collection provided is too small. It "
+                "must be two or greater");
+        }
     }
 
     m_source = newSource;
+}
+
+template<typename T>
+std::vector<T> CollectionsProducer<T>::getSource()
+{
+    return m_source;
 }
 
 } // namespace aleatoric
