@@ -94,6 +94,7 @@ void CollectionsProducer<T>::setProtocol(
     std::unique_ptr<NumberProtocol> protocol)
 {
     m_protocol = std::move(protocol);
+    m_protocol->setParams(Range(0, m_source.size() - 1));
 }
 
 template<typename T>
