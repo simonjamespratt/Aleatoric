@@ -37,7 +37,7 @@ double Cycle::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Cycle::setParams(NumberProtocolParameters newParams)
+void Cycle::setParams(NumberProtocolConfig newParams)
 {
     auto cycleParams = newParams.protocols.getCycle();
     m_bidirectional = cycleParams.getBidirectional();
@@ -47,13 +47,11 @@ void Cycle::setParams(NumberProtocolParameters newParams)
     setRange(newParams.getRange());
 }
 
-NumberProtocolParameters Cycle::getParams()
+NumberProtocolConfig Cycle::getParams()
 {
-    return NumberProtocolParameters(
+    return NumberProtocolConfig(
         m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Cycle(m_bidirectional,
-                                            m_reverseDirection)));
+        NumberProtocolParams(CycleParams(m_bidirectional, m_reverseDirection)));
 }
 
 // Private methods

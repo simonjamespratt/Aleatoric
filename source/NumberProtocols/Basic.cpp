@@ -26,14 +26,12 @@ double Basic::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-NumberProtocolParameters Basic::getParams()
+NumberProtocolConfig Basic::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(NumberProtocolParameters::Basic()));
+    return NumberProtocolConfig(m_range, NumberProtocolParams(BasicParams()));
 }
 
-void Basic::setParams(NumberProtocolParameters newParams)
+void Basic::setParams(NumberProtocolConfig newParams)
 {
     m_range = newParams.getRange();
     m_generator->setDistribution(m_range.start, m_range.end);

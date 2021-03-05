@@ -2,32 +2,32 @@
 
 namespace aleatoric {
 
-NumberProtocolParameters::NumberProtocolParameters(Range newRange,
-                                                   Protocols protocolsParams)
+NumberProtocolConfig::NumberProtocolConfig(Range newRange,
+                                           NumberProtocolParams protocolsParams)
 {
     m_range = newRange;
     protocols = protocolsParams;
 }
 
-NumberProtocolParameters::NumberProtocolParameters(Range newRange)
+NumberProtocolConfig::NumberProtocolConfig(Range newRange)
 {
     m_range = newRange;
-    protocols.m_subset = Subset(1, newRange.size);
+    protocols.m_subset = SubsetParams(1, newRange.size);
 
     std::vector<int> ratios(newRange.size);
     for(auto &&i : ratios) {
         i = 1;
     }
-    protocols.m_ratio = Ratio(ratios);
+    protocols.m_ratio = RatioParams(ratios);
 
     std::vector<double> distribution(newRange.size);
     for(auto &&i : distribution) {
         i = 1.0 / distribution.size();
     }
-    protocols.m_precision = Precision(distribution);
+    protocols.m_precision = PrecisionParams(distribution);
 }
 
-Range NumberProtocolParameters::getRange()
+Range NumberProtocolConfig::getRange()
 {
     return m_range;
 }
@@ -35,153 +35,145 @@ Range NumberProtocolParameters::getRange()
 // Protocols =====================================================
 
 // Constructors
-NumberProtocolParameters::Protocols::Protocols()
+NumberProtocolParams::NumberProtocolParams()
 {}
 
-NumberProtocolParameters::Protocols::Protocols(AdjacentSteps protocolParams)
+NumberProtocolParams::NumberProtocolParams(AdjacentStepsParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::adjacentSteps;
+    m_activeProtocol = NumberProtocol::Type::adjacentSteps;
     m_adjacentSteps = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Basic protocolParams)
+NumberProtocolParams::NumberProtocolParams(BasicParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::basic;
+    m_activeProtocol = NumberProtocol::Type::basic;
     m_basic = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Cycle protocolParams)
+NumberProtocolParams::NumberProtocolParams(CycleParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::cycle;
+    m_activeProtocol = NumberProtocol::Type::cycle;
     m_cycle = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(GranularWalk protocolParams)
+NumberProtocolParams::NumberProtocolParams(GranularWalkParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::granularWalk;
+    m_activeProtocol = NumberProtocol::Type::granularWalk;
     m_granularWalk = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(GroupedRepetition protocolParams)
+NumberProtocolParams::NumberProtocolParams(
+    GroupedRepetitionParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::groupedRepetition;
+    m_activeProtocol = NumberProtocol::Type::groupedRepetition;
     m_groupedRepetition = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(NoRepetition protocolParams)
+NumberProtocolParams::NumberProtocolParams(NoRepetitionParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::noRepetition;
+    m_activeProtocol = NumberProtocol::Type::noRepetition;
     m_noRepetition = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Periodic protocolParams)
+NumberProtocolParams::NumberProtocolParams(PeriodicParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::periodic;
+    m_activeProtocol = NumberProtocol::Type::periodic;
     m_periodic = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Precision protocolParams)
+NumberProtocolParams::NumberProtocolParams(PrecisionParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::precision;
+    m_activeProtocol = NumberProtocol::Type::precision;
     m_precision = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Ratio protocolParams)
+NumberProtocolParams::NumberProtocolParams(RatioParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::ratio;
+    m_activeProtocol = NumberProtocol::Type::ratio;
     m_ratio = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Serial protocolParams)
+NumberProtocolParams::NumberProtocolParams(SerialParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::serial;
+    m_activeProtocol = NumberProtocol::Type::serial;
     m_serial = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Subset protocolParams)
+NumberProtocolParams::NumberProtocolParams(SubsetParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::subset;
+    m_activeProtocol = NumberProtocol::Type::subset;
     m_subset = protocolParams;
 }
 
-NumberProtocolParameters::Protocols::Protocols(Walk protocolParams)
+NumberProtocolParams::NumberProtocolParams(WalkParams protocolParams)
 {
-    m_activeProtocol = Protocols::ActiveProtocol::walk;
+    m_activeProtocol = NumberProtocol::Type::walk;
     m_walk = protocolParams;
 }
 
 // other methods
 
-NumberProtocolParameters::Protocols::ActiveProtocol
-NumberProtocolParameters::Protocols::getActiveProtocol()
+NumberProtocol::Type NumberProtocolParams::getActiveProtocol()
 {
     return m_activeProtocol;
 }
 
-NumberProtocolParameters::AdjacentSteps
-NumberProtocolParameters::Protocols::getAdjacentSteps()
+AdjacentStepsParams NumberProtocolParams::getAdjacentSteps()
 {
     return m_adjacentSteps;
 }
 
-NumberProtocolParameters::Basic NumberProtocolParameters::Protocols::getBasic()
+BasicParams NumberProtocolParams::getBasic()
 {
     return m_basic;
 }
 
-NumberProtocolParameters::Cycle NumberProtocolParameters::Protocols::getCycle()
+CycleParams NumberProtocolParams::getCycle()
 {
     return m_cycle;
 }
 
-NumberProtocolParameters::GranularWalk
-NumberProtocolParameters::Protocols::getGranularWalk()
+GranularWalkParams NumberProtocolParams::getGranularWalk()
 {
     return m_granularWalk;
 }
 
-NumberProtocolParameters::GroupedRepetition
-NumberProtocolParameters::Protocols::getGroupedRepetition()
+GroupedRepetitionParams NumberProtocolParams::getGroupedRepetition()
 {
     return m_groupedRepetition;
 }
 
-NumberProtocolParameters::NoRepetition
-NumberProtocolParameters::Protocols::getNoRepetition()
+NoRepetitionParams NumberProtocolParams::getNoRepetition()
 {
     return m_noRepetition;
 }
 
-NumberProtocolParameters::Periodic
-NumberProtocolParameters::Protocols::getPeriodic()
+PeriodicParams NumberProtocolParams::getPeriodic()
 {
     return m_periodic;
 }
 
-NumberProtocolParameters::Precision
-NumberProtocolParameters::Protocols::getPrecision()
+PrecisionParams NumberProtocolParams::getPrecision()
 {
     return m_precision;
 }
 
-NumberProtocolParameters::Ratio NumberProtocolParameters::Protocols::getRatio()
+RatioParams NumberProtocolParams::getRatio()
 {
     return m_ratio;
 }
 
-NumberProtocolParameters::Serial
-NumberProtocolParameters::Protocols::getSerial()
+SerialParams NumberProtocolParams::getSerial()
 {
     return m_serial;
 }
 
-NumberProtocolParameters::Subset
-NumberProtocolParameters::Protocols::getSubset()
+SubsetParams NumberProtocolParams::getSubset()
 {
     return m_subset;
 }
 
-NumberProtocolParameters::Walk NumberProtocolParameters::Protocols::getWalk()
+WalkParams NumberProtocolParams::getWalk()
 {
     return m_walk;
 }
@@ -189,127 +181,125 @@ NumberProtocolParameters::Walk NumberProtocolParameters::Protocols::getWalk()
 // ===============================================================
 
 // Cycle
-NumberProtocolParameters::Cycle::Cycle()
+CycleParams::CycleParams()
 {}
 
-NumberProtocolParameters::Cycle::Cycle(bool bidirectional,
-                                       bool reverseDirection)
+CycleParams::CycleParams(bool bidirectional, bool reverseDirection)
 {
     m_bidirectional = bidirectional;
     m_reverseDirection = reverseDirection;
 }
 
-bool NumberProtocolParameters::Cycle::getBidirectional()
+bool CycleParams::getBidirectional()
 {
     return m_bidirectional;
 }
 
-bool NumberProtocolParameters::Cycle::getReverseDirection()
+bool CycleParams::getReverseDirection()
 {
     return m_reverseDirection;
 }
 
 // GranularWalk
-NumberProtocolParameters::GranularWalk::GranularWalk()
+GranularWalkParams::GranularWalkParams()
 {}
 
-NumberProtocolParameters::GranularWalk::GranularWalk(double deviationFactor)
+GranularWalkParams::GranularWalkParams(double deviationFactor)
 {
     m_deviationFactor = deviationFactor;
 }
 
-double NumberProtocolParameters::GranularWalk::getDeviationFactor()
+double GranularWalkParams::getDeviationFactor()
 {
     return m_deviationFactor;
 }
 
 // Grouped Repetition
-NumberProtocolParameters::GroupedRepetition::GroupedRepetition()
+GroupedRepetitionParams::GroupedRepetitionParams()
 {}
 
-NumberProtocolParameters::GroupedRepetition::GroupedRepetition(
-    std::vector<int> groupings)
+GroupedRepetitionParams::GroupedRepetitionParams(std::vector<int> groupings)
 {
     m_groupings = groupings;
 }
 
-std::vector<int> NumberProtocolParameters::GroupedRepetition::getGroupings()
+std::vector<int> GroupedRepetitionParams::getGroupings()
 {
     return m_groupings;
 }
 
 // Periodic
-NumberProtocolParameters::Periodic::Periodic()
+PeriodicParams::PeriodicParams()
 {}
 
-NumberProtocolParameters::Periodic::Periodic(double chanceOfRepetition)
+PeriodicParams::PeriodicParams(double chanceOfRepetition)
 {
     m_chanceOfRepetition = chanceOfRepetition;
 }
 
-double NumberProtocolParameters::Periodic::getChanceOfRepetition()
+double PeriodicParams::getChanceOfRepetition()
 {
     return m_chanceOfRepetition;
 }
 
 // Precision
-NumberProtocolParameters::Precision::Precision()
+PrecisionParams::PrecisionParams()
 {}
 
-NumberProtocolParameters::Precision::Precision(std::vector<double> distribution)
+PrecisionParams::PrecisionParams(std::vector<double> distribution)
 {
     m_distribution = distribution;
 }
 
-std::vector<double> NumberProtocolParameters::Precision::getDistribution()
+std::vector<double> PrecisionParams::getDistribution()
 {
     return m_distribution;
 }
 
 // Ratio
-NumberProtocolParameters::Ratio::Ratio()
+RatioParams::RatioParams()
 {}
 
-NumberProtocolParameters::Ratio::Ratio(std::vector<int> ratios)
+RatioParams::RatioParams(std::vector<int> ratios)
 {
     m_ratios = ratios;
 }
 
-std::vector<int> NumberProtocolParameters::Ratio::getRatios()
+std::vector<int> RatioParams::getRatios()
 {
     return m_ratios;
 }
 
 // Subset
-NumberProtocolParameters::Subset::Subset()
+SubsetParams::SubsetParams()
 {}
 
-NumberProtocolParameters::Subset::Subset(int min, int max)
+SubsetParams::SubsetParams(int min, int max)
 {
     m_min = min;
     m_max = max;
 }
 
-int NumberProtocolParameters::Subset::getMin()
+int SubsetParams::getMin()
 {
     return m_min;
 }
 
-int NumberProtocolParameters::Subset::getMax()
+int SubsetParams::getMax()
 {
     return m_max;
 }
 
 // Walk
-NumberProtocolParameters::Walk::Walk()
+WalkParams::WalkParams()
 {}
 
-NumberProtocolParameters::Walk::Walk(int maxStep)
+WalkParams::WalkParams(int maxStep)
 {
     m_maxStep = maxStep;
 }
 
-int NumberProtocolParameters::Walk::getMaxStep()
+int WalkParams::getMaxStep()
 {
     return m_maxStep;
 }

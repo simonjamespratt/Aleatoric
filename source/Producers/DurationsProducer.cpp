@@ -44,12 +44,12 @@ std::vector<int> DurationsProducer::getSelectableDurations()
     return m_durationProtocol->getSelectableDurations();
 }
 
-NumberProtocolParameters::Protocols DurationsProducer::getParams()
+NumberProtocolParams DurationsProducer::getParams()
 {
     return m_numberProtocol->getParams().protocols;
 }
 
-void DurationsProducer::setParams(NumberProtocolParameters::Protocols newParams)
+void DurationsProducer::setParams(NumberProtocolParams newParams)
 {
     if(newParams.getActiveProtocol() !=
        m_numberProtocol->getParams().protocols.getActiveProtocol()) {
@@ -59,8 +59,8 @@ void DurationsProducer::setParams(NumberProtocolParameters::Protocols newParams)
     }
 
     m_numberProtocol->setParams(
-        NumberProtocolParameters(Range(0, m_durationCollectionSize - 1),
-                                 newParams));
+        NumberProtocolConfig(Range(0, m_durationCollectionSize - 1),
+                             newParams));
 
     notifyParamsChangeListeners();
 }

@@ -31,7 +31,7 @@ double Precision::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Precision::setParams(NumberProtocolParameters newParams)
+void Precision::setParams(NumberProtocolConfig newParams)
 {
     auto newDistribution = newParams.protocols.getPrecision().getDistribution();
     auto newRange = newParams.getRange();
@@ -40,12 +40,11 @@ void Precision::setParams(NumberProtocolParameters newParams)
     m_range = newRange;
 }
 
-NumberProtocolParameters Precision::getParams()
+NumberProtocolConfig Precision::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(NumberProtocolParameters::Precision(
-            m_generator->getDistributionVector())));
+    return NumberProtocolConfig(m_range,
+                                NumberProtocolParams(PrecisionParams(
+                                    m_generator->getDistributionVector())));
 }
 
 // Private methods

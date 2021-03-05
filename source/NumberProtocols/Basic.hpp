@@ -39,9 +39,9 @@ class Basic : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    NumberProtocolParameters getParams() override;
+    NumberProtocolConfig getParams() override;
 
-    void setParams(NumberProtocolParameters newParams) override;
+    void setParams(NumberProtocolConfig newParams) override;
 
   private:
     std::unique_ptr<IUniformGenerator> m_generator;

@@ -38,7 +38,7 @@ double NoRepetition::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void NoRepetition::setParams(NumberProtocolParameters newParams)
+void NoRepetition::setParams(NumberProtocolConfig newParams)
 {
     auto newRange = newParams.getRange();
     m_generator->setDistributionVector(newRange.size, 1.0);
@@ -53,12 +53,10 @@ void NoRepetition::setParams(NumberProtocolParameters newParams)
     m_range = newRange;
 }
 
-NumberProtocolParameters NoRepetition::getParams()
+NumberProtocolConfig NoRepetition::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::NoRepetition()));
+    return NumberProtocolConfig(m_range,
+                                NumberProtocolParams(NoRepetitionParams()));
 }
 
 } // namespace aleatoric

@@ -83,9 +83,9 @@ class Periodic : public NumberProtocol {
 
     double getDecimalNumber() override;
 
-    void setParams(NumberProtocolParameters newParams) override;
+    void setParams(NumberProtocolConfig newParams) override;
 
-    NumberProtocolParameters getParams() override;
+    NumberProtocolConfig getParams() override;
 
   private:
     std::unique_ptr<IDiscreteGenerator> m_generator;

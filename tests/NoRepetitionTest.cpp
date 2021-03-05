@@ -134,18 +134,16 @@ SCENARIO("Numbers::NoRepetition: params")
             REQUIRE(returnedRange.start == 1);
             REQUIRE(returnedRange.end == 10);
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::
-                        noRepetition);
+                    NumberProtocol::Type::noRepetition);
         }
     }
 
     WHEN("set params")
     {
         Range newRange(20, 30);
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::NoRepetition()));
+            NumberProtocolParams(NoRepetitionParams()));
         instance.setParams(newParams);
 
         THEN("object state should be updated")
@@ -162,10 +160,9 @@ SCENARIO("Numbers::NoRepetition: params")
         GIVEN("No numbers have been returned yet")
         {
             Range newRange(11, 13);
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::NoRepetition()));
+                NumberProtocolParams(NoRepetitionParams()));
             instance.setParams(newParams);
 
             THEN("Generator distribution should be equal prob for new range")
@@ -182,10 +179,9 @@ SCENARIO("Numbers::NoRepetition: params")
             WHEN("That is outside the new range")
             {
                 Range newRange(lastNumber + 1, lastNumber + 4);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::NoRepetition()));
+                    NumberProtocolParams(NoRepetitionParams()));
                 instance.setParams(newParams);
                 THEN(
                     "Generator distribution should be equal prob for new range")
@@ -198,10 +194,9 @@ SCENARIO("Numbers::NoRepetition: params")
             WHEN("That is within the new range")
             {
                 Range newRange(lastNumber - 1, lastNumber + 1);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::NoRepetition()));
+                    NumberProtocolParams(NoRepetitionParams()));
                 instance.setParams(newParams);
 
                 THEN("That number should be disallowed on the next selection")

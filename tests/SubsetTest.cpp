@@ -297,9 +297,8 @@ SCENARIO("Numbers::subset: params")
             REQUIRE(returnedRange.end == 10);
             REQUIRE(subsetParams.getMin() == subsetMin);
             REQUIRE(subsetParams.getMax() == subsetMax);
-            REQUIRE(
-                params.protocols.getActiveProtocol() ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::subset);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocol::Type::subset);
         }
     }
 
@@ -308,10 +307,9 @@ SCENARIO("Numbers::subset: params")
         Range newRange(20, 30);
         int newMin = 3;
         int newMax = 5;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Subset(newMin, newMax)));
+            NumberProtocolParams(SubsetParams(newMin, newMax)));
         instance.setParams(newParams);
 
         auto params = instance.getParams();
@@ -362,10 +360,9 @@ SCENARIO("Numbers::subset: params")
         {
             int newMin = 0;
             int newMax = 7;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 Range(20, 30),
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Subset(newMin, newMax)));
+                NumberProtocolParams(SubsetParams(newMin, newMax)));
 
             THEN("Throw execption")
             {
@@ -378,10 +375,9 @@ SCENARIO("Numbers::subset: params")
         {
             int newMin = 8;
             int newMax = 7;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 Range(20, 30),
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Subset(newMin, newMax)));
+                NumberProtocolParams(SubsetParams(newMin, newMax)));
 
             THEN("Throw execption")
             {
@@ -395,10 +391,9 @@ SCENARIO("Numbers::subset: params")
             Range newRange(20, 30);
             int newMin = 8;
             int newMax = newRange.size + 1;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Subset(newMin, newMax)));
+                NumberProtocolParams(SubsetParams(newMin, newMax)));
 
             THEN("Throw execption")
             {

@@ -59,7 +59,7 @@ double Subset::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Subset::setParams(NumberProtocolParameters newParams)
+void Subset::setParams(NumberProtocolConfig newParams)
 {
     auto subsetParams = newParams.protocols.getSubset();
     auto newMin = subsetParams.getMin();
@@ -75,12 +75,11 @@ void Subset::setParams(NumberProtocolParameters newParams)
     setSubset();
 }
 
-NumberProtocolParameters Subset::getParams()
+NumberProtocolConfig Subset::getParams()
 {
-    return NumberProtocolParameters(
+    return NumberProtocolConfig(
         m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Subset(m_subsetMin, m_subsetMax)));
+        NumberProtocolParams(SubsetParams(m_subsetMin, m_subsetMax)));
 }
 
 // Private methods

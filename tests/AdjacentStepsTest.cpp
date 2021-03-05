@@ -178,18 +178,16 @@ SCENARIO("Numbers::AdjacentSteps: params")
             REQUIRE(returnedRange.start == range.start);
             REQUIRE(returnedRange.end == range.end);
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::
-                        adjacentSteps);
+                    NumberProtocol::Type::adjacentSteps);
         }
     }
 
     WHEN("Set params")
     {
         Range newRange(20, 40);
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::AdjacentSteps()));
+            NumberProtocolParams(AdjacentStepsParams()));
         instance.setParams(newParams);
 
         THEN("object state is updated")
@@ -206,10 +204,9 @@ SCENARIO("Numbers::AdjacentSteps: params")
         GIVEN("No numbers have been returned yet")
         {
             Range newRange(4, 7);
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::AdjacentSteps()));
+                NumberProtocolParams(AdjacentStepsParams()));
             instance.setParams(newParams);
 
             THEN("Generator distribution has equal probability for whole range")
@@ -227,10 +224,9 @@ SCENARIO("Numbers::AdjacentSteps: params")
             WHEN("It is outside the new range")
             {
                 Range newRange(lastNumber + 1, lastNumber + 5);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::AdjacentSteps()));
+                    NumberProtocolParams(AdjacentStepsParams()));
                 instance.setParams(newParams);
 
                 THEN("Generator dist has equal prob for whole range")
@@ -244,10 +240,9 @@ SCENARIO("Numbers::AdjacentSteps: params")
             WHEN("It is mid-range within new range")
             {
                 Range newRange(lastNumber - 2, lastNumber + 2);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::AdjacentSteps()));
+                    NumberProtocolParams(AdjacentStepsParams()));
                 instance.setParams(newParams);
 
                 THEN("Only numbers either side of it are selectable")
@@ -261,10 +256,9 @@ SCENARIO("Numbers::AdjacentSteps: params")
             WHEN("It is start of the new range")
             {
                 Range newRange(lastNumber, lastNumber + 4);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::AdjacentSteps()));
+                    NumberProtocolParams(AdjacentStepsParams()));
                 instance.setParams(newParams);
 
                 THEN("Only the number above is selectable")
@@ -278,10 +272,9 @@ SCENARIO("Numbers::AdjacentSteps: params")
             WHEN("It is end of the new range")
             {
                 Range newRange(lastNumber - 4, lastNumber);
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     newRange,
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::AdjacentSteps()));
+                    NumberProtocolParams(AdjacentStepsParams()));
                 instance.setParams(newParams);
 
                 THEN("Only the number below is selectable")

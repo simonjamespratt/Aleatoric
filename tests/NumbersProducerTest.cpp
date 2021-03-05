@@ -30,9 +30,8 @@ SCENARIO("Numbers: Using Basic")
             NumberProtocol::create(NumberProtocol::Type::basic));
 
         instance.setParams(
-            NumberProtocolParameters(referenceRange,
-                                     NumberProtocolParameters::Protocols(
-                                         NumberProtocolParameters::Basic())));
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(BasicParams())));
 
         WHEN("A sample has been gathered")
         {
@@ -73,10 +72,9 @@ SCENARIO("Numbers: Using Cycle")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::cycle));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(false, false))));
+                NumberProtocolParams(CycleParams(false, false))));
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -96,10 +94,9 @@ SCENARIO("Numbers: Using Cycle")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::cycle));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(false, true))));
+                NumberProtocolParams(CycleParams(false, true))));
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -119,10 +116,9 @@ SCENARIO("Numbers: Using Cycle")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::cycle));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(true, false))));
+                NumberProtocolParams(CycleParams(true, false))));
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -142,10 +138,9 @@ SCENARIO("Numbers: Using Cycle")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::cycle));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(true, true))));
+                NumberProtocolParams(CycleParams(true, true))));
 
             AND_WHEN("A pair of cycles is requested")
             {
@@ -174,9 +169,8 @@ SCENARIO("Numbers: Using Serial")
             NumberProtocol::create(NumberProtocol::Type::serial));
 
         instance.setParams(
-            NumberProtocolParameters(referenceRange,
-                                     NumberProtocolParameters::Protocols(
-                                         NumberProtocolParameters::Serial())));
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(SerialParams())));
 
         WHEN("A full series sample set has been gathered")
         {
@@ -233,10 +227,9 @@ SCENARIO("Numbers: Using Subset")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::subset));
 
-        instance.setParams(NumberProtocolParameters(
+        instance.setParams(NumberProtocolConfig(
             referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Subset(subsetMin, subsetMax))));
+            NumberProtocolParams(SubsetParams(subsetMin, subsetMax))));
 
         WHEN("A sample has been collected")
         {
@@ -298,10 +291,9 @@ SCENARIO("Numbers: Using GroupedRepetition")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::groupedRepetition));
 
-        instance.setParams(NumberProtocolParameters(
+        instance.setParams(NumberProtocolConfig(
             referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::GroupedRepetition(groupings))));
+            NumberProtocolParams(GroupedRepetitionParams(groupings))));
 
         WHEN("Two samples each consisting of a full series set has been "
              "gathered")
@@ -351,10 +343,9 @@ SCENARIO("Numbers: Using Ratio")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::ratio));
 
-        instance.setParams(NumberProtocolParameters(
-            referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Ratio(ratios))));
+        instance.setParams(
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(RatioParams(ratios))));
 
         WHEN("A full series sample set has been gathered")
         {
@@ -392,10 +383,9 @@ SCENARIO("Numbers: Using Ratio")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::ratio));
 
-        instance.setParams(NumberProtocolParameters(
-            referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Ratio(ratios))));
+        instance.setParams(
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(RatioParams(ratios))));
 
         WHEN("A full series sample set has been gathered")
         {
@@ -450,10 +440,9 @@ SCENARIO("Numbers: Using Precision")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::precision));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Precision(distribution))));
+                NumberProtocolParams(PrecisionParams(distribution))));
 
             AND_WHEN("A sample is requested")
             {
@@ -477,10 +466,9 @@ SCENARIO("Numbers: Using Precision")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::precision));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Precision(distribution))));
+                NumberProtocolParams(PrecisionParams(distribution))));
 
             AND_WHEN("A sample is requested")
             {
@@ -506,10 +494,9 @@ SCENARIO("Numbers: Using NoRepetition")
     NumbersProducer instance(
         NumberProtocol::create(NumberProtocol::Type::noRepetition));
 
-    instance.setParams(NumberProtocolParameters(
-        referenceRange,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::NoRepetition())));
+    instance.setParams(
+        NumberProtocolConfig(referenceRange,
+                             NumberProtocolParams(NoRepetitionParams())));
 
     GIVEN("The Producer has been instantiated")
     {
@@ -553,10 +540,9 @@ SCENARIO("Numbers: Using Periodic")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::periodic));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(0.5))));
+                NumberProtocolParams(PeriodicParams(0.5))));
 
             WHEN("A sample has been gathered")
             {
@@ -586,10 +572,9 @@ SCENARIO("Numbers: Using Periodic")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::periodic));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(0.0))));
+                NumberProtocolParams(PeriodicParams(0.0))));
 
             WHEN("A sample has been gathered")
             {
@@ -620,10 +605,9 @@ SCENARIO("Numbers: Using Periodic")
             NumbersProducer instance(
                 NumberProtocol::create(NumberProtocol::Type::periodic));
 
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(1.0))));
+                NumberProtocolParams(PeriodicParams(1.0))));
 
             WHEN("A sample has been gathered")
             {
@@ -651,10 +635,9 @@ SCENARIO("Numbers: Using AdjacentSteps")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::adjacentSteps));
 
-        instance.setParams(NumberProtocolParameters(
-            referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::AdjacentSteps())));
+        instance.setParams(
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(AdjacentStepsParams())));
 
         WHEN("A sample has been gathered")
         {
@@ -700,10 +683,9 @@ SCENARIO("Numbers: Using Walk")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::walk));
 
-        instance.setParams(NumberProtocolParameters(
-            referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Walk(maxStep))));
+        instance.setParams(
+            NumberProtocolConfig(referenceRange,
+                                 NumberProtocolParams(WalkParams(maxStep))));
 
         WHEN("A sample has been gathered")
         {
@@ -750,10 +732,9 @@ SCENARIO("Numbers: Using GranularWalk")
         NumbersProducer instance(
             NumberProtocol::create(NumberProtocol::Type::granularWalk));
 
-        instance.setParams(NumberProtocolParameters(
+        instance.setParams(NumberProtocolConfig(
             referenceRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::GranularWalk(deviationFactor))));
+            NumberProtocolParams(GranularWalkParams(deviationFactor))));
 
         WHEN("A sample has been gathered")
         {
@@ -795,10 +776,9 @@ SCENARIO("Numbers: Get and set params using Cycle")
     NumbersProducer instance(
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
-    instance.setParams(NumberProtocolParameters(
-        referenceRange,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Cycle(false, false))));
+    instance.setParams(
+        NumberProtocolConfig(referenceRange,
+                             NumberProtocolParams(CycleParams(false, false))));
 
     GIVEN("Params have not been changed from initial setting")
     {
@@ -812,9 +792,8 @@ SCENARIO("Numbers: Get and set params using Cycle")
             {
                 REQUIRE(returnedRange.start == referenceRange.start);
                 REQUIRE(returnedRange.end == referenceRange.end);
-                REQUIRE(
-                    params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                REQUIRE(params.protocols.getActiveProtocol() ==
+                        NumberProtocol::Type::cycle);
                 REQUIRE_FALSE(cycleParams.getBidirectional());
                 REQUIRE_FALSE(cycleParams.getReverseDirection());
             }
@@ -836,10 +815,9 @@ SCENARIO("Numbers: Get and set params using Cycle")
           "range")
     {
         Range newRange(1, 5);
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(false, true)));
+            NumberProtocolParams(CycleParams(false, true)));
 
         instance.setParams(newParams);
 
@@ -871,10 +849,9 @@ SCENARIO("Numbers: Get and set params using Cycle")
         THEN("Exception is thrown")
         {
             // Provides Basic protocol params, not cycle
-            REQUIRE_THROWS_AS(instance.setParams(NumberProtocolParameters(
+            REQUIRE_THROWS_AS(instance.setParams(NumberProtocolConfig(
                                   Range(20, 30),
-                                  NumberProtocolParameters::Protocols(
-                                      NumberProtocolParameters::Basic()))),
+                                  NumberProtocolParams(BasicParams()))),
                               std::invalid_argument);
         }
     }
@@ -896,15 +873,14 @@ SCENARIO("Numbers: Change protocol")
             auto activeProtocol =
                 instance.getParams().protocols.getActiveProtocol();
             REQUIRE(activeProtocol ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                    NumberProtocol::Type::cycle);
         }
 
         THEN("Set of numbers is as expected")
         {
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(false, false))));
+                NumberProtocolParams(CycleParams(false, false))));
 
             std::vector<int> expectedResult {1, 2, 3, 1, 2, 3};
             auto set = instance.getIntegerCollection(expectedResult.size());
@@ -922,17 +898,15 @@ SCENARIO("Numbers: Change protocol")
         {
             auto activeProtocol =
                 instance.getParams().protocols.getActiveProtocol();
-            REQUIRE(
-                activeProtocol ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::periodic);
+            REQUIRE(activeProtocol ==
+                    NumberProtocol::Type::periodic);
         }
 
         THEN("Set of numbers is as expected")
         {
-            instance.setParams(NumberProtocolParameters(
+            instance.setParams(NumberProtocolConfig(
                 referenceRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(1.0))));
+                NumberProtocolParams(PeriodicParams(1.0))));
 
             // use as reference number for set gathered next
             auto firstNumber = instance.getIntegerNumber();

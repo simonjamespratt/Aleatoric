@@ -165,19 +165,16 @@ SCENARIO("Numbers::Serial: params")
         {
             REQUIRE(returnedRange.start == 1);
             REQUIRE(returnedRange.end == 3);
-            REQUIRE(
-                params.protocols.getActiveProtocol() ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocol::Type::serial);
         }
     }
 
     WHEN("Set params")
     {
         Range newRange(4, 9);
-        NumberProtocolParameters newParams(
-            newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Serial()));
+        NumberProtocolConfig newParams(newRange,
+                                       NumberProtocolParams(SerialParams()));
         instance.setParams(newParams);
 
         THEN("The object state is updated")

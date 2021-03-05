@@ -47,7 +47,7 @@ double Walk::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Walk::setParams(NumberProtocolParameters newParams)
+void Walk::setParams(NumberProtocolConfig newParams)
 {
     auto maxStep = newParams.protocols.getWalk().getMaxStep();
     auto newRange = newParams.getRange();
@@ -58,12 +58,10 @@ void Walk::setParams(NumberProtocolParameters newParams)
     setRange(newRange);
 }
 
-NumberProtocolParameters Walk::getParams()
+NumberProtocolConfig Walk::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Walk(m_maxStep)));
+    return NumberProtocolConfig(m_range,
+                                NumberProtocolParams(WalkParams(m_maxStep)));
 }
 
 // Private methods

@@ -233,16 +233,15 @@ SCENARIO("Numbers::Cycle: params")
             REQUIRE_FALSE(cycleParams.getBidirectional());
             REQUIRE_FALSE(cycleParams.getReverseDirection());
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                    NumberProtocol::Type::cycle);
         }
     }
 
     WHEN("Set params")
     {
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             Range(10, 20),
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(true, true)));
+            NumberProtocolParams(CycleParams(true, true)));
         instance.setParams(newParams);
 
         THEN("params should be updated")
@@ -274,11 +273,10 @@ SCENARIO("Numbers::Cycle: Set params: no numbers returned yet")
 
         bool newBidirectional = false;
         bool newReverseDirection = false;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(newBidirectional,
-                                                newReverseDirection)));
+            NumberProtocolParams(
+                CycleParams(newBidirectional, newReverseDirection)));
         instance.setParams(newParams);
 
         THEN("A set of numbers should be as expected")
@@ -300,11 +298,10 @@ SCENARIO("Numbers::Cycle: Set params: no numbers returned yet")
 
         bool newBidirectional = false;
         bool newReverseDirection = true;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(newBidirectional,
-                                                newReverseDirection)));
+            NumberProtocolParams(
+                CycleParams(newBidirectional, newReverseDirection)));
         instance.setParams(newParams);
 
         THEN("A set of numbers should be as expected")
@@ -326,11 +323,10 @@ SCENARIO("Numbers::Cycle: Set params: no numbers returned yet")
 
         bool newBidirectional = true;
         bool newReverseDirection = false;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(newBidirectional,
-                                                newReverseDirection)));
+            NumberProtocolParams(
+                CycleParams(newBidirectional, newReverseDirection)));
         instance.setParams(newParams);
 
         THEN("A set of numbers should be as expected")
@@ -352,11 +348,10 @@ SCENARIO("Numbers::Cycle: Set params: no numbers returned yet")
 
         bool newBidirectional = true;
         bool newReverseDirection = true;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(newBidirectional,
-                                                newReverseDirection)));
+            NumberProtocolParams(
+                CycleParams(newBidirectional, newReverseDirection)));
         instance.setParams(newParams);
 
         THEN("A set of numbers should be as expected")
@@ -390,11 +385,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is mid new range")
         {
             Range newRange(lastNumber - 1, lastNumber + 1); // 2 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -411,11 +405,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at end of new range")
         {
             Range newRange(lastNumber - 3, lastNumber); // 0 - 3
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -432,11 +425,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at start of new range")
         {
             Range newRange(lastNumber, lastNumber + 2); // 3 - 5
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -453,11 +445,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number not in new range")
         {
             Range newRange(lastNumber + 1, lastNumber + 3); // 4 - 6
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("Cycle jumps to start of new range")
@@ -486,11 +477,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is mid new range")
         {
             Range newRange(lastNumber - 1, lastNumber + 1); // 0 - 2
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -507,11 +497,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at end of new range")
         {
             Range newRange(lastNumber - 2, lastNumber); // -1, 1
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -528,11 +517,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at start of new range")
         {
             Range newRange(lastNumber, lastNumber + 3); // 1 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -549,11 +537,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number not in new range")
         {
             Range newRange(lastNumber + 1, lastNumber + 3); // 2 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("Cycle jumps to end of new range")
@@ -582,11 +569,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is mid new range")
         {
             Range newRange(lastNumber - 1, lastNumber + 1); // 2 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -603,11 +589,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at end of new range")
         {
             Range newRange(lastNumber - 3, lastNumber); // 0, 3
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -624,11 +609,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at start of new range")
         {
             Range newRange(lastNumber, lastNumber + 2); // 3 - 5
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -645,11 +629,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number not in new range")
         {
             Range newRange(lastNumber + 1, lastNumber + 3); // 4 - 6
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("Cycle jumps to start of new range")
@@ -678,11 +661,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is mid new range")
         {
             Range newRange(lastNumber - 1, lastNumber + 1); // 0 - 2
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -699,11 +681,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at end of new range")
         {
             Range newRange(lastNumber - 2, lastNumber); // -1, 1
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -720,11 +701,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number is at start of new range")
         {
             Range newRange(lastNumber, lastNumber + 3); // 1 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("The cycle continues as expected")
@@ -741,11 +721,10 @@ SCENARIO("Numbers::Cycle: Set params: with last returned number")
         WHEN("Last number not in new range")
         {
             Range newRange(lastNumber + 1, lastNumber + 3); // 2 - 4
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Cycle(newBidirectional,
-                                                    newReverseDirection)));
+                NumberProtocolParams(
+                    CycleParams(newBidirectional, newReverseDirection)));
             instance.setParams(newParams);
 
             THEN("Cycle jumps to end of new range")

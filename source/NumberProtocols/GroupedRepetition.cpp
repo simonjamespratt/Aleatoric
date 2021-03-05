@@ -60,7 +60,7 @@ double GroupedRepetition::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void GroupedRepetition::setParams(NumberProtocolParameters newParams)
+void GroupedRepetition::setParams(NumberProtocolConfig newParams)
 {
     m_groupings = newParams.protocols.getGroupedRepetition().getGroupings();
     m_groupingGenerator->setDistributionVector(m_groupings.size(), 1.0);
@@ -71,12 +71,11 @@ void GroupedRepetition::setParams(NumberProtocolParameters newParams)
     m_groupingCount = 0;
 }
 
-NumberProtocolParameters GroupedRepetition::getParams()
+NumberProtocolConfig GroupedRepetition::getParams()
 {
-    return NumberProtocolParameters(
+    return NumberProtocolConfig(
         m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::GroupedRepetition(m_groupings)));
+        NumberProtocolParams(GroupedRepetitionParams(m_groupings)));
 }
 
 // Private methods
