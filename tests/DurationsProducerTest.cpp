@@ -413,26 +413,29 @@ SCENARIO("DurationsProducer: Change number protocol")
     WHEN("After number protocol change")
     {
         instance.setNumberProtocol(
-            NumberProtocol::create(NumberProtocol::Type::periodic));
+            NumberProtocol::create(NumberProtocol::Type::serial));
 
         THEN("Active protocol is as expected")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
             REQUIRE(
                 activeProtocol ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::periodic);
+                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
         }
 
-        THEN("Set of durations is as expected")
+        THEN("Set of durations is as expected with the protocol range "
+             "configured to the selectable durations size")
         {
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Periodic(1.0)));
+            auto selectables = instance.getSelectableDurations();
+            // Get several sets matching selectables size - serial will return a
+            // permutated version of the selectables for each
+            std::vector<std::vector<int>> sets(10);
+            for(auto &set : sets) {
+                set = instance.getCollection(selectables.size());
+            }
 
-            // use as reference duration for set gathered next
-            auto firstDuration = instance.getDuration();
-
-            for(int i = 0; i < 1000; i++) {
-                REQUIRE(instance.getDuration() == firstDuration);
+            for(auto &set : sets) {
+                REQUIRE_THAT(set, Catch::UnorderedEquals(selectables));
             }
         }
     }

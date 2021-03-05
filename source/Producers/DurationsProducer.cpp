@@ -86,6 +86,7 @@ void DurationsProducer::setNumberProtocol(
     std::unique_ptr<NumberProtocol> numberProtocol)
 {
     m_numberProtocol = std::move(numberProtocol);
+    m_numberProtocol->setParams(Range(0, m_durationCollectionSize - 1));
 }
 
 void DurationsProducer::setDurationProtocol(

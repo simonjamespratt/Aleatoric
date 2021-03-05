@@ -583,26 +583,28 @@ SCENARIO("CollectionsProducer: Change protocol")
     WHEN("After protocol change")
     {
         instance.setProtocol(
-            NumberProtocol::create(NumberProtocol::Type::periodic));
+            NumberProtocol::create(NumberProtocol::Type::serial));
 
         THEN("Active protocol is as expected")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
             REQUIRE(
                 activeProtocol ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::periodic);
+                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
         }
 
-        THEN("Set of items is as expected")
+        THEN("Set of items is as expected with the protocol range configured "
+             "to the source size")
         {
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Periodic(1.0)));
+            // Get several sets matching source size - serial will return a
+            // permutated version of the source for each
+            std::vector<std::vector<char>> sets(10);
+            for(auto &set : sets) {
+                set = instance.getCollection(source.size());
+            }
 
-            // use as reference item for set gathered next
-            auto firstItem = instance.getItem();
-
-            for(int i = 0; i < 1000; i++) {
-                REQUIRE(instance.getItem() == firstItem);
+            for(auto &set : sets) {
+                REQUIRE_THAT(set, Catch::UnorderedEquals(source));
             }
         }
     }
