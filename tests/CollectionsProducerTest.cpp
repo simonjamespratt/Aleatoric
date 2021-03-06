@@ -162,8 +162,8 @@ SCENARIO("CollectionsProducer: using Subset")
             source,
             NumberProtocol::create(NumberProtocol::Type::subset));
 
-        instance.setParams(NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Subset(subsetMin, subsetMax)));
+        instance.setParams(
+            NumberProtocolParams(SubsetParams(subsetMin, subsetMax)));
 
         WHEN("A sample has been collected")
         {
@@ -225,8 +225,8 @@ SCENARIO("CollectionsProducer: using GroupedRepetition")
             source,
             NumberProtocol::create(NumberProtocol::Type::groupedRepetition));
 
-        instance.setParams(NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::GroupedRepetition(groupings)));
+        instance.setParams(
+            NumberProtocolParams(GroupedRepetitionParams(groupings)));
 
         WHEN("Two samples each consisting of a full series set has been "
              "gathered")
@@ -274,8 +274,7 @@ SCENARIO("CollectionsProducer: using Ratio")
             source,
             NumberProtocol::create(NumberProtocol::Type::ratio));
 
-        instance.setParams(NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Ratio(ratios)));
+        instance.setParams(NumberProtocolParams(RatioParams(ratios)));
 
         WHEN("A full series sample has been gathered")
         {
@@ -315,8 +314,8 @@ SCENARIO("CollectionsProducer: using Precision")
                 source,
                 NumberProtocol::create(NumberProtocol::Type::precision));
 
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Precision(distribution)));
+            instance.setParams(
+                NumberProtocolParams(PrecisionParams(distribution)));
 
             AND_WHEN("A sample is requested")
             {
@@ -387,8 +386,8 @@ SCENARIO("CollectionsProducer: using Periodic")
                 source,
                 NumberProtocol::create(NumberProtocol::Type::periodic));
 
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Periodic(chanceOfRepetition)));
+            instance.setParams(
+                NumberProtocolParams(PeriodicParams(chanceOfRepetition)));
 
             WHEN("A sample has been gathered")
             {
@@ -454,8 +453,7 @@ SCENARIO("CollectionsProducer: using Walk")
             source,
             NumberProtocol::create(NumberProtocol::Type::walk));
 
-        instance.setParams(NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Walk(maxStep)));
+        instance.setParams(NumberProtocolParams(WalkParams(maxStep)));
 
         WHEN("A sample has been gathered")
         {
@@ -489,9 +487,8 @@ SCENARIO("CollectionsProducer: Get and set params (using cycle for test)")
             {
                 auto params = instance.getParams();
                 auto cycleParams = params.getCycle();
-                REQUIRE(
-                    params.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                REQUIRE(params.getActiveProtocol() ==
+                        NumberProtocol::Type::cycle);
                 REQUIRE_FALSE(cycleParams.getReverseDirection());
                 REQUIRE_FALSE(cycleParams.getBidirectional());
             }
@@ -511,8 +508,7 @@ SCENARIO("CollectionsProducer: Get and set params (using cycle for test)")
 
     GIVEN("Params have been updated: change to reverse unidirectional")
     {
-        NumberProtocolParameters::Protocols newParams(
-            NumberProtocolParameters::Cycle(false, true));
+        NumberProtocolParams newParams(CycleParams(false, true));
 
         instance.setParams(newParams);
 
@@ -542,8 +538,7 @@ SCENARIO("CollectionsProducer: Get and set params (using cycle for test)")
         {
             // Provides Basic protocol params, not cycle
             REQUIRE_THROWS_AS(
-                instance.setParams(NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Basic())),
+                instance.setParams(NumberProtocolParams(BasicParams())),
                 std::invalid_argument);
         }
     }
@@ -565,13 +560,12 @@ SCENARIO("CollectionsProducer: Change protocol")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
             REQUIRE(activeProtocol ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                    NumberProtocol::Type::cycle);
         }
 
         THEN("A collection of items is as expected")
         {
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(false, false)));
+            instance.setParams(NumberProtocolParams(CycleParams(false, false)));
 
             std::vector<char> expectedResult {'a', 'b', 'c', 'a', 'b', 'c'};
             auto set = instance.getCollection(expectedResult.size());
@@ -588,9 +582,8 @@ SCENARIO("CollectionsProducer: Change protocol")
         THEN("Active protocol is as expected")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
-            REQUIRE(
-                activeProtocol ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
+            REQUIRE(activeProtocol ==
+                    NumberProtocol::Type::serial);
         }
 
         THEN("Set of items is as expected with the protocol range configured "
@@ -621,8 +614,7 @@ SCENARIO("CollectionsProducer: Change source collection")
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     // NB: set to reverse bidirectional
-    instance.setParams(NumberProtocolParameters::Protocols(
-        NumberProtocolParameters::Cycle(true, true)));
+    instance.setParams(NumberProtocolParams(CycleParams(true, true)));
 
     WHEN("New source collection size is too small")
     {

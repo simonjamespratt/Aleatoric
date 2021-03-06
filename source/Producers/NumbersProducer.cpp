@@ -1,5 +1,7 @@
 #include "NumbersProducer.hpp"
 
+#include "NumberProtocolParameters.hpp"
+
 #include <stdexcept>
 
 namespace aleatoric {
@@ -42,12 +44,12 @@ std::vector<double> NumbersProducer::getDecimalCollection(int size)
     return collection;
 }
 
-NumberProtocolParameters NumbersProducer::getParams()
+NumberProtocolConfig NumbersProducer::getParams()
 {
     return m_protocol->getParams();
 }
 
-void NumbersProducer::setParams(NumberProtocolParameters newParams)
+void NumbersProducer::setParams(NumberProtocolConfig newParams)
 {
     if(newParams.protocols.getActiveProtocol() !=
        m_protocol->getParams().protocols.getActiveProtocol()) {

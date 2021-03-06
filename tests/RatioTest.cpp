@@ -224,7 +224,7 @@ SCENARIO("Numbers::Ratio: params")
             REQUIRE(returnedRange.end == 3);
             REQUIRE(params.protocols.getRatio().getRatios() == ratios);
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::ratio);
+                    NumberProtocol::Type::ratio);
         }
     }
 
@@ -232,10 +232,9 @@ SCENARIO("Numbers::Ratio: params")
     {
         Range newRange(4, 6);
         std::vector<int> newRatios {1, 2, 3};
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Ratio(newRatios)));
+            NumberProtocolParams(RatioParams(newRatios)));
         instance.setParams(newParams);
 
         THEN("Object is updated")
@@ -266,10 +265,9 @@ SCENARIO("Numbers::Ratio: params")
     {
         Range newRange(4, 6);
         std::vector<int> newRatios {2, 3};
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Ratio(newRatios)));
+            NumberProtocolParams(RatioParams(newRatios)));
 
         THEN("Throw exception")
         {

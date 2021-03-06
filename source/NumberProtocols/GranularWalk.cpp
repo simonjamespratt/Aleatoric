@@ -47,7 +47,7 @@ double GranularWalk::getDecimalNumber()
     return m_lastReturnedNumber;
 }
 
-void GranularWalk::setParams(NumberProtocolParameters newParams)
+void GranularWalk::setParams(NumberProtocolConfig newParams)
 {
     auto granWalkParams = newParams.protocols.getGranularWalk();
 
@@ -60,12 +60,11 @@ void GranularWalk::setParams(NumberProtocolParameters newParams)
     setRange(newParams.getRange());
 }
 
-NumberProtocolParameters GranularWalk::getParams()
+NumberProtocolConfig GranularWalk::getParams()
 {
-    return NumberProtocolParameters(
+    return NumberProtocolConfig(
         m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::GranularWalk(m_deviationFactor)));
+        NumberProtocolParams(GranularWalkParams(m_deviationFactor)));
 }
 
 // Private methods=====================================================

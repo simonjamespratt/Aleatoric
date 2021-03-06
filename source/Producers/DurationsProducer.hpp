@@ -3,6 +3,7 @@
 
 #include "DurationProtocol.hpp"
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 
 #include <functional>
 #include <map>
@@ -20,9 +21,9 @@ class DurationsProducer {
 
     std::vector<int> getSelectableDurations();
 
-    NumberProtocolParameters::Protocols getParams();
+    NumberProtocolParams getParams();
 
-    void setParams(NumberProtocolParameters::Protocols newParams);
+    void setParams(NumberProtocolParams newParams);
 
     int addListenerForParamsChange(std::function<void()> callback);
 

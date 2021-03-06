@@ -310,8 +310,7 @@ SCENARIO("Numbers::GroupedRepetition: params")
             REQUIRE(params.protocols.getGroupedRepetition().getGroupings() ==
                     groupings);
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::
-                        groupedRepetition);
+                    NumberProtocol::Type::groupedRepetition);
         }
     }
 
@@ -319,10 +318,9 @@ SCENARIO("Numbers::GroupedRepetition: params")
     {
         Range newRange(1, 2);
         std::vector<int> newGroupings {2};
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::GroupedRepetition(newGroupings)));
+            NumberProtocolParams(GroupedRepetitionParams(newGroupings)));
 
         THEN("object is updated")
         {

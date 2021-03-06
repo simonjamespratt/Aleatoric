@@ -203,7 +203,7 @@ SCENARIO("Numbers::Walk: params")
         THEN("active protocol is set correctly")
         {
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::walk);
+                    NumberProtocol::Type::walk);
         }
     }
 
@@ -212,10 +212,9 @@ SCENARIO("Numbers::Walk: params")
         int newMaxStep = 3;
         Range newRange(20, 30);
 
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Walk(newMaxStep)));
+            NumberProtocolParams(WalkParams(newMaxStep)));
 
         instance.setParams(newParams);
         auto params = instance.getParams();
@@ -273,10 +272,9 @@ SCENARIO("Numbers::Walk: params")
         int newMaxStep = 3;
         Range newRange(lastNumber - 20, lastNumber + 20);
 
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Walk(newMaxStep)));
+            NumberProtocolParams(WalkParams(newMaxStep)));
 
         instance.setParams(newParams);
 
@@ -296,10 +294,9 @@ SCENARIO("Numbers::Walk: params")
         AND_WHEN("it is greater than new range size")
         {
             auto newMaxStep = newRange.size + 1;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Walk(newMaxStep)));
+                NumberProtocolParams(WalkParams(newMaxStep)));
 
             THEN("An exception is thrown")
             {
@@ -311,10 +308,9 @@ SCENARIO("Numbers::Walk: params")
         AND_WHEN("it is less than 1")
         {
             int newMaxStep = 0;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Walk(newMaxStep)));
+                NumberProtocolParams(WalkParams(newMaxStep)));
 
             THEN("An exception is thrown")
             {

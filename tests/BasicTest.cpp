@@ -93,17 +93,15 @@ SCENARIO("Numbers::Basic: params")
             REQUIRE(returnedRange.start == 1);
             REQUIRE(returnedRange.end == 10);
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::basic);
+                    NumberProtocol::Type::basic);
         }
     }
 
     WHEN("Set params")
     {
         Range newRange(20, 30);
-        NumberProtocolParameters newParams(
-            newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Basic()));
+        NumberProtocolConfig newParams(newRange,
+                                       NumberProtocolParams(BasicParams()));
         instance.setParams(newParams);
 
         THEN("object state is updated")

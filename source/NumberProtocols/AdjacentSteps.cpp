@@ -41,7 +41,7 @@ double AdjacentSteps::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void AdjacentSteps::setParams(NumberProtocolParameters newParams)
+void AdjacentSteps::setParams(NumberProtocolConfig newParams)
 {
     m_range = newParams.getRange();
     m_generator->setDistributionVector(m_range.size, 1.0);
@@ -52,12 +52,10 @@ void AdjacentSteps::setParams(NumberProtocolParameters newParams)
     }
 }
 
-NumberProtocolParameters AdjacentSteps::getParams()
+NumberProtocolConfig AdjacentSteps::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::AdjacentSteps()));
+    return NumberProtocolConfig(m_range,
+                                NumberProtocolParams(AdjacentStepsParams()));
 }
 
 void AdjacentSteps::prepareStepBasedDistribution(int number)

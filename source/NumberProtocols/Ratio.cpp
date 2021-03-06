@@ -44,7 +44,7 @@ double Ratio::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Ratio::setParams(NumberProtocolParameters newParams)
+void Ratio::setParams(NumberProtocolConfig newParams)
 {
     auto newRatios = newParams.protocols.getRatio().getRatios();
     auto newRange = newParams.getRange();
@@ -56,12 +56,10 @@ void Ratio::setParams(NumberProtocolParameters newParams)
     m_generator->setDistributionVector(m_selectables.size(), 1.0);
 }
 
-NumberProtocolParameters Ratio::getParams()
+NumberProtocolConfig Ratio::getParams()
 {
-    return NumberProtocolParameters(
-        m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Ratio(m_ratios)));
+    return NumberProtocolConfig(m_range,
+                                NumberProtocolParams(RatioParams(m_ratios)));
 }
 
 // Private methods

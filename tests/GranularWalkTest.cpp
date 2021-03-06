@@ -199,8 +199,7 @@ SCENARIO("Numbers::GranularWalk: params")
         THEN("active protocol should be granular walk")
         {
             REQUIRE(params.protocols.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::
-                        granularWalk);
+                    NumberProtocol::Type::granularWalk);
         }
     }
 
@@ -208,10 +207,9 @@ SCENARIO("Numbers::GranularWalk: params")
     {
         Range newRange(20, 40);
         double newDeviationFactor = 0.1;
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::GranularWalk(newDeviationFactor)));
+            NumberProtocolParams(GranularWalkParams(newDeviationFactor)));
 
         instance.setParams(newParams);
         auto params = instance.getParams();
@@ -274,10 +272,9 @@ SCENARIO("Numbers::GranularWalk: params")
         double newDeviationFactor = 0.1;
         Range newRange(lastNumber - 10, lastNumber + 10);
 
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::GranularWalk(newDeviationFactor)));
+            NumberProtocolParams(GranularWalkParams(newDeviationFactor)));
 
         instance.setParams(newParams);
 
@@ -309,10 +306,9 @@ SCENARIO("Numbers::GranularWalk: params")
 
         THEN("Throw exception if too high")
         {
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::GranularWalk(devFactorTooHigh)));
+                NumberProtocolParams(GranularWalkParams(devFactorTooHigh)));
 
             REQUIRE_THROWS_AS(instance.setParams(newParams),
                               std::invalid_argument);
@@ -320,9 +316,8 @@ SCENARIO("Numbers::GranularWalk: params")
 
         THEN("Throw exception if too low")
         {
-            NumberProtocolParameters newParams(
-                newRange,
-                NumberProtocolParameters::GranularWalk(devFactorTooLow));
+            NumberProtocolConfig newParams(newRange,
+                                           GranularWalkParams(devFactorTooLow));
             REQUIRE_THROWS_AS(instance.setParams(newParams),
                               std::invalid_argument);
         }

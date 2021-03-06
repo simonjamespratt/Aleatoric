@@ -1,176 +1,162 @@
 #ifndef NumberProtocolParameters_hpp
 #define NumberProtocolParameters_hpp
 
+#include "NumberProtocol.hpp"
 #include "Range.hpp"
 
 #include <vector>
 
 namespace aleatoric {
 
-struct NumberProtocolParameters {
-    struct Protocols; // forward declaration for setting up friend relationships
+struct NumberProtocolParams; // forward declaration for setting up friend
+                             // relationships
 
-    struct AdjacentSteps {};
+struct AdjacentStepsParams {};
 
-    struct Basic {};
+struct BasicParams {};
 
-    struct Cycle {
-        Cycle(bool bidirectional, bool reverseDirection);
-        friend struct Protocols;
-        bool getBidirectional();
-        bool getReverseDirection();
+struct CycleParams {
+    CycleParams(bool bidirectional, bool reverseDirection);
+    friend struct NumberProtocolParams;
+    bool getBidirectional();
+    bool getReverseDirection();
 
-      private:
-        Cycle();
-        bool m_bidirectional = false;
-        bool m_reverseDirection = false;
-    };
+  private:
+    CycleParams();
+    bool m_bidirectional = false;
+    bool m_reverseDirection = false;
+};
 
-    struct GranularWalk {
-        GranularWalk(double deviationFactor);
-        friend struct Protocols;
-        double getDeviationFactor();
+struct GranularWalkParams {
+    GranularWalkParams(double deviationFactor);
+    friend struct NumberProtocolParams;
+    double getDeviationFactor();
 
-      private:
-        GranularWalk();
-        double m_deviationFactor = 1.0;
-    };
+  private:
+    GranularWalkParams();
+    double m_deviationFactor = 1.0;
+};
 
-    struct GroupedRepetition {
-        GroupedRepetition(std::vector<int> groupings);
-        friend struct Protocols;
-        std::vector<int> getGroupings();
+struct GroupedRepetitionParams {
+    GroupedRepetitionParams(std::vector<int> groupings);
+    friend struct NumberProtocolParams;
+    std::vector<int> getGroupings();
 
-      private:
-        GroupedRepetition();
-        std::vector<int> m_groupings {1};
-    };
+  private:
+    GroupedRepetitionParams();
+    std::vector<int> m_groupings {1};
+};
 
-    struct NoRepetition {};
+struct NoRepetitionParams {};
 
-    struct Periodic {
-        Periodic(double chanceOfRepetition);
-        friend struct Protocols;
-        double getChanceOfRepetition();
+struct PeriodicParams {
+    PeriodicParams(double chanceOfRepetition);
+    friend struct NumberProtocolParams;
+    double getChanceOfRepetition();
 
-      private:
-        Periodic();
-        double m_chanceOfRepetition = 0.0;
-    };
+  private:
+    PeriodicParams();
+    double m_chanceOfRepetition = 0.0;
+};
 
-    struct Precision {
-        Precision(std::vector<double> distribution);
-        friend struct Protocols;
-        std::vector<double> getDistribution();
+struct PrecisionParams {
+    PrecisionParams(std::vector<double> distribution);
+    friend struct NumberProtocolParams;
+    std::vector<double> getDistribution();
 
-      private:
-        Precision();
-        std::vector<double> m_distribution {};
-    };
+  private:
+    PrecisionParams();
+    std::vector<double> m_distribution {};
+};
 
-    struct Ratio {
-        Ratio(std::vector<int> ratios);
-        friend struct Protocols;
-        std::vector<int> getRatios();
+struct RatioParams {
+    RatioParams(std::vector<int> ratios);
+    friend struct NumberProtocolParams;
+    std::vector<int> getRatios();
 
-      private:
-        Ratio();
-        std::vector<int> m_ratios {};
-    };
+  private:
+    RatioParams();
+    std::vector<int> m_ratios {};
+};
 
-    struct Serial {};
+struct SerialParams {};
 
-    struct Subset {
-        Subset(int min, int max);
-        friend struct Protocols;
-        int getMin();
-        int getMax();
+struct SubsetParams {
+    SubsetParams(int min, int max);
+    friend struct NumberProtocolParams;
+    int getMin();
+    int getMax();
 
-      private:
-        Subset();
-        int m_min = 0;
-        int m_max = 0;
-    };
+  private:
+    SubsetParams();
+    int m_min = 0;
+    int m_max = 0;
+};
 
-    struct Walk {
-        Walk(int maxStep);
-        friend struct Protocols;
-        int getMaxStep();
+struct WalkParams {
+    WalkParams(int maxStep);
+    friend struct NumberProtocolParams;
+    int getMaxStep();
 
-      private:
-        Walk();
-        int m_maxStep = 1;
-    };
+  private:
+    WalkParams();
+    int m_maxStep = 1;
+};
 
-    struct Protocols {
-        enum class ActiveProtocol {
-            adjacentSteps,
-            basic,
-            cycle,
-            granularWalk,
-            groupedRepetition,
-            noRepetition,
-            periodic,
-            precision,
-            ratio,
-            serial,
-            subset,
-            walk,
-            none
-        };
+struct NumberProtocolParams {
+    friend struct NumberProtocolConfig;
 
-        friend struct NumberProtocolParameters;
+    NumberProtocolParams(AdjacentStepsParams protocolParams);
+    NumberProtocolParams(BasicParams protocolParams);
+    NumberProtocolParams(CycleParams protocolParams);
+    NumberProtocolParams(GranularWalkParams protocolParams);
+    NumberProtocolParams(GroupedRepetitionParams protocolParams);
+    NumberProtocolParams(NoRepetitionParams protocolParams);
+    NumberProtocolParams(PeriodicParams protocolParams);
+    NumberProtocolParams(PrecisionParams protocolParams);
+    NumberProtocolParams(RatioParams protocolParams);
+    NumberProtocolParams(SerialParams protocolParams);
+    NumberProtocolParams(SubsetParams protocolParams);
+    NumberProtocolParams(WalkParams protocolParams);
 
-        Protocols(AdjacentSteps protocolParams);
-        Protocols(Basic protocolParams);
-        Protocols(Cycle protocolParams);
-        Protocols(GranularWalk protocolParams);
-        Protocols(GroupedRepetition protocolParams);
-        Protocols(NoRepetition protocolParams);
-        Protocols(Periodic protocolParams);
-        Protocols(Precision protocolParams);
-        Protocols(Ratio protocolParams);
-        Protocols(Serial protocolParams);
-        Protocols(Subset protocolParams);
-        Protocols(Walk protocolParams);
+    NumberProtocol::Type getActiveProtocol();
+    AdjacentStepsParams getAdjacentSteps();
+    BasicParams getBasic();
+    CycleParams getCycle();
+    GranularWalkParams getGranularWalk();
+    GroupedRepetitionParams getGroupedRepetition();
+    NoRepetitionParams getNoRepetition();
+    PeriodicParams getPeriodic();
+    PrecisionParams getPrecision();
+    RatioParams getRatio();
+    SerialParams getSerial();
+    SubsetParams getSubset();
+    WalkParams getWalk();
 
-        ActiveProtocol getActiveProtocol();
-        AdjacentSteps getAdjacentSteps();
-        Basic getBasic();
-        Cycle getCycle();
-        GranularWalk getGranularWalk();
-        GroupedRepetition getGroupedRepetition();
-        NoRepetition getNoRepetition();
-        Periodic getPeriodic();
-        Precision getPrecision();
-        Ratio getRatio();
-        Serial getSerial();
-        Subset getSubset();
-        Walk getWalk();
+  private:
+    NumberProtocolParams();
+    NumberProtocol::Type m_activeProtocol = NumberProtocol::Type::none;
 
-      private:
-        Protocols();
-        ActiveProtocol m_activeProtocol = ActiveProtocol::none;
+    AdjacentStepsParams m_adjacentSteps;
+    BasicParams m_basic;
+    CycleParams m_cycle;
+    GranularWalkParams m_granularWalk;
+    GroupedRepetitionParams m_groupedRepetition;
+    NoRepetitionParams m_noRepetition;
+    PeriodicParams m_periodic;
+    PrecisionParams m_precision;
+    RatioParams m_ratio;
+    SerialParams m_serial;
+    SubsetParams m_subset;
+    WalkParams m_walk;
+};
 
-        AdjacentSteps m_adjacentSteps;
-        Basic m_basic;
-        Cycle m_cycle;
-        GranularWalk m_granularWalk;
-        GroupedRepetition m_groupedRepetition;
-        NoRepetition m_noRepetition;
-        Periodic m_periodic;
-        Precision m_precision;
-        Ratio m_ratio;
-        Serial m_serial;
-        Subset m_subset;
-        Walk m_walk;
-    };
-
-    NumberProtocolParameters(Range newRange, Protocols protocolsParams);
+struct NumberProtocolConfig {
+    NumberProtocolConfig(Range newRange, NumberProtocolParams protocolsParams);
 
     Range getRange();
 
-    Protocols protocols;
+    NumberProtocolParams protocols;
 
     template<typename>
     friend class CollectionsProducer;
@@ -178,7 +164,7 @@ struct NumberProtocolParameters {
     friend class DurationsProducer;
 
   private:
-    NumberProtocolParameters(Range newRange);
+    NumberProtocolConfig(Range newRange);
     Range m_range = Range(0, 1);
 };
 

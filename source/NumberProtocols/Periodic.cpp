@@ -46,15 +46,14 @@ double Periodic::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-NumberProtocolParameters Periodic::getParams()
+NumberProtocolConfig Periodic::getParams()
 {
-    return NumberProtocolParameters(
+    return NumberProtocolConfig(
         m_range,
-        NumberProtocolParameters::Protocols(
-            NumberProtocolParameters::Periodic(m_periodicity)));
+        NumberProtocolParams(PeriodicParams(m_periodicity)));
 }
 
-void Periodic::setParams(NumberProtocolParameters params)
+void Periodic::setParams(NumberProtocolConfig params)
 {
     auto chanceOfRepetition =
         params.protocols.getPeriodic().getChanceOfRepetition();

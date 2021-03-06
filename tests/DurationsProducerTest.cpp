@@ -309,9 +309,8 @@ SCENARIO("DurationsProducer: Get and set params (using Prescribed and Cycle "
             {
                 auto params = instance.getParams();
                 auto cycleParams = params.getCycle();
-                REQUIRE(
-                    params.getActiveProtocol() ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+                REQUIRE(params.getActiveProtocol() ==
+                        NumberProtocol::Type::cycle);
                 REQUIRE_FALSE(cycleParams.getReverseDirection());
                 REQUIRE_FALSE(cycleParams.getBidirectional());
             }
@@ -336,8 +335,7 @@ SCENARIO("DurationsProducer: Get and set params (using Prescribed and Cycle "
 
     GIVEN("Params have been updated: change to reverse unidirectional")
     {
-        NumberProtocolParameters::Protocols newParams(
-            NumberProtocolParameters::Cycle(false, true));
+        NumberProtocolParams newParams(CycleParams(false, true));
 
         instance.setParams(newParams);
 
@@ -372,8 +370,7 @@ SCENARIO("DurationsProducer: Get and set params (using Prescribed and Cycle "
         {
             // Provides Basic protocol params, not cycle
             REQUIRE_THROWS_AS(
-                instance.setParams(NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Basic())),
+                instance.setParams(NumberProtocolParams(BasicParams())),
                 std::invalid_argument);
         }
     }
@@ -394,14 +391,12 @@ SCENARIO("DurationsProducer: Change number protocol")
         THEN("Active protocol is as expected")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
-            REQUIRE(activeProtocol ==
-                    NumberProtocolParameters::Protocols::ActiveProtocol::cycle);
+            REQUIRE(activeProtocol == NumberProtocol::Type::cycle);
         }
 
         THEN("Set of durations is as expected")
         {
-            instance.setParams(NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Cycle(false, false)));
+            instance.setParams(NumberProtocolParams(CycleParams(false, false)));
 
             std::vector<int> expectedResult {1, 2, 3, 1, 2, 3};
             auto set = instance.getCollection(expectedResult.size());
@@ -418,9 +413,7 @@ SCENARIO("DurationsProducer: Change number protocol")
         THEN("Active protocol is as expected")
         {
             auto activeProtocol = instance.getParams().getActiveProtocol();
-            REQUIRE(
-                activeProtocol ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::serial);
+            REQUIRE(activeProtocol == NumberProtocol::Type::serial);
         }
 
         THEN("Set of durations is as expected with the protocol range "
@@ -453,8 +446,7 @@ SCENARIO("DurationsProducer: Change duration protocol")
         NumberProtocol::create(NumberProtocol::Type::cycle));
 
     // NB: set to reverse bidirectional
-    instance.setParams(NumberProtocolParameters::Protocols(
-        NumberProtocolParameters::Cycle(true, true)));
+    instance.setParams(NumberProtocolParams(CycleParams(true, true)));
 
     // register after initial params setting directly above to avoid listener
     // getting called prematurely
@@ -682,8 +674,7 @@ SCENARIO("DurationsProducer: Observing changes to params (registering, "
         auto callbackTwoId = instance.addListenerForParamsChange(
             [&callbackTwoHasBeenCalled]() { callbackTwoHasBeenCalled = true; });
 
-        NumberProtocolParameters::Protocols newParams(
-            NumberProtocolParameters::Cycle(true, true));
+        NumberProtocolParams newParams(CycleParams(true, true));
 
         // setting params triggers params change listeners
         instance.setParams(newParams);

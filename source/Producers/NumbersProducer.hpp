@@ -44,9 +44,9 @@ class NumbersProducer {
 
     std::vector<double> getDecimalCollection(int size);
 
-    NumberProtocolParameters getParams();
+    NumberProtocolConfig getParams();
 
-    void setParams(NumberProtocolParameters newParams);
+    void setParams(NumberProtocolConfig newParams);
 
     void setProtocol(std::unique_ptr<NumberProtocol> protocol);
 

@@ -37,17 +37,15 @@ double Serial::getDecimalNumber()
     return static_cast<double>(getIntegerNumber());
 }
 
-void Serial::setParams(NumberProtocolParameters newParams)
+void Serial::setParams(NumberProtocolConfig newParams)
 {
     m_range = newParams.getRange();
     m_generator->setDistributionVector(m_range.size, 1.0);
 }
 
-NumberProtocolParameters Serial::getParams()
+NumberProtocolConfig Serial::getParams()
 {
-    return NumberProtocolParameters(m_range,
-                                    NumberProtocolParameters::Protocols(
-                                        NumberProtocolParameters::Serial()));
+    return NumberProtocolConfig(m_range, NumberProtocolParams(SerialParams()));
 }
 
 } // namespace aleatoric

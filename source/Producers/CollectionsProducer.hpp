@@ -2,6 +2,7 @@
 #define CollectionsProducer_hpp
 
 #include "NumberProtocol.hpp"
+#include "NumberProtocolParameters.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -17,8 +18,8 @@ class CollectionsProducer {
 
     const T &getItem();
     std::vector<T> getCollection(int size);
-    NumberProtocolParameters::Protocols getParams();
-    void setParams(NumberProtocolParameters::Protocols newParams);
+    NumberProtocolParams getParams();
+    void setParams(NumberProtocolParams newParams);
     void setProtocol(std::unique_ptr<NumberProtocol> protocol);
     void setSource(std::vector<T> newSource);
     std::vector<T> getSource();
@@ -69,14 +70,13 @@ std::vector<T> CollectionsProducer<T>::getCollection(int size)
 }
 
 template<typename T>
-NumberProtocolParameters::Protocols CollectionsProducer<T>::getParams()
+NumberProtocolParams CollectionsProducer<T>::getParams()
 {
     return m_protocol->getParams().protocols;
 }
 
 template<typename T>
-void CollectionsProducer<T>::setParams(
-    NumberProtocolParameters::Protocols newParams)
+void CollectionsProducer<T>::setParams(NumberProtocolParams newParams)
 {
     if(newParams.getActiveProtocol() !=
        m_protocol->getParams().protocols.getActiveProtocol()) {
@@ -86,7 +86,7 @@ void CollectionsProducer<T>::setParams(
     }
 
     m_protocol->setParams(
-        NumberProtocolParameters(Range(0, m_source.size() - 1), newParams));
+        NumberProtocolConfig(Range(0, m_source.size() - 1), newParams));
 }
 
 template<typename T>

@@ -204,9 +204,8 @@ SCENARIO("Numbers::Periodic: params")
 
             REQUIRE(params.protocols.getPeriodic().getChanceOfRepetition() ==
                     0.5);
-            REQUIRE(
-                params.protocols.getActiveProtocol() ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::periodic);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocol::Type::periodic);
         }
     }
 
@@ -217,11 +216,9 @@ SCENARIO("Numbers::Periodic: params")
             THEN("An exception is thrown")
             {
                 double invalidPeriodicity = -0.1;
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     Range(0, 1),
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::Periodic(
-                            invalidPeriodicity)));
+                    NumberProtocolParams(PeriodicParams(invalidPeriodicity)));
 
                 REQUIRE_THROWS_AS(instance.setParams(newParams),
                                   std::invalid_argument);
@@ -233,11 +230,9 @@ SCENARIO("Numbers::Periodic: params")
             THEN("An exception is thrown")
             {
                 double invalidPeriodicity = 1.1;
-                NumberProtocolParameters newParams(
+                NumberProtocolConfig newParams(
                     Range(0, 1),
-                    NumberProtocolParameters::Protocols(
-                        NumberProtocolParameters::Periodic(
-                            invalidPeriodicity)));
+                    NumberProtocolParams(PeriodicParams(invalidPeriodicity)));
 
                 REQUIRE_THROWS_AS(instance.setParams(newParams),
                                   std::invalid_argument);
@@ -247,10 +242,9 @@ SCENARIO("Numbers::Periodic: params")
         AND_WHEN("The value is valid")
         {
             double newPeriodicity = 1.0;
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 Range(0, 1),
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(newPeriodicity)));
+                NumberProtocolParams(PeriodicParams(newPeriodicity)));
             instance.setParams(newParams);
 
             THEN("The object state is updated")
@@ -285,10 +279,9 @@ SCENARIO("Numbers::Periodic: params")
         THEN("The object state is updated")
         {
             Range newRange(11, 20);
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+                NumberProtocolParams(PeriodicParams(chanceOfRepetition)));
 
             instance.setParams(newParams);
             auto params = instance.getParams();
@@ -300,10 +293,9 @@ SCENARIO("Numbers::Periodic: params")
         AND_WHEN("No numbers have been returned yet")
         {
             Range newRange(11, 13); // was (1, 10)
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+                NumberProtocolParams(PeriodicParams(chanceOfRepetition)));
 
             instance.setParams(newParams);
 
@@ -321,10 +313,9 @@ SCENARIO("Numbers::Periodic: params")
             auto lastNumber = instance.getIntegerNumber();
             Range newRange(lastNumber + 1,
                            lastNumber + 3); // size of 3
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(chanceOfRepetition)));
+                NumberProtocolParams(PeriodicParams(chanceOfRepetition)));
 
             instance.setParams(newParams);
 
@@ -344,10 +335,9 @@ SCENARIO("Numbers::Periodic: params")
                            lastNumber + 2); // size of 5
             double newChanceOfRepetition = 0.25;
 
-            NumberProtocolParameters newParams(
+            NumberProtocolConfig newParams(
                 newRange,
-                NumberProtocolParameters::Protocols(
-                    NumberProtocolParameters::Periodic(newChanceOfRepetition)));
+                NumberProtocolParams(PeriodicParams(newChanceOfRepetition)));
 
             instance.setParams(newParams);
 

@@ -1,12 +1,13 @@
 #ifndef NumberProtocol_hpp
 #define NumberProtocol_hpp
 
-#include "NumberProtocolParameters.hpp"
+// #include "NumberProtocolParameters.hpp"
 #include "Range.hpp"
 
 #include <memory>
 
 namespace aleatoric {
+struct NumberProtocolConfig; // forward dec preventing circular dep
 
 /*! @brief Interface to which concrete protocol classes that produce random
  * numbers must conform
@@ -24,9 +25,9 @@ class NumberProtocol {
 
     virtual double getDecimalNumber() = 0;
 
-    virtual void setParams(NumberProtocolParameters newParams) = 0;
+    virtual void setParams(NumberProtocolConfig newParams) = 0;
 
-    virtual NumberProtocolParameters getParams() = 0;
+    virtual NumberProtocolConfig getParams() = 0;
 
     virtual ~NumberProtocol() = default;
 
@@ -42,7 +43,8 @@ class NumberProtocol {
         ratio,
         serial,
         subset,
-        walk
+        walk,
+        none
     };
 
     static std::unique_ptr<NumberProtocol> create(Type type);

@@ -126,9 +126,8 @@ SCENARIO("Numbers:Precision: params")
             REQUIRE(returnedRange.end == 4);
             REQUIRE(params.protocols.getPrecision().getDistribution() ==
                     distribution);
-            REQUIRE(
-                params.protocols.getActiveProtocol() ==
-                NumberProtocolParameters::Protocols::ActiveProtocol::precision);
+            REQUIRE(params.protocols.getActiveProtocol() ==
+                    NumberProtocol::Type::precision);
         }
     }
 
@@ -136,10 +135,9 @@ SCENARIO("Numbers:Precision: params")
     {
         Range newRange(11, 15);
         std::vector<double> newDistribution {0.2, 0.2, 0.2, 0.2, 0.2};
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Precision(newDistribution)));
+            NumberProtocolParams(PrecisionParams(newDistribution)));
         instance.setParams(newParams);
 
         THEN("Object state is updated")
@@ -176,10 +174,9 @@ SCENARIO("Numbers:Precision: params")
     {
         Range newRange(1, 2);
         std::vector<double> newDistribution {1};
-        NumberProtocolParameters newParams(
+        NumberProtocolConfig newParams(
             newRange,
-            NumberProtocolParameters::Protocols(
-                NumberProtocolParameters::Precision(newDistribution)));
+            NumberProtocolParams(PrecisionParams(newDistribution)));
 
         THEN("Throw exception")
         {
