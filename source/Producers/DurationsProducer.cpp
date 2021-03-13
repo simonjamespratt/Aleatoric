@@ -93,8 +93,10 @@ void DurationsProducer::setDurationProtocol(
     std::unique_ptr<DurationProtocol> durationProtocol)
 {
     auto newCollectionSize = durationProtocol->getCollectionSize();
+    auto hasDifferentCollectionSize =
+        newCollectionSize != m_durationCollectionSize;
 
-    if(newCollectionSize != m_durationCollectionSize) {
+    if(hasDifferentCollectionSize) {
         try {
             m_numberProtocol->setParams(Range(0, newCollectionSize - 1));
         } catch(const std::invalid_argument &e) {
@@ -102,12 +104,14 @@ void DurationsProducer::setDurationProtocol(
                 "The selectable durations collection size of the provided "
                 "Duration Protocol is too small. It must be two or greater");
         }
-
-        m_durationCollectionSize = newCollectionSize;
-        notifyParamsChangeListeners();
     }
 
     m_durationProtocol = std::move(durationProtocol);
+
+    if(hasDifferentCollectionSize) {
+        m_durationCollectionSize = newCollectionSize;
+        notifyParamsChangeListeners();
+    }
 }
 
 // Private methods

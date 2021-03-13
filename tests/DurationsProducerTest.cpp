@@ -440,6 +440,7 @@ SCENARIO("DurationsProducer: Change duration protocol")
 
     std::vector<int> sourceDurations {1, 2, 3};
     bool callbackHasBeenCalled = false;
+    std::vector<int> selectableDurationsReturnedInCallback;
 
     DurationsProducer instance(
         DurationProtocol::createPrescribed(sourceDurations),
@@ -451,7 +452,13 @@ SCENARIO("DurationsProducer: Change duration protocol")
     // register after initial params setting directly above to avoid listener
     // getting called prematurely
     instance.addListenerForParamsChange(
-        [&callbackHasBeenCalled]() { callbackHasBeenCalled = true; });
+        [&callbackHasBeenCalled,
+         &instance,
+         &selectableDurationsReturnedInCallback]() {
+            callbackHasBeenCalled = true;
+            selectableDurationsReturnedInCallback =
+                instance.getSelectableDurations();
+        });
 
     WHEN("The Duration Protocol collection size is too small")
     {
@@ -489,7 +496,7 @@ SCENARIO("DurationsProducer: Change duration protocol")
                 DurationProtocol::createPrescribed(std::vector<int> {1, 2})));
         }
 
-        THEN("Duration Protocol is not changed")
+        THEN("Params change listener is not called")
         {
             try {
                 instance.setDurationProtocol(
@@ -499,7 +506,7 @@ SCENARIO("DurationsProducer: Change duration protocol")
             }
         }
 
-        THEN("Params change listener is not called")
+        THEN("Duration Protocol is not changed")
         {
             try {
                 instance.setDurationProtocol(
@@ -569,9 +576,12 @@ SCENARIO("DurationsProducer: Change duration protocol")
             REQUIRE_FALSE(cycleParams.getReverseDirection());
         }
 
-        THEN("Params change listener is called")
+        THEN("Params change listener is called but after the new duration "
+             "protocol is set")
         {
             REQUIRE(callbackHasBeenCalled);
+            REQUIRE(selectableDurationsReturnedInCallback ==
+                    std::vector<int> {10, 20, 30, 40, 50});
         }
     }
 }
