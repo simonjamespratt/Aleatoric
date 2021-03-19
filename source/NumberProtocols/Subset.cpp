@@ -104,13 +104,13 @@ void Subset::checkSubsetValues(const int &subsetMin,
 {
     if(subsetMin < 1 || subsetMin > subsetMax) {
         throw std::invalid_argument(
-            "The value passed as argument for subsetMin must be greater than 1 "
-            "and less than subsetMin");
+            "The value passed as argument for subsetMin must be greater than 0 "
+            "but not greater than subsetMax");
     }
 
     if(subsetMax < subsetMin || subsetMax > range.size) {
         throw std::invalid_argument(
-            "The value passed as argument for subsetMax must be greater than "
+            "The value passed as argument for subsetMax must not be less than "
             "subsetMin and no greater than the range size");
     }
 }
